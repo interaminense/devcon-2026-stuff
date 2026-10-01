@@ -1,0 +1,14 @@
+# Not required for the UI registration used in the demo. This is the same
+# definition expressed as code, for when the widget moves into a workspace.
+
+ldp-visitors:
+    cssURLs: []
+    friendlyURLMapping: ldp-visitors
+    htmlElementName: ldp-visitors
+    instanceable: true
+    name: LDP Visitors
+    portletCategoryName: category.client-extensions
+    type: customElement
+    urls:
+        - ldp-visitors.js
+    useESM: false
