@@ -1,4 +1,4 @@
-# DEVCON 2026 - LDP Headless Integrations
+# DEVCON 2026 Stuff
 
 Code for the DEVCON 2026 deep dive *Bridging the Data Gap: Building Custom Analytics Dashboards with Liferay Data Platform Headless APIs* (3 November 2026, Track A).
 
@@ -8,6 +8,7 @@ Everything here reads LDP data from inside Liferay DXP through the DXP GraphQL p
 
 | Folder | What it is |
 |---|---|
+| `dxp` | How to run the frozen demo DXP in Docker, with the scripts that create, back up and restore it. |
 | `scripts` | `curl` scripts that prove the proxy works before any page exists. |
 | `html-fragment` | The first prototype: the widget pasted into the out-of-the-box HTML fragment of a content page. |
 | `client-extension` | The same widget as a Web Component, registered as a Custom Element client extension without a Liferay workspace. |
@@ -15,7 +16,7 @@ Everything here reads LDP data from inside Liferay DXP through the DXP GraphQL p
 ## Prerequisites
 
 - An LDP workspace with data, where you are an Owner or Administrator.
-- A DXP that ships the GraphQL proxy (`analytics-rest-impl`, LPD-85945).
+- A DXP that ships the GraphQL proxy (`analytics-rest-impl`, LPD-85945). `dxp/README.md` sets one up.
 - DXP connected to LDP, with the demo site assigned to an LDP property (channel).
 
 ## Scripts
