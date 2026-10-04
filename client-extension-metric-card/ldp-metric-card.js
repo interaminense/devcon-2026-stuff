@@ -545,6 +545,68 @@
 		return queryCache.get(key);
 	}
 
+	// Each card's configuration is an entry of the LDP Metric Card object, keyed
+	// by the entry's external reference code. The key is the id of the portlet
+	// that wraps the card, which DXP generates per widget instance and keeps
+	// between the page draft and the published page.
+
+	const OBJECT_URL = '/o/c/ldpmetriccards';
+
+	function getInstanceKey(element) {
+		const wrapper = element.closest('[id^="p_p_id_"]');
+
+		return wrapper?.id.match(/^p_p_id_(.+)_$/)?.[1] || null;
+	}
+
+	function getEntryURL(key) {
+		return `${OBJECT_URL}/by-external-reference-code/${encodeURIComponent(key)}`;
+	}
+
+	async function loadConfig(key) {
+		try {
+			const entry = await request(getEntryURL(key));
+
+			const custom = Boolean(entry.rangeStart && entry.rangeEnd);
+
+			return {
+				chart: entry.chart || '',
+				metric: entry.metric,
+				range: custom
+					? {
+							end: entry.rangeEnd.slice(0, 10),
+							start: entry.rangeStart.slice(0, 10),
+						}
+					: {key: entry.rangeKey || DEFAULT_CONFIG.range.key},
+				title: entry.title || '',
+			};
+		}
+		catch (error) {
+
+			// 404 means the card was never configured. Guests without
+			// permission to view the entries also fall back to the default.
+
+			if (error.status !== 404) {
+				console.warn('[ldp-metric-card] Unable to load the configuration', error);
+			}
+
+			return null;
+		}
+	}
+
+	function saveConfig(key, {chart, metric, range, title}) {
+		return request(getEntryURL(key), {
+			body: JSON.stringify({
+				chart,
+				metric,
+				rangeEnd: range.end || null,
+				rangeKey: range.key || null,
+				rangeStart: range.start || null,
+				title,
+			}),
+			method: 'PUT',
+		});
+	}
+
 	const PALETTE = [
 		'#0b5fff',
 		'#4fbfa5',
@@ -1194,6 +1256,8 @@
 		}
 
 		.status {
+			display: flex;
+			justify-content: space-between;
 			margin-top: 8px;
 		}
 
@@ -1318,17 +1382,20 @@
 	}
 
 	class LdpMetricCard extends HTMLElement {
-		connectedCallback() {
+		async connectedCallback() {
 			if (this.shadowRoot) {
 				return;
 			}
 
-			this._config = {
+			this.attachShadow({mode: 'open'}).innerHTML =
+				`<style>${STYLE}</style><div class="card"><div class="empty">Loading...</div></div>`;
+
+			this._key = getInstanceKey(this);
+
+			this._config = (this._key && (await loadConfig(this._key))) || {
 				...DEFAULT_CONFIG,
 				metric: this.getAttribute('metric') || DEFAULT_CONFIG.metric,
 			};
-
-			this.attachShadow({mode: 'open'});
 
 			this._render();
 		}
@@ -1359,7 +1426,10 @@
 						}
 					</div>
 					<div data-role="body"><div class="empty">Loading...</div></div>
-					<div class="status" data-role="status"></div>
+					<div class="status">
+						<span data-role="status"></span>
+						<span class="save-status" data-role="save-status">${escape(this._saveStatus || '')}</span>
+					</div>
 					<div class="panel" data-role="panel"></div>
 				</div>
 			`;
@@ -1521,7 +1591,32 @@
 				title: this._get('title').value.trim(),
 			};
 
+			this._saveStatus = 'Saving...';
+
 			this._render();
+			this._save();
+		}
+
+		async _save() {
+			if (!this._key) {
+				this._saveStatus = 'Not saved: this card is not inside a widget.';
+			}
+			else {
+				try {
+					await saveConfig(this._key, this._config);
+
+					this._saveStatus = 'Saved';
+				}
+				catch (error) {
+					this._saveStatus = `Not saved: ${error.message}`;
+				}
+			}
+
+			const status = this._get('save-status');
+
+			if (status) {
+				status.textContent = this._saveStatus;
+			}
 		}
 	}
 

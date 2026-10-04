@@ -6,9 +6,9 @@ A Custom Element client extension (`ldp-metric-card`) that renders any of 21 LDP
 
 ![Columns, table, horizontal bars, and number only](screenshots/cards-2.png)
 
-## Configuration Is Not Persisted Yet
+## Configuration
 
-The cog's configuration lives only in the card's memory. Reloading or publishing the page resets every card to *Visitors, last 30 days*. Persistence comes next, with Liferay Objects. The configuration is already a single object per card (`metric`, `chart`, `range`, `title`), in the shape the Object will store.
+The cog's configuration (`metric`, `chart`, `range`, `title`) is stored per card in the `LDPMetricCard` Liferay Object, keyed by the id of the widget instance. Reloading or republishing the page keeps every card as configured. See `../objects/README.md` to set up the Object.
 
 ![The configuration panel](screenshots/cog.png)
 

@@ -1,0 +1,77 @@
+{
+	"active": true,
+	"externalReferenceCode": "LDP_METRIC_CARD",
+	"label": {
+		"en_US": "LDP Metric Card"
+	},
+	"name": "LDPMetricCard",
+	"objectFields": [
+		{
+			"DBType": "String",
+			"businessType": "Text",
+			"externalReferenceCode": "LDP_METRIC_CARD_METRIC",
+			"indexed": true,
+			"indexedAsKeyword": true,
+			"label": {
+				"en_US": "Metric"
+			},
+			"name": "metric",
+			"required": true
+		},
+		{
+			"DBType": "String",
+			"businessType": "Text",
+			"externalReferenceCode": "LDP_METRIC_CARD_CHART",
+			"label": {
+				"en_US": "Chart"
+			},
+			"name": "chart",
+			"required": false
+		},
+		{
+			"DBType": "Integer",
+			"businessType": "Integer",
+			"externalReferenceCode": "LDP_METRIC_CARD_RANGE_KEY",
+			"label": {
+				"en_US": "Range Key"
+			},
+			"name": "rangeKey",
+			"required": false
+		},
+		{
+			"DBType": "Date",
+			"businessType": "Date",
+			"externalReferenceCode": "LDP_METRIC_CARD_RANGE_START",
+			"label": {
+				"en_US": "Range Start"
+			},
+			"name": "rangeStart",
+			"required": false
+		},
+		{
+			"DBType": "Date",
+			"businessType": "Date",
+			"externalReferenceCode": "LDP_METRIC_CARD_RANGE_END",
+			"label": {
+				"en_US": "Range End"
+			},
+			"name": "rangeEnd",
+			"required": false
+		},
+		{
+			"DBType": "String",
+			"businessType": "Text",
+			"externalReferenceCode": "LDP_METRIC_CARD_TITLE",
+			"label": {
+				"en_US": "Title"
+			},
+			"name": "title",
+			"required": false
+		}
+	],
+	"pluralLabel": {
+		"en_US": "LDP Metric Cards"
+	},
+	"scope": "company",
+	"titleObjectFieldName": "metric"
+}
