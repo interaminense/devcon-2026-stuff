@@ -69,6 +69,7 @@
 			"required": false
 		}
 	],
+	"objectFolderExternalReferenceCode": "DEVCON_2026",
 	"pluralLabel": {
 		"en_US": "LDP Metric Cards"
 	},

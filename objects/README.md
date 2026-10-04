@@ -8,7 +8,7 @@
 
 | Piece | Where |
 |---|---|
-| Object definition `LDPMetricCard` | `ldp-metric-card.object-definition.json`, created by `create-object-definition.sh` |
+| Object definition `LDPMetricCard` | `ldp-metric-card.object-definition.json`, created by `create-object-definition.sh` inside the *DEVCON 2026* object folder |
 | Generated headless API | `/o/c/ldpmetriccards` |
 | One entry per card | Keyed by its external reference code (ERC) |
 | Card code | `loadConfig`, `saveConfig`, and `getInstanceKey` in `../client-extension-metric-card/ldp-metric-card.js` |
@@ -57,7 +57,7 @@ Both calls are same-origin, with the user's session and `x-csrf-token: Liferay.a
 
 ## Set Up
 
-1. Create and publish the definition. The script is safe to run twice.
+1. Create and publish the definition. The script creates the *DEVCON 2026* object folder first, then the definition inside it. It is safe to run twice, and it moves an existing definition into the folder if it sits elsewhere.
 
 	```bash
 	export DXP_PASSWORD=<password>
@@ -67,7 +67,7 @@ Both calls are same-origin, with the user's session and `x-csrf-token: Liferay.a
 	objects/create-object-definition.sh
 	```
 
-	The same definition can be built by hand in *Control Panel → Objects*: name `LDPMetricCard`, company scope, and the fields above. Keep the field names identical; the card depends on them.
+	The same definition can be built by hand in *Control Panel → Objects*: create a folder, then an object named `LDPMetricCard` inside it, with company scope and the fields above. Keep the field names identical; the card depends on them.
 
 1. Serve and register the card as described in `../client-extension-metric-card/README.md`. No change to the client extension registration is needed.
 
@@ -94,6 +94,7 @@ A guest therefore sees every card with its default configuration. It makes no di
 
 ## Gotchas
 
+- The Objects screen in 2026.Q3 lists only explicit object folders. A definition created through the API without `objectFolderExternalReferenceCode` lands in the implicit `default` folder: it works, but it does not show up on that screen. That is why the definition names the *DEVCON 2026* folder.
 - Dates come back with a time (`2026-03-01T00:00:00.000Z`). The card keeps the first 10 characters.
 - An integer field sent as `null` comes back as `0`. The card treats `0` as "no predefined period".
 - The ERC holds the full portlet id (143 characters in the test) without trouble.
