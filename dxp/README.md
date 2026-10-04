@@ -79,6 +79,8 @@ The data lives outside this repository. `DXP_HOME` overrides its location in bot
 
 The script URL points at `localhost` even though DXP runs in a container: the browser loads the script, not the server.
 
+The metric card (`client-extension-metric-card`) registers the same way, served on port 3334. See its README.
+
 ## Day to Day
 
 ```bash

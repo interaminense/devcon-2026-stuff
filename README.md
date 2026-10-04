@@ -9,9 +9,10 @@ Everything here reads LDP data from inside Liferay DXP through the DXP GraphQL p
 | Folder | What it is |
 |---|---|
 | `dxp` | How to run the frozen demo DXP in Docker, with the scripts that create, back up and restore it. |
-| `scripts` | `curl` scripts that prove the proxy works before any page exists. |
+| `scripts` | `curl` scripts that prove the proxy works before any page exists, and `probe-metrics.mjs`, which checks every metric of the metric card. |
 | `html-fragment` | The first prototype: the widget pasted into the out-of-the-box HTML fragment of a content page. |
-| `client-extension` | The same widget as a Web Component, registered as a Custom Element client extension without a Liferay workspace. |
+| `client-extension` | The same widget as a Web Component, registered as a Custom Element client extension without a Liferay workspace. Served on port 3333. |
+| `client-extension-metric-card` | A card that renders any of 21 LDP metrics with a choice of charts, with a cog to pick the metric, the chart, the period, and the title. Served on port 3334. |
 
 ## Prerequisites
 
@@ -44,4 +45,4 @@ See `client-extension/README.md`.
 - The LDP GraphQL schema behind the proxy is not a documented public API and may change.
 - The "sum of daily values" KPI counts the same person once per day they visited.
 - Anonymous requests to the proxy get 403. The permissions it requires are still to be confirmed.
-- The metric and period chosen on each widget instance are not persisted yet. Liferay Objects is the next step.
+- The configuration chosen on each card is not persisted yet: reloading the page resets it. Liferay Objects is the next step.

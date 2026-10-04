@@ -1,0 +1,14 @@
+# Not required for the UI registration used in the demo. This is the same
+# definition expressed as code, for when the widget moves into a workspace.
+
+ldp-metric-card:
+    cssURLs: []
+    friendlyURLMapping: ldp-metric-card
+    htmlElementName: ldp-metric-card
+    instanceable: true
+    name: LDP Metric Card
+    portletCategoryName: category.client-extensions
+    type: customElement
+    urls:
+        - ldp-metric-card.js
+    useESM: false
