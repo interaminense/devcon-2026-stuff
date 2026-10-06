@@ -1,3 +1,8 @@
+// The LDP property (channel) to read. See step 4 of the tutorial for how to
+// find it.
+
+const CHANNEL_ID = '<your channelId>';
+
 const METRICS = {
 	sessionsMetric: 'Sessions',
 	visitorsMetric: 'Visitors',
@@ -21,22 +26,6 @@ async function api(url, options = {}) {
 	return response.json();
 }
 
-async function getChannelId() {
-	const {items} = await api(
-		'/o/analytics-settings-rest/v1.0/channels?pageSize=200'
-	);
-
-	const groupId = Number(Liferay.ThemeDisplay.getScopeGroupId());
-
-	const channel = items.find((item) =>
-		(item.dataSources || []).some((dataSource) =>
-			(dataSource.siteIds || []).map(Number).includes(groupId)
-		)
-	);
-
-	return channel.channelId;
-}
-
 async function getMetric(metric, rangeKey) {
 	const query = `
 		query ($channelId: String!, $rangeKey: Int) {
@@ -57,7 +46,7 @@ async function getMetric(metric, rangeKey) {
 	const {data} = await api('/o/analytics-rest/v1.0/graphql', {
 		body: JSON.stringify({
 			query,
-			variables: {channelId: await getChannelId(), rangeKey},
+			variables: {channelId: CHANNEL_ID, rangeKey},
 		}),
 		method: 'POST',
 	});
