@@ -9,6 +9,7 @@ Everything here reads LDP data from inside Liferay DXP through the DXP GraphQL p
 | Folder | What it is |
 |---|---|
 | `dxp` | How to run the frozen demo DXP in Docker, with the scripts that create, back up and restore it. |
+| `tutorial` | Reference solutions for the from-scratch tutorial: a small `ldp-card` built step by step, from Hello, World to Objects. |
 | `objects` | The Liferay Object that stores each metric card's configuration, with the script that creates it and the integration guide. |
 | `scripts` | `curl` scripts that prove the proxy works before any page exists, and `probe-metrics.mjs`, which checks every metric of the metric card. |
 | `html-fragment` | The first prototype: the widget pasted into the out-of-the-box HTML fragment of a content page. |
