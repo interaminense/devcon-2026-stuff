@@ -1,18 +1,20 @@
 #!/bin/bash
 
-# Creates and publishes the LDP Metric Card object definition, which stores the
-# configuration of each ldp-metric-card instance, inside the DEVCON 2026 object
-# folder. Safe to run twice: existing pieces are reported and left alone, except
-# that a definition outside the folder is moved into it.
+# Creates and publishes an object definition inside the DEVCON 2026 object
+# folder. By default it is the LDP Metric Card definition, which stores the
+# configuration of each ldp-metric-card instance. Safe to run twice: existing
+# pieces are reported and left alone, except that a definition outside the
+# folder is moved into it.
 #
 # Usage:
-#   DXP_USER=<email> DXP_PASSWORD=<password> objects/create-object-definition.sh
+#   DXP_USER=<email> DXP_PASSWORD=<password> objects/create-object-definition.sh [definition.json]
 
 set -o errexit
 set -o nounset
 set -o pipefail
 
 DIR="$(cd "$(dirname "${0}")" && pwd)"
+DEFINITION_FILE="${1:-${DIR}/ldp-metric-card.object-definition.json}"
 DXP_URL="${DXP_URL:-http://devcon.localhost:8081}"
 FOLDER_ERC="DEVCON_2026"
 
@@ -45,7 +47,7 @@ fi
 
 EXISTING=$(
 	call \
-		--data-urlencode "filter=name eq 'LDPMetricCard'" \
+		--data-urlencode "filter=name eq '$(jq --raw-output '.name' "${DEFINITION_FILE}")'" \
 		--get \
 		--url "${DXP_URL}/o/object-admin/v1.0/object-definitions" \
 	| jq '.items[0] // empty'
@@ -75,7 +77,7 @@ fi
 
 ID=$(
 	call \
-		--data "@${DIR}/ldp-metric-card.object-definition.json" \
+		--data "@${DEFINITION_FILE}" \
 		--header "Content-Type: application/json" \
 		--request POST \
 		--url "${DXP_URL}/o/object-admin/v1.0/object-definitions" \

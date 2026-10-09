@@ -1,0 +1,36 @@
+<section class="sl-section">
+	<div class="sl-container sl-booking">
+		<div class="sl-booking__intro">
+			<div class="sl-section__eyebrow" data-lfr-editable-id="eyebrow" data-lfr-editable-type="text">Book</div>
+
+			<h2 class="sl-section__title" data-lfr-editable-id="title" data-lfr-editable-type="text">Save your spot</h2>
+
+			<p class="sl-section__lead" data-lfr-editable-id="lead" data-lfr-editable-type="text">Tell us what you want to do and when. A coach answers within one day to confirm the details.</p>
+		</div>
+
+		<form class="sl-booking__form" novalidate>
+			<label>Full name<input name="fullName" required type="text" /></label>
+
+			<label>Email<input name="email" required type="email" /></label>
+
+			<label>What do you want to book?
+				<select name="product" required>
+					<option value="beginner">Beginner lesson: First Waves</option>
+					<option value="intermediate">Intermediate lesson: Green Waves</option>
+					<option value="advanced">Advanced coaching</option>
+					<option value="trip-bali">Trip: Bali Reef Week</option>
+					<option value="trip-portugal">Trip: Ericeira Point Breaks</option>
+					<option value="trip-costa-rica">Trip: Nosara Jungle Surf</option>
+				</select>
+			</label>
+
+			<label>Preferred date<input name="preferredDate" required type="date" /></label>
+
+			<label class="sl-booking__wide">Anything we should know?<textarea name="message" rows="4"></textarea></label>
+
+			<button class="sl-button sl-button--accent sl-booking__submit" type="submit">Request booking</button>
+
+			<p aria-live="polite" class="sl-booking__status"></p>
+		</form>
+	</div>
+</section>

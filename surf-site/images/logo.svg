@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="220" height="48" viewBox="0 0 220 48">
+	<circle cx="24" cy="24" fill="#0B4F6C" r="22" />
+	<path d="M6 28c5-1 8-6 13-6s7 5 12 5 7-4 11-4v11a22 22 0 0 1-36-6z" fill="#20C9C3" />
+	<path d="M9 22c4-6 10-10 17-9-5 2-8 5-9 9" fill="none" stroke="#F7F3EA" stroke-linecap="round" stroke-width="2.5" />
+	<text fill="#0B4F6C" font-family="Poppins, 'Segoe UI', Arial, sans-serif" font-size="22" font-weight="700" letter-spacing="1.5" x="56" y="32">SWELL<tspan dx="8" fill="#20C9C3" font-weight="500">LAB</tspan></text>
+</svg>

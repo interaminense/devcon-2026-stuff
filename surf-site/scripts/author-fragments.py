@@ -1,0 +1,938 @@
+import json
+import os
+import sys
+
+ROOT = os.path.expanduser(sys.argv[1])
+COLLECTION = os.path.join(ROOT, "src/fragments/swell-lab")
+
+FRAGMENTS = {}
+
+
+def fragment(key, name, html, css, js=None, icon="square-hole"):
+	FRAGMENTS[key] = (name, html.strip() + "\n", css.strip() + "\n", js.strip() + "\n" if js else None, icon)
+
+
+fragment(
+	"sl-header",
+	"Swell Lab Header",
+	"""
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet" />
+
+<header class="sl-header">
+	<div class="sl-container sl-header__inner">
+		<a class="sl-header__brand" href="/home">
+			<img alt="Swell Lab" class="sl-header__logo" data-lfr-editable-id="logo" data-lfr-editable-type="image" src="[resources:logo.svg]" />
+		</a>
+
+		<nav class="sl-header__nav">
+			<a href="/lessons">Lessons</a>
+			<a href="/trips">Trips</a>
+			<a href="/spots">Spots</a>
+		</nav>
+
+		<a class="sl-button sl-button--accent" data-lfr-editable-id="cta" data-lfr-editable-type="link" href="/book">Book a lesson</a>
+	</div>
+</header>
+""",
+	"""
+:root {
+	--sl-accent: #20c9c3;
+	--sl-accent-dark: #17a8a3;
+	--sl-ink: #1d2b36;
+	--sl-muted: #5b6b77;
+	--sl-primary: #0b4f6c;
+	--sl-sand: #f7f3ea;
+	--sl-white: #ffffff;
+}
+
+body {
+	background-color: var(--sl-sand);
+	color: var(--sl-ink);
+	font-family: Inter, system-ui, -apple-system, 'Segoe UI', sans-serif;
+}
+
+body h1,
+body h2,
+body h3,
+body h4,
+.sl-heading {
+	color: var(--sl-primary);
+	font-family: Poppins, Inter, system-ui, sans-serif;
+	font-weight: 700;
+	letter-spacing: -0.01em;
+}
+
+.sl-container {
+	margin: 0 auto;
+	max-width: 1180px;
+	padding: 0 24px;
+}
+
+.sl-button {
+	border-radius: 999px;
+	display: inline-block;
+	font-weight: 600;
+	padding: 12px 26px;
+	text-decoration: none;
+	transition: background-color 0.15s ease, transform 0.15s ease;
+}
+
+.sl-button:hover {
+	text-decoration: none;
+	transform: translateY(-1px);
+}
+
+.sl-button--accent {
+	background-color: var(--sl-accent);
+	color: var(--sl-primary);
+}
+
+.sl-button--accent:hover {
+	background-color: var(--sl-accent-dark);
+	color: var(--sl-white);
+}
+
+.sl-button--ghost {
+	border: 2px solid currentColor;
+	color: var(--sl-white);
+}
+
+.sl-button--ghost:hover {
+	background-color: rgba(255, 255, 255, 0.15);
+	color: var(--sl-white);
+}
+
+.sl-section {
+	padding: 72px 0;
+}
+
+.sl-section__eyebrow {
+	color: var(--sl-accent-dark);
+	font-size: 13px;
+	font-weight: 600;
+	letter-spacing: 0.12em;
+	margin-bottom: 8px;
+	text-transform: uppercase;
+}
+
+.sl-section__title {
+	font-size: 36px;
+	margin-bottom: 12px;
+}
+
+.sl-section__lead {
+	color: var(--sl-muted);
+	font-size: 18px;
+	margin-bottom: 40px;
+	max-width: 640px;
+}
+
+.sl-grid {
+	display: grid;
+	gap: 24px;
+	grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+}
+
+.sl-card {
+	background-color: var(--sl-white);
+	border-radius: 20px;
+	box-shadow: 0 10px 30px rgba(11, 79, 108, 0.08);
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
+}
+
+.sl-card__image {
+	aspect-ratio: 4 / 3;
+	display: block;
+	object-fit: cover;
+	width: 100%;
+}
+
+.sl-card__body {
+	display: flex;
+	flex: 1;
+	flex-direction: column;
+	gap: 8px;
+	padding: 22px 24px 26px;
+}
+
+.sl-card__title {
+	font-size: 22px;
+	margin: 0;
+}
+
+.sl-card__text {
+	color: var(--sl-muted);
+	margin: 0;
+}
+
+.sl-tag {
+	align-self: flex-start;
+	background-color: rgba(32, 201, 195, 0.15);
+	border-radius: 999px;
+	color: var(--sl-primary);
+	font-size: 12px;
+	font-weight: 600;
+	padding: 4px 12px;
+}
+
+.sl-header {
+	background-color: var(--sl-white);
+	box-shadow: 0 1px 0 rgba(11, 79, 108, 0.08);
+	position: sticky;
+	top: 0;
+	z-index: 10;
+}
+
+.sl-header__inner {
+	align-items: center;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 16px 32px;
+	min-height: 76px;
+}
+
+.sl-header__logo {
+	display: block;
+	height: 40px;
+	width: auto;
+}
+
+.sl-header__nav {
+	display: flex;
+	flex: 1;
+	gap: 28px;
+}
+
+.sl-header__nav a {
+	color: var(--sl-ink);
+	font-weight: 500;
+	text-decoration: none;
+}
+
+.sl-header__nav a:hover {
+	color: var(--sl-accent-dark);
+}
+
+@media (max-width: 640px) {
+	.sl-header__inner {
+		gap: 12px 16px;
+		justify-content: space-between;
+		padding-bottom: 12px;
+		padding-top: 12px;
+	}
+
+	.sl-header__logo {
+		height: 32px;
+	}
+
+	.sl-header__nav {
+		flex-basis: 100%;
+		order: 3;
+	}
+
+	.sl-header .sl-button {
+		padding: 10px 18px;
+	}
+}
+""",
+	icon="nav",
+)
+
+fragment(
+	"sl-footer",
+	"Swell Lab Footer",
+	"""
+<footer class="sl-footer">
+	<div class="sl-container sl-footer__inner">
+		<div>
+			<div class="sl-footer__brand">SWELL LAB</div>
+			<p class="sl-footer__text" data-lfr-editable-id="about" data-lfr-editable-type="text">Surf school and surf trips since 2014. Small groups, certified coaches, and the best waves of the season.</p>
+		</div>
+
+		<div>
+			<div class="sl-footer__heading">Visit</div>
+			<p class="sl-footer__text" data-lfr-editable-id="address" data-lfr-editable-type="rich-text">Praia do Rosa, Santa Catarina<br />Open every day, 7 AM to 6 PM</p>
+		</div>
+
+		<div>
+			<div class="sl-footer__heading">Talk to us</div>
+			<p class="sl-footer__text" data-lfr-editable-id="contact" data-lfr-editable-type="rich-text">hello@swelllab.example<br />+55 48 0000-0000</p>
+		</div>
+
+		<div>
+			<div class="sl-footer__heading">Follow</div>
+			<p class="sl-footer__text">Instagram &middot; YouTube &middot; Strava</p>
+		</div>
+	</div>
+
+	<div class="sl-container sl-footer__legal">&copy; 2026 Swell Lab. A fictional surf school built for DEVCON 2026.</div>
+</footer>
+""",
+	"""
+.sl-footer {
+	background-color: var(--sl-primary, #0b4f6c);
+	color: rgba(255, 255, 255, 0.8);
+	padding: 56px 0 24px;
+}
+
+.sl-footer__inner {
+	display: grid;
+	gap: 32px;
+	grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+}
+
+.sl-footer__brand {
+	color: #ffffff;
+	font-family: Poppins, Inter, sans-serif;
+	font-size: 22px;
+	font-weight: 700;
+	letter-spacing: 0.08em;
+	margin-bottom: 8px;
+}
+
+.sl-footer__heading {
+	color: var(--sl-accent, #20c9c3);
+	font-size: 13px;
+	font-weight: 600;
+	letter-spacing: 0.12em;
+	margin-bottom: 8px;
+	text-transform: uppercase;
+}
+
+.sl-footer__text {
+	margin: 0;
+}
+
+.sl-footer__legal {
+	border-top: 1px solid rgba(255, 255, 255, 0.15);
+	font-size: 13px;
+	margin-top: 40px;
+	padding-top: 20px;
+}
+""",
+	icon="square-hole-multi",
+)
+
+fragment(
+	"sl-hero",
+	"Swell Lab Hero",
+	"""
+<section class="sl-hero">
+	<img alt="Surfer riding a wave" class="sl-hero__image" data-lfr-editable-id="image" data-lfr-editable-type="image" src="[resources:hero-barrel.jpg]" />
+
+	<div class="sl-container sl-hero__content">
+		<div class="sl-hero__eyebrow" data-lfr-editable-id="eyebrow" data-lfr-editable-type="text">Surf school &amp; surf trips</div>
+
+		<h1 class="sl-hero__title" data-lfr-editable-id="title" data-lfr-editable-type="text">Ride your first wave</h1>
+
+		<p class="sl-hero__text" data-lfr-editable-id="text" data-lfr-editable-type="text">Small groups, certified coaches, and boards for every level. Start on the sand on Monday and stand up by Friday.</p>
+
+		<div class="sl-hero__actions">
+			<a class="sl-button sl-button--accent" data-lfr-editable-id="primary" data-lfr-editable-type="link" href="/book">Book a lesson</a>
+
+			<a class="sl-button sl-button--ghost" data-lfr-editable-id="secondary" data-lfr-editable-type="link" href="/trips">See our trips</a>
+		</div>
+	</div>
+</section>
+""",
+	"""
+.sl-hero {
+	align-items: center;
+	color: #ffffff;
+	display: flex;
+	min-height: 78vh;
+	overflow: hidden;
+	position: relative;
+}
+
+.sl-hero__image {
+	height: 100%;
+	inset: 0;
+	object-fit: cover;
+	position: absolute;
+	width: 100%;
+}
+
+.sl-hero::after {
+	background: linear-gradient(90deg, rgba(11, 79, 108, 0.85) 0%, rgba(11, 79, 108, 0.35) 60%, rgba(11, 79, 108, 0) 100%);
+	content: '';
+	inset: 0;
+	position: absolute;
+}
+
+.sl-hero__content {
+	padding-bottom: 96px;
+	padding-top: 96px;
+	position: relative;
+	width: 100%;
+	z-index: 1;
+}
+
+.sl-hero__eyebrow {
+	color: var(--sl-accent, #20c9c3);
+	font-weight: 600;
+	letter-spacing: 0.14em;
+	margin-bottom: 12px;
+	text-transform: uppercase;
+}
+
+body .sl-hero__title {
+	color: #ffffff;
+	font-size: clamp(40px, 6vw, 72px);
+	line-height: 1.05;
+	margin-bottom: 20px;
+	max-width: 640px;
+}
+
+.sl-hero__text {
+	font-size: 20px;
+	margin-bottom: 32px;
+	max-width: 520px;
+}
+
+.sl-hero__actions {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 16px;
+}
+""",
+	icon="picture",
+)
+
+fragment(
+	"sl-page-hero",
+	"Swell Lab Page Banner",
+	"""
+<section class="sl-page-hero">
+	<img alt="" class="sl-page-hero__image" data-lfr-editable-id="image" data-lfr-editable-type="image" src="[resources:spot-reef.jpg]" />
+
+	<div class="sl-container sl-page-hero__content">
+		<h1 class="sl-page-hero__title" data-lfr-editable-id="title" data-lfr-editable-type="text">Page title</h1>
+
+		<p class="sl-page-hero__text" data-lfr-editable-id="text" data-lfr-editable-type="text">A short line about this page.</p>
+	</div>
+</section>
+""",
+	"""
+.sl-page-hero {
+	color: #ffffff;
+	overflow: hidden;
+	position: relative;
+}
+
+.sl-page-hero__image {
+	height: 100%;
+	inset: 0;
+	object-fit: cover;
+	position: absolute;
+	width: 100%;
+}
+
+.sl-page-hero::after {
+	background: linear-gradient(90deg, rgba(11, 79, 108, 0.9) 0%, rgba(11, 79, 108, 0.45) 100%);
+	content: '';
+	inset: 0;
+	position: absolute;
+}
+
+.sl-page-hero__content {
+	padding-bottom: 80px;
+	padding-top: 80px;
+	position: relative;
+	z-index: 1;
+}
+
+body .sl-page-hero__title {
+	color: #ffffff;
+	font-size: clamp(34px, 5vw, 56px);
+	margin-bottom: 12px;
+}
+
+.sl-page-hero__text {
+	font-size: 19px;
+	margin: 0;
+	max-width: 560px;
+}
+""",
+	icon="picture",
+)
+
+
+def card(index, image, alt, tag, title, text, link_label=None, href=None, extra=""):
+	link = ""
+
+	if link_label:
+		link = f"""
+			<a class="sl-card__link" data-lfr-editable-id="link-{index}" data-lfr-editable-type="link" href="{href}">{link_label} &rarr;</a>"""
+
+	return f"""
+	<article class="sl-card">
+		<img alt="{alt}" class="sl-card__image" data-lfr-editable-id="image-{index}" data-lfr-editable-type="image" src="[resources:{image}]" />
+
+		<div class="sl-card__body">
+			<span class="sl-tag" data-lfr-editable-id="tag-{index}" data-lfr-editable-type="text">{tag}</span>
+
+			<h3 class="sl-card__title" data-lfr-editable-id="title-{index}" data-lfr-editable-type="text">{title}</h3>
+
+			<p class="sl-card__text" data-lfr-editable-id="text-{index}" data-lfr-editable-type="text">{text}</p>{extra}{link}
+		</div>
+	</article>"""
+
+
+def section(eyebrow, title, lead, body, modifier=""):
+	return f"""
+<section class="sl-section{modifier}">
+	<div class="sl-container">
+		<div class="sl-section__eyebrow" data-lfr-editable-id="eyebrow" data-lfr-editable-type="text">{eyebrow}</div>
+
+		<h2 class="sl-section__title" data-lfr-editable-id="title" data-lfr-editable-type="text">{title}</h2>
+
+		<p class="sl-section__lead" data-lfr-editable-id="lead" data-lfr-editable-type="text">{lead}</p>
+
+		<div class="sl-grid">{body}
+		</div>
+	</div>
+</section>
+"""
+
+
+CARD_LINK_CSS = """
+.sl-card__link {
+	color: var(--sl-primary, #0b4f6c);
+	font-weight: 600;
+	margin-top: auto;
+	padding-top: 8px;
+	text-decoration: none;
+}
+
+.sl-card__link:hover {
+	color: var(--sl-accent-dark, #17a8a3);
+}
+"""
+
+fragment(
+	"sl-highlights",
+	"Swell Lab Highlights",
+	section(
+		"Why Swell Lab",
+		"Everything you need to catch waves",
+		"From your first pop-up to your first barrel, we plan the sessions, the boards, and the trips.",
+		card(1, "lesson-beginner.jpg", "Surfboard on the beach", "Lessons", "Learn with certified coaches", "Groups of up to six, with a coach in the water and video review after every session.", "See lessons", "/lessons")
+		+ card(2, "trip-bali.jpg", "Palm trees on a tropical beach", "Trips", "Surf trips around the world", "Bali, Portugal, and Costa Rica, with lodging, transfers, and daily coaching.", "See trips", "/trips")
+		+ card(3, "spot-reef.jpg", "Aerial view of a reef break", "Spots", "Know where to paddle out", "Our guide to the local breaks: level, best tide, and the right board for each one.", "See spots", "/spots"),
+	),
+	CARD_LINK_CSS,
+	icon="cards2",
+)
+
+fragment(
+	"sl-testimonials",
+	"Swell Lab Testimonials",
+	"""
+<section class="sl-section sl-testimonials">
+	<div class="sl-container">
+		<div class="sl-section__eyebrow" data-lfr-editable-id="eyebrow" data-lfr-editable-type="text">Stories from the lineup</div>
+
+		<h2 class="sl-section__title" data-lfr-editable-id="title" data-lfr-editable-type="text">Our surfers say it best</h2>
+
+		<div class="sl-grid sl-testimonials__grid">
+			<blockquote class="sl-quote">
+				<p data-lfr-editable-id="quote-1" data-lfr-editable-type="text">I stood up on my third wave. The coaches made the whole thing feel easy and safe.</p>
+				<cite data-lfr-editable-id="author-1" data-lfr-editable-type="text">Marina, Beginner course</cite>
+			</blockquote>
+
+			<blockquote class="sl-quote">
+				<p data-lfr-editable-id="quote-2" data-lfr-editable-type="text">The Portugal trip was perfectly planned. Every morning we surfed the best spot for the swell.</p>
+				<cite data-lfr-editable-id="author-2" data-lfr-editable-type="text">Daniel, Ericeira trip</cite>
+			</blockquote>
+
+			<blockquote class="sl-quote">
+				<p data-lfr-editable-id="quote-3" data-lfr-editable-type="text">Video review changed my bottom turn in a week. Worth every session.</p>
+				<cite data-lfr-editable-id="author-3" data-lfr-editable-type="text">Priya, Advanced coaching</cite>
+			</blockquote>
+		</div>
+	</div>
+</section>
+""",
+	"""
+.sl-testimonials {
+	background-color: #ffffff;
+}
+
+.sl-testimonials__grid {
+	margin-top: 32px;
+}
+
+.sl-quote {
+	background-color: var(--sl-sand, #f7f3ea);
+	border-left: 4px solid var(--sl-accent, #20c9c3);
+	border-radius: 16px;
+	margin: 0;
+	padding: 28px;
+}
+
+.sl-quote p {
+	font-size: 18px;
+	margin-bottom: 16px;
+}
+
+.sl-quote cite {
+	color: var(--sl-primary, #0b4f6c);
+	font-style: normal;
+	font-weight: 600;
+}
+""",
+	icon="quote-left",
+)
+
+fragment(
+	"sl-cta",
+	"Swell Lab Call to Action",
+	"""
+<section class="sl-cta">
+	<img alt="" class="sl-cta__image" data-lfr-editable-id="image" data-lfr-editable-type="image" src="[resources:surf-shack.jpg]" />
+
+	<div class="sl-container sl-cta__content">
+		<h2 class="sl-cta__title" data-lfr-editable-id="title" data-lfr-editable-type="text">The next swell arrives on Friday</h2>
+
+		<p class="sl-cta__text" data-lfr-editable-id="text" data-lfr-editable-type="text">Book your spot now. Boards and wetsuits are on us.</p>
+
+		<a class="sl-button sl-button--accent" data-lfr-editable-id="cta" data-lfr-editable-type="link" href="/book">Book a lesson</a>
+	</div>
+</section>
+""",
+	"""
+.sl-cta {
+	color: #ffffff;
+	overflow: hidden;
+	position: relative;
+	text-align: center;
+}
+
+.sl-cta__image {
+	height: 100%;
+	inset: 0;
+	object-fit: cover;
+	position: absolute;
+	width: 100%;
+}
+
+.sl-cta::after {
+	background-color: rgba(11, 79, 108, 0.82);
+	content: '';
+	inset: 0;
+	position: absolute;
+}
+
+.sl-cta__content {
+	padding-bottom: 88px;
+	padding-top: 88px;
+	position: relative;
+	z-index: 1;
+}
+
+body .sl-cta__title {
+	color: #ffffff;
+	font-size: clamp(30px, 4vw, 44px);
+	margin-bottom: 12px;
+}
+
+.sl-cta__text {
+	font-size: 19px;
+	margin-bottom: 28px;
+}
+""",
+	icon="megaphone-full",
+)
+
+
+def details(index, rows):
+	items = "".join(
+		f"""
+				<li><span>{label}</span><strong data-lfr-editable-id="{key}-{index}" data-lfr-editable-type="text">{value}</strong></li>"""
+		for key, label, value in rows
+	)
+
+	return f"""
+
+			<ul class="sl-details">{items}
+			</ul>"""
+
+
+DETAILS_CSS = """
+.sl-details {
+	border-top: 1px solid rgba(11, 79, 108, 0.1);
+	list-style: none;
+	margin: 8px 0 0;
+	padding: 12px 0 0;
+}
+
+.sl-details li {
+	display: flex;
+	justify-content: space-between;
+	padding: 4px 0;
+}
+
+.sl-details span {
+	color: var(--sl-muted, #5b6b77);
+}
+
+.sl-details strong {
+	color: var(--sl-ink, #1d2b36);
+}
+"""
+
+fragment(
+	"sl-lessons",
+	"Swell Lab Lessons",
+	section(
+		"Lessons",
+		"Pick your level",
+		"Every course includes the board, the wetsuit, and a coach in the water. Sessions follow the tide, so the times change during the week.",
+		card(1, "lesson-beginner.jpg", "Surfboard standing on the sand", "Beginner", "First Waves", "Five days to learn safety, paddling, and your first pop-ups on the white water.", "Book Beginner", "/book?product=beginner", details(1, [("duration", "Duration", "5 days"), ("group", "Group", "Up to 6"), ("price", "Price", "R$ 890")]))
+		+ card(2, "lesson-intermediate.jpg", "Surfer on an open-face wave", "Intermediate", "Green Waves", "Leave the white water: reading the lineup, catching unbroken waves, and trimming down the line.", "Book Intermediate", "/book?product=intermediate", details(2, [("duration", "Duration", "5 days"), ("group", "Group", "Up to 4"), ("price", "Price", "R$ 1.190")]))
+		+ card(3, "lesson-advanced.jpg", "Surfer doing a top turn", "Advanced", "Performance Coaching", "One-on-one sessions with video analysis to sharpen your turns and your wave selection.", "Book Advanced", "/book?product=advanced", details(3, [("duration", "Duration", "3 days"), ("group", "Group", "1 to 2"), ("price", "Price", "R$ 1.650")])),
+	),
+	CARD_LINK_CSS + DETAILS_CSS,
+	icon="cards2",
+)
+
+fragment(
+	"sl-trips",
+	"Swell Lab Trips",
+	section(
+		"Trips",
+		"Surf trips for the season",
+		"Small groups, lodging near the break, and a coach who knows every spot. Flights are not included.",
+		card(1, "trip-bali.jpg", "Palm trees and a calm tropical bay", "Indonesia", "Bali Reef Week", "Warm water and long lefts at Uluwatu, Padang Padang, and the Bukit reefs.", "Book Bali", "/book?product=trip-bali", details(1, [("dates", "Dates", "May 10 to 17"), ("nights", "Nights", "7"), ("price", "From", "US$ 1,890")]))
+		+ card(2, "trip-portugal.jpg", "Surfer waiting for a wave at sunset", "Portugal", "Ericeira Point Breaks", "Europe's World Surfing Reserve: consistent swell, point breaks, and a great town.", "Book Portugal", "/book?product=trip-portugal", details(2, [("dates", "Dates", "Sep 20 to 27"), ("nights", "Nights", "7"), ("price", "From", "US$ 1,450")]))
+		+ card(3, "trip-costa-rica.jpg", "Turquoise water around green islands", "Costa Rica", "Nosara Jungle Surf", "Beach breaks for every level, yoga at sunrise, and the jungle a few steps from the sand.", "Book Costa Rica", "/book?product=trip-costa-rica", details(3, [("dates", "Dates", "Dec 2 to 9"), ("nights", "Nights", "7"), ("price", "From", "US$ 1,690")])),
+	),
+	CARD_LINK_CSS + DETAILS_CSS,
+	icon="cards2",
+)
+
+fragment(
+	"sl-spots",
+	"Swell Lab Spots",
+	section(
+		"Local spots",
+		"Where we paddle out",
+		"Our coaches pick the spot every morning from the swell, the wind, and the tide. These are the four we surf the most.",
+		card(1, "spot-sunset-beach.jpg", "Beach with gentle waves at sunset", "Beginner", "Praia do Rosa", "A wide sandy beach with soft waves on the inside. Our classroom.", None, None, details(1, [("tide", "Best tide", "Mid to high"), ("swell", "Swell", "South-east"), ("board", "Board", "Foam 8'")]))
+		+ card(2, "lesson-intermediate.jpg", "Clean wave breaking along the coast", "Intermediate", "Ferrugem", "Fast peaks along the beach with a lively lineup on the weekends.", None, None, details(2, [("tide", "Best tide", "Low to mid"), ("swell", "Swell", "East"), ("board", "Board", "Funboard 7'")]))
+		+ card(3, "spot-reef.jpg", "Aerial view of a reef with breaking waves", "Advanced", "Silveira Reef", "A powerful right over rocks. Only for experienced surfers.", None, None, details(3, [("tide", "Best tide", "Mid"), ("swell", "Swell", "South"), ("board", "Board", "Shortboard 6'")]))
+		+ card(4, "lesson-advanced.jpg", "Big wave with a surfer on the face", "Advanced", "Guarda Point", "The left that wakes up with a big south swell. Pure adrenaline.", None, None, details(4, [("tide", "Best tide", "Low"), ("swell", "Swell", "South"), ("board", "Board", "Step-up 6'6&quot;")])),
+	),
+	DETAILS_CSS,
+	icon="map",
+)
+
+fragment(
+	"sl-booking-form",
+	"Swell Lab Booking Form",
+	"""
+<section class="sl-section">
+	<div class="sl-container sl-booking">
+		<div class="sl-booking__intro">
+			<div class="sl-section__eyebrow" data-lfr-editable-id="eyebrow" data-lfr-editable-type="text">Book</div>
+
+			<h2 class="sl-section__title" data-lfr-editable-id="title" data-lfr-editable-type="text">Save your spot</h2>
+
+			<p class="sl-section__lead" data-lfr-editable-id="lead" data-lfr-editable-type="text">Tell us what you want to do and when. A coach answers within one day to confirm the details.</p>
+		</div>
+
+		<form class="sl-booking__form" novalidate>
+			<label>Full name<input name="fullName" required type="text" /></label>
+
+			<label>Email<input name="email" required type="email" /></label>
+
+			<label>What do you want to book?
+				<select name="product" required>
+					<option value="beginner">Beginner lesson: First Waves</option>
+					<option value="intermediate">Intermediate lesson: Green Waves</option>
+					<option value="advanced">Advanced coaching</option>
+					<option value="trip-bali">Trip: Bali Reef Week</option>
+					<option value="trip-portugal">Trip: Ericeira Point Breaks</option>
+					<option value="trip-costa-rica">Trip: Nosara Jungle Surf</option>
+				</select>
+			</label>
+
+			<label>Preferred date<input name="preferredDate" required type="date" /></label>
+
+			<label class="sl-booking__wide">Anything we should know?<textarea name="message" rows="4"></textarea></label>
+
+			<button class="sl-button sl-button--accent sl-booking__submit" type="submit">Request booking</button>
+
+			<p aria-live="polite" class="sl-booking__status"></p>
+		</form>
+	</div>
+</section>
+""",
+	"""
+.sl-booking {
+	display: grid;
+	gap: 40px;
+	grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+}
+
+.sl-booking__form {
+	background-color: #ffffff;
+	border-radius: 20px;
+	box-shadow: 0 10px 30px rgba(11, 79, 108, 0.08);
+	display: grid;
+	gap: 18px;
+	grid-template-columns: 1fr 1fr;
+	padding: 32px;
+}
+
+.sl-booking__form label {
+	color: var(--sl-primary, #0b4f6c);
+	display: flex;
+	flex-direction: column;
+	font-size: 14px;
+	font-weight: 600;
+	gap: 6px;
+	min-width: 0;
+}
+
+.sl-booking__form input,
+.sl-booking__form select,
+.sl-booking__form textarea {
+	background-color: var(--sl-sand, #f7f3ea);
+	border: 1px solid transparent;
+	border-radius: 12px;
+	color: var(--sl-ink, #1d2b36);
+	font: inherit;
+	font-weight: 400;
+	min-width: 0;
+	padding: 10px 14px;
+	width: 100%;
+}
+
+.sl-booking__form input:focus,
+.sl-booking__form select:focus,
+.sl-booking__form textarea:focus {
+	border-color: var(--sl-accent, #20c9c3);
+	outline: none;
+}
+
+.sl-booking__wide,
+.sl-booking__submit,
+.sl-booking__status {
+	grid-column: 1 / -1;
+}
+
+.sl-booking__submit {
+	border: 0;
+	cursor: pointer;
+	justify-self: start;
+}
+
+.sl-booking__status {
+	margin: 0;
+	min-height: 1.5em;
+}
+
+.sl-booking__status--error {
+	color: #c0392b;
+}
+
+.sl-booking__status--success {
+	color: var(--sl-primary, #0b4f6c);
+	font-weight: 600;
+}
+
+@media (max-width: 640px) {
+	.sl-booking__form {
+		grid-template-columns: 1fr;
+	}
+}
+""",
+	"""
+const form = fragmentElement.querySelector('.sl-booking__form');
+const status = fragmentElement.querySelector('.sl-booking__status');
+
+const product = new URLSearchParams(window.location.search).get('product');
+
+if (product && form.elements.product.querySelector(`option[value="${product}"]`)) {
+	form.elements.product.value = product;
+}
+
+function setStatus(message, type) {
+	status.className = `sl-booking__status sl-booking__status--${type}`;
+	status.textContent = message;
+}
+
+form.addEventListener('submit', async (event) => {
+	event.preventDefault();
+
+	if (!form.checkValidity()) {
+		setStatus('Please fill in your name, email, and preferred date.', 'error');
+
+		return;
+	}
+
+	const booking = Object.fromEntries(new FormData(form));
+
+	try {
+		const response = await fetch('/o/c/surfbookings', {
+			body: JSON.stringify(booking),
+			headers: {
+				'Content-Type': 'application/json',
+				'x-csrf-token': Liferay.authToken,
+			},
+			method: 'POST',
+		});
+
+		if (!response.ok) {
+			throw new Error(`/o/c/surfbookings returned ${response.status}`);
+		}
+
+		if (window.Analytics) {
+			window.Analytics.send('bookingRequested', 'SwellLab', {
+				product: booking.product,
+			});
+		}
+
+		form.reset();
+
+		setStatus('Thanks! Your request is in. A coach will email you within one day.', 'success');
+	}
+	catch (error) {
+		console.error(error);
+
+		setStatus('We could not send your request. Please try again in a moment.', 'error');
+	}
+});
+""",
+	icon="forms",
+)
+
+
+def write(path, content):
+	os.makedirs(os.path.dirname(path), exist_ok=True)
+
+	with open(path, "w") as file:
+		file.write(content)
+
+
+write(os.path.join(COLLECTION, "collection.json"), json.dumps({"description": "Fragments of the Swell Lab surf school demo site.", "name": "Swell Lab"}, indent="\t") + "\n")
+
+for key, (name, html, css, js, icon) in FRAGMENTS.items():
+	directory = os.path.join(COLLECTION, key)
+
+	descriptor = {"cssPath": "styles.css", "htmlPath": "index.html", "icon": icon, "name": name, "type": "section"}
+
+	if js:
+		descriptor["jsPath"] = "main.js"
+
+		write(os.path.join(directory, "main.js"), js)
+
+	write(os.path.join(directory, "fragment.json"), json.dumps(dict(sorted(descriptor.items())), indent="\t") + "\n")
+	write(os.path.join(directory, "index.html"), html)
+	write(os.path.join(directory, "styles.css"), css)
+
+print(len(FRAGMENTS), "fragments")

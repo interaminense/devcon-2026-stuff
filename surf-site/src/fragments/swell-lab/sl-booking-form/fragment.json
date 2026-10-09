@@ -1,0 +1,8 @@
+{
+	"cssPath": "styles.css",
+	"htmlPath": "index.html",
+	"icon": "forms",
+	"jsPath": "main.js",
+	"name": "Swell Lab Booking Form",
+	"type": "section"
+}

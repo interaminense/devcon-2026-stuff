@@ -1,0 +1,80 @@
+{
+	"pageElement": {
+		"pageElements": [
+			{
+				"definition": {
+					"fragment": {
+						"key": "sl-page-hero"
+					},
+					"fragmentConfig": {},
+					"fragmentFields": [
+						{
+							"id": "text",
+							"value": {
+								"text": {
+									"value_i18n": {
+										"en_US": "A week of waves with lodging, transfers, and daily coaching."
+									}
+								}
+							}
+						},
+						{
+							"id": "title",
+							"value": {
+								"text": {
+									"value_i18n": {
+										"en_US": "Surf trips"
+									}
+								}
+							}
+						},
+						{
+							"id": "image",
+							"value": {
+								"fragmentImage": {
+									"description": {
+										"value_i18n": {
+											"en_US": ""
+										}
+									},
+									"url": {
+										"value_i18n": {
+											"en_US": "/documents/d/guest/trip-bali-jpg?download=true"
+										}
+									}
+								}
+							}
+						}
+					]
+				},
+				"type": "Fragment"
+			},
+			{
+				"definition": {
+					"fragment": {
+						"key": "sl-trips"
+					},
+					"fragmentConfig": {},
+					"fragmentFields": []
+				},
+				"type": "Fragment"
+			},
+			{
+				"definition": {
+					"fragment": {
+						"key": "sl-cta"
+					},
+					"fragmentConfig": {},
+					"fragmentFields": []
+				},
+				"type": "Fragment"
+			}
+		],
+		"type": "Root"
+	},
+	"settings": {
+		"masterPage": {
+			"key": "swell-lab"
+		}
+	}
+}

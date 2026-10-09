@@ -1,0 +1,26 @@
+.sl-testimonials {
+	background-color: #ffffff;
+}
+
+.sl-testimonials__grid {
+	margin-top: 32px;
+}
+
+.sl-quote {
+	background-color: var(--sl-sand, #f7f3ea);
+	border-left: 4px solid var(--sl-accent, #20c9c3);
+	border-radius: 16px;
+	margin: 0;
+	padding: 28px;
+}
+
+.sl-quote p {
+	font-size: 18px;
+	margin-bottom: 16px;
+}
+
+.sl-quote cite {
+	color: var(--sl-primary, #0b4f6c);
+	font-style: normal;
+	font-weight: 600;
+}

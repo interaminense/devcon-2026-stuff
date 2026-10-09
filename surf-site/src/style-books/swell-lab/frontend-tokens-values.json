@@ -1,0 +1,82 @@
+{
+	"bodyBgColor": {
+		"cssVariableMapping": "body-bg",
+		"value": "#F7F3EA"
+	},
+	"bodyColor": {
+		"cssVariableMapping": "body-color",
+		"value": "#1D2B36"
+	},
+	"borderRadius": {
+		"cssVariableMapping": "border-radius",
+		"value": "0.75rem"
+	},
+	"borderRadiusLg": {
+		"cssVariableMapping": "border-radius-lg",
+		"value": "1.25rem"
+	},
+	"borderRadiusSm": {
+		"cssVariableMapping": "border-radius-sm",
+		"value": "0.5rem"
+	},
+	"brandColor1": {
+		"cssVariableMapping": "brand-color-1",
+		"value": "#0B4F6C"
+	},
+	"brandColor2": {
+		"cssVariableMapping": "brand-color-2",
+		"value": "#20C9C3"
+	},
+	"brandColor3": {
+		"cssVariableMapping": "brand-color-3",
+		"value": "#F7F3EA"
+	},
+	"brandColor4": {
+		"cssVariableMapping": "brand-color-4",
+		"value": "#1D2B36"
+	},
+	"btnLinkColor": {
+		"cssVariableMapping": "btn-link-color",
+		"value": "#0B4F6C"
+	},
+	"btnPrimaryBackgroundColor": {
+		"cssVariableMapping": "btn-primary-background-color",
+		"value": "#0B4F6C"
+	},
+	"btnPrimaryBorderColor": {
+		"cssVariableMapping": "btn-primary-border-color",
+		"value": "#0B4F6C"
+	},
+	"btnPrimaryColor": {
+		"cssVariableMapping": "btn-primary-color",
+		"value": "#FFFFFF"
+	},
+	"btnSecondaryBackgroundColor": {
+		"cssVariableMapping": "btn-secondary-background-color",
+		"value": "#FFFFFF"
+	},
+	"btnSecondaryBorderColor": {
+		"cssVariableMapping": "btn-secondary-border-color",
+		"value": "#20C9C3"
+	},
+	"btnSecondaryColor": {
+		"cssVariableMapping": "btn-secondary-color",
+		"value": "#0B4F6C"
+	},
+	"fontFamilyBase": {
+		"cssVariableMapping": "font-family-base",
+		"value": "Inter, system-ui, -apple-system, 'Segoe UI', sans-serif"
+	},
+	"fontFamilySansSerif": {
+		"cssVariableMapping": "font-family-sans-serif",
+		"value": "Inter, system-ui, -apple-system, 'Segoe UI', sans-serif"
+	},
+	"primaryColor": {
+		"cssVariableMapping": "primary",
+		"value": "#0B4F6C"
+	},
+	"secondaryColor": {
+		"cssVariableMapping": "secondary",
+		"value": "#5B6B77"
+	}
+}

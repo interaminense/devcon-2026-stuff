@@ -1,0 +1,39 @@
+.sl-cta {
+	color: #ffffff;
+	overflow: hidden;
+	position: relative;
+	text-align: center;
+}
+
+.sl-cta__image {
+	height: 100%;
+	inset: 0;
+	object-fit: cover;
+	position: absolute;
+	width: 100%;
+}
+
+.sl-cta::after {
+	background-color: rgba(11, 79, 108, 0.82);
+	content: '';
+	inset: 0;
+	position: absolute;
+}
+
+.sl-cta__content {
+	padding-bottom: 88px;
+	padding-top: 88px;
+	position: relative;
+	z-index: 1;
+}
+
+body .sl-cta__title {
+	color: #ffffff;
+	font-size: clamp(30px, 4vw, 44px);
+	margin-bottom: 12px;
+}
+
+.sl-cta__text {
+	font-size: 19px;
+	margin-bottom: 28px;
+}
