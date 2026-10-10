@@ -624,7 +624,7 @@
 	// starts the agent with the stream key, and reads the answer from the
 	// event named after the agent.
 
-	const INSIGHT_AGENT_ERC = '';
+	const INSIGHT_AGENT_ERC = 'DEVCON_2026_LDP_METRIC_INSIGHT';
 
 	const INSIGHT_TIMEOUT = 60000;
 
