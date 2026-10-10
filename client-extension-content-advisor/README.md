@@ -18,10 +18,11 @@ The title and text are read from the page itself, so after the admin edits a blo
 | Item | Value |
 |---|---|
 | Document | `ldp-content-advisor.js` in Guest Documents & Media, viewable by anyone (guests load it but it does nothing for them) |
-| Client extension | *LDP Content Advisor*, type JavaScript, URL `…/documents/d/guest/ldp-content-advisor-js?v=3` |
+| Client extension | *LDP Content Advisor*, type JavaScript, URL `…/documents/d/guest/ldp-content-advisor-js?v=4` |
 | Applied in | *Site Builder → Pages → Configuration → Design → JavaScript*, *In Page Bottom* |
 
 ## Gotchas
 
 - **LDP drops repeated events for 5 seconds.** The key includes the user, the page, and the event name, but not the custom properties, so two clicks on different blocks by the same visitor within 5 seconds count once. Real visitors rarely do that; a traffic bot must space its clicks.
 - **Plain text to AI Hub.** Its firewall rejects a context that carries nested JSON.
+- **One retry.** The firewall in front of AI Hub sometimes refuses a call made right after others (the browser only sees "Failed to fetch"). The advisor retries once after 4 seconds; the same request went through on the retry when tested on 2026-10-10.

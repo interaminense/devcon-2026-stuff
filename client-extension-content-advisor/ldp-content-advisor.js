@@ -390,6 +390,24 @@
 		}
 	}
 
+	// The firewall in front of AI Hub sometimes rejects a call made right
+	// after others; one retry after a short pause usually goes through
+
+	async function askAgentWithRetry(contents) {
+		try {
+			return await askAgent(contents);
+		}
+		catch (error) {
+			if (!/refused/.test(error.message)) {
+				throw error;
+			}
+
+			await new Promise((resolve) => setTimeout(resolve, 4000));
+
+			return askAgent(contents);
+		}
+	}
+
 	// The agent answers in labeled lines; anything else is shown as is
 
 	function parseSuggestion(text) {
@@ -619,7 +637,7 @@
 			render('<p>Asking AI Hub...</p>');
 
 			try {
-				const fields = parseSuggestion(await askAgent(contents));
+				const fields = parseSuggestion(await askAgentWithRetry(contents));
 
 				const body = `
 					<dl>
