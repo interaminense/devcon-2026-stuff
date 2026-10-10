@@ -912,6 +912,93 @@ form.addEventListener('submit', async (event) => {
 )
 
 
+fragment(
+	"sl-dashboard-header",
+	"Swell Lab Dashboard Header",
+	"""
+<section class="sl-dashboard-header">
+	<div class="sl-container">
+		<div class="sl-section__eyebrow" data-lfr-editable-id="eyebrow" data-lfr-editable-type="text">Swell Lab analytics</div>
+
+		<h1 class="sl-dashboard-header__title" data-lfr-editable-id="title" data-lfr-editable-type="text">Surf school dashboard</h1>
+
+		<p class="sl-dashboard-header__text" data-lfr-editable-id="text" data-lfr-editable-type="text">Live data from Liferay Data Platform. Open the cog on any card to pick the metric, the chart, and the period. Each card keeps its setup in Liferay Objects.</p>
+
+		<ul class="sl-dashboard-header__stack">
+			<li>LDP Headless API</li>
+			<li>Client Extensions</li>
+			<li>Liferay Objects</li>
+			<li>Fragments</li>
+		</ul>
+	</div>
+</section>
+""",
+	"""
+.sl-dashboard-header {
+	padding: 56px 0 24px;
+}
+
+body .sl-dashboard-header__title {
+	font-size: clamp(32px, 4vw, 48px);
+	margin-bottom: 12px;
+}
+
+.sl-dashboard-header__text {
+	color: var(--sl-muted, #5b6b77);
+	font-size: 18px;
+	margin-bottom: 20px;
+	max-width: 720px;
+}
+
+.sl-dashboard-header__stack {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+.sl-dashboard-header__stack li {
+	background-color: rgba(32, 201, 195, 0.15);
+	border-radius: 999px;
+	color: var(--sl-primary, #0b4f6c);
+	font-size: 13px;
+	font-weight: 600;
+	padding: 6px 14px;
+}
+
+.sl-dashboard {
+	margin-left: auto !important;
+	margin-right: auto !important;
+	max-width: 1180px !important;
+	padding: 0 24px 72px !important;
+}
+
+.sl-dashboard .portlet {
+	margin-bottom: 24px;
+}
+
+ldp-metric-card {
+	--ldp-accent: #0b4f6c;
+	--ldp-accent-soft: rgba(11, 79, 108, 0.12);
+	--ldp-border: rgba(11, 79, 108, 0.06);
+	--ldp-border-strong: rgba(11, 79, 108, 0.2);
+	--ldp-font: Inter, system-ui, -apple-system, 'Segoe UI', sans-serif;
+	--ldp-heading-font: Poppins, Inter, system-ui, sans-serif;
+	--ldp-muted: #5b6b77;
+	--ldp-palette: #0a7a9e, #e0932b, #17a9a3, #e2574f, #4f7fe8, #2f9a62, #9a5fd6, #b9763f;
+	--ldp-radius: 20px;
+	--ldp-shadow: 0 10px 30px rgba(11, 79, 108, 0.08);
+	--ldp-subtle: #f7f3ea;
+	--ldp-text: #1d2b36;
+	--ldp-title: #0b4f6c;
+}
+""",
+	icon="analytics",
+)
+
+
 def write(path, content):
 	os.makedirs(os.path.dirname(path), exist_ok=True)
 

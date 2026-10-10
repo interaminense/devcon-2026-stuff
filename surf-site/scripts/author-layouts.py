@@ -170,6 +170,82 @@ TEMPLATES = {
 	),
 }
 
+# The dashboard: LDP metric cards (a client extension) laid out with layout
+# fragments. Fixed instance ids keep each card's Object entry key predictable.
+
+METRIC_CARD_PORTLET = (
+	"com_liferay_client_extension_web_internal_portlet_ClientExtensionEntryPortlet_"
+	"26689402450212_52b9ea1e_eb7b_9cf2_96a4_3d964b3a548d"
+)
+
+DASHBOARD_ROWS = [
+	[(4, "visitors"), (4, "sessions"), (4, "bouncerate")],
+	[(7, "toppages"), (5, "acquisition")],
+	[(7, "heatmap"), (5, "devices")],
+]
+
+
+def metric_card(instance_id):
+	return {
+		"definition": {
+			"widgetInstance": {
+				"widgetConfig": {"portletSetupPortletDecoratorId": "barebone"},
+				"widgetInstanceId": instance_id,
+				"widgetName": METRIC_CARD_PORTLET,
+			}
+		},
+		"type": "Widget",
+	}
+
+
+def row(columns):
+	return {
+		"definition": {
+			"gutters": True,
+			"modulesPerRow": len(columns),
+			"numberOfColumns": len(columns),
+			"reverseOrder": False,
+			"rowViewports": [
+				{"id": "landscapeMobile", "rowViewportDefinition": {"modulesPerRow": 1}},
+				{"id": "portraitMobile", "rowViewportDefinition": {"modulesPerRow": 1}},
+				{"id": "tablet", "rowViewportDefinition": {"modulesPerRow": 1}},
+			],
+			"verticalAlignment": "top",
+		},
+		"pageElements": [
+			{
+				"definition": {
+					"columnViewports": [
+						{"columnViewportDefinition": {"size": 12}, "id": "landscapeMobile"},
+						{"columnViewportDefinition": {"size": 12}, "id": "portraitMobile"},
+						{"columnViewportDefinition": {"size": 12}, "id": "tablet"},
+					],
+					"size": size,
+				},
+				"pageElements": [metric_card(instance_id)],
+				"type": "Column",
+			}
+			for size, instance_id in columns
+		],
+		"type": "Row",
+	}
+
+
+TEMPLATES["swell-lab-dashboard"] = (
+	"Swell Lab Dashboard",
+	[
+		fragment("sl-dashboard-header"),
+		{
+			"definition": {
+				"cssClasses": ["sl-dashboard"],
+				"layout": {"widthType": "Fixed"},
+			},
+			"pageElements": [row(columns) for columns in DASHBOARD_ROWS],
+			"type": "Section",
+		},
+	],
+)
+
 collection = os.path.join(ROOT, "page-templates/swell-lab")
 
 write_json(os.path.join(collection, "page-template-collection.json"), {"name": "Swell Lab"})

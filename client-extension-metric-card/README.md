@@ -63,3 +63,11 @@ What the live check against LDP showed:
 - Identical queries are cached per page: four cards with the same metric make one request.
 - The cog shows for signed-in users only.
 - Errors are spelled out: DXP not connected to LDP, site not assigned to a property, GraphQL errors, and empty periods.
+
+## Theming
+
+The card reads CSS custom properties, which reach into its shadow root, so a page can restyle it without touching the code: `--ldp-accent`, `--ldp-accent-soft`, `--ldp-text`, `--ldp-title`, `--ldp-muted`, `--ldp-border`, `--ldp-border-strong`, `--ldp-subtle`, `--ldp-radius`, `--ldp-shadow`, `--ldp-font`, `--ldp-heading-font`, and `--ldp-palette` (a comma-separated list of series colors). Without them, the card keeps its original look. The Swell Lab dashboard sets them in the `sl-dashboard-header` fragment.
+
+## Cloud Demo
+
+On the team's cloud DXP the script is hosted in Guest Documents & Media (`/documents/d/guest/ldp-metric-card-js?v=2`), so no local server is needed. See `../surf-site/DESIGN.md` for the dashboard page built with it.

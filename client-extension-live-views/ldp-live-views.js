@@ -341,6 +341,10 @@
 
 			this.classList.add('ldp-live');
 
+			// Start minimized over the dashboard so it does not cover the cards
+
+			this.collapsed = Boolean(document.querySelector('ldp-metric-card'));
+
 			this.addEventListener('click', (event) => this.onClick(event));
 			this.addEventListener('mousemove', (event) => this.onHover(event));
 			this.addEventListener('mouseleave', () => this.hideTooltip());

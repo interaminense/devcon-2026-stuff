@@ -28,9 +28,21 @@ The theme is not rebuilt. A Style Book carries the colors, fonts, and radius as 
 
 The journey Home → Lessons or Trips → Book feeds the metrics shown in the demo (top pages, visitors, sessions).
 
-## Deferred
+## Dashboard
 
-- **Dashboard page:** a private page with `ldp-metric-card` widgets, visible only to signed-in users. Built later, on request.
+`/dashboard` (built on 2026-10-10) is a regular page, hidden from the navigation, whose *View* permission is removed from Guest and given to User and Site Member, so only signed-in users reach it; guests get a 404. Private pages are not used: on 2026.Q3 they depend on the deprecation feature flag LPD-38869, which is off.
+
+| Piece | Detail |
+|---|---|
+| LDP Headless API | Every card queries the DXP GraphQL proxy `/o/analytics-rest/v1.0/graphql` |
+| Client extension | *LDP Metric Card*, a Custom Element, instanceable, whose script is `ldp-metric-card.js` in Guest Documents & Media |
+| Liferay Objects | `LDPMetricCard` (`/o/c/ldpmetriccards`), one entry per card, keyed by the card's portlet instance id |
+| Fragments | The *Swell Lab Dashboard* page template: the `sl-dashboard-header` fragment, then layout fragments (a container and rows of columns) holding seven card instances with fixed instance ids (`visitors`, `sessions`, `bouncerate`, `toppages`, `acquisition`, `heatmap`, `devices`) |
+| Swell Lab look | `sl-dashboard-header` sets the card's `--ldp-*` CSS custom properties (colors, fonts, radius, shadow, and a validated categorical palette), which reach into the card's shadow root |
+
+Fixed instance ids make the Object keys predictable, so each card's starting configuration was written to the Object before anyone opened the page.
+
+Site metrics (visitors, sessions, acquisition, devices, heatmap) come from LDP batch processing and stay empty until it runs for a new property; page metrics show up in about 40 seconds. The *Most visited pages* card starts on the last 24 hours for that reason.
 
 ## Out of Scope
 

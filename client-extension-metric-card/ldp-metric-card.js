@@ -344,6 +344,7 @@
 	];
 
 	const RANGES = [
+		{key: 0, label: 'Last 24 hours'},
 		{key: 7, label: 'Last 7 days'},
 		{key: 30, label: 'Last 30 days'},
 		{key: 90, label: 'Last 90 days'},
@@ -389,7 +390,15 @@
 			return {...variables, rangeEnd: range.end, rangeStart: range.start};
 		}
 
-		return {...variables, rangeKey: range.key || 30};
+		// rangeKey 0 is the last 24 hours, which LDP answers per hour
+
+		const rangeKey = range.key ?? 30;
+
+		return {
+			...variables,
+			interval: rangeKey === 0 ? 'H' : 'D',
+			rangeKey,
+		};
 	}
 
 	function formatValue(value, format) {
@@ -576,7 +585,7 @@
 							end: entry.rangeEnd.slice(0, 10),
 							start: entry.rangeStart.slice(0, 10),
 						}
-					: {key: entry.rangeKey || DEFAULT_CONFIG.range.key},
+					: {key: entry.rangeKey ?? DEFAULT_CONFIG.range.key},
 				title: entry.title || '',
 			};
 		}
@@ -599,7 +608,7 @@
 				chart,
 				metric,
 				rangeEnd: range.end || null,
-				rangeKey: range.key || null,
+				rangeKey: range.key ?? null,
 				rangeStart: range.start || null,
 				title,
 			}),
@@ -607,7 +616,7 @@
 		});
 	}
 
-	const PALETTE = [
+	const DEFAULT_PALETTE = [
 		'#0b5fff',
 		'#4fbfa5',
 		'#ffb46e',
@@ -619,6 +628,23 @@
 		'#9fc5ff',
 		'#ff9ac1',
 	];
+
+	// A page can restyle the card through CSS custom properties, which reach
+	// into the shadow root. --ldp-palette replaces the series colors.
+
+	let PALETTE = DEFAULT_PALETTE;
+
+	function readPalette(element) {
+		const custom = getComputedStyle(element)
+			.getPropertyValue('--ldp-palette')
+			.split(',')
+			.map((color) => color.trim())
+			.filter(Boolean);
+
+		if (custom.length) {
+			PALETTE = custom;
+		}
+	}
 
 	const EMPTY = '<div class="empty">No data for this period.</div>';
 
@@ -925,7 +951,7 @@
 							.map((hour) => {
 								const value = grid[day][hour];
 
-								return `<span class="heatmap-cell" style="background: rgba(11, 95, 255, ${value ? (0.15 + (value / max) * 0.85).toFixed(2) : 0.04})" title="${label} ${hour}:00 UTC: ${value}"></span>`;
+								return `<span class="heatmap-cell" style="background: color-mix(in srgb, var(--ldp-accent, #0b5fff) ${value ? Math.round(15 + (value / max) * 85) : 4}%, transparent)" title="${label} ${hour}:00 UTC: ${value}"></span>`;
 							})
 							.join('')}
 					`
@@ -960,13 +986,14 @@
 	const STYLE = `
 		:host {
 			display: block;
-			font-family: inherit;
+			font-family: var(--ldp-font, inherit);
 		}
 
 		.card {
 			background: #fff;
-			border: 1px solid #e7e7ed;
-			border-radius: 8px;
+			border: 1px solid var(--ldp-border, #e7e7ed);
+			border-radius: var(--ldp-radius, 8px);
+			box-shadow: var(--ldp-shadow, none);
 			box-sizing: border-box;
 			min-height: 220px;
 			padding: 16px 20px;
@@ -984,12 +1011,13 @@
 		.muted,
 		.axis,
 		.status {
-			color: #6b6c7e;
+			color: var(--ldp-muted, #6b6c7e);
 			font-size: 12px;
 		}
 
 		.title {
-			color: #272833;
+			color: var(--ldp-title, #272833);
+			font-family: var(--ldp-heading-font, inherit);
 			font-size: 16px;
 			font-weight: 600;
 			margin-top: 2px;
@@ -999,7 +1027,7 @@
 			background: none;
 			border: 0;
 			border-radius: 4px;
-			color: #6b6c7e;
+			color: var(--ldp-muted, #6b6c7e);
 			cursor: pointer;
 			font-size: 18px;
 			line-height: 1;
@@ -1007,8 +1035,8 @@
 		}
 
 		.cog:hover {
-			background: #f1f2f5;
-			color: #272833;
+			background: var(--ldp-subtle, #f1f2f5);
+			color: var(--ldp-text, #272833);
 		}
 
 		.kpi {
@@ -1020,7 +1048,7 @@
 		}
 
 		.value {
-			color: #272833;
+			color: var(--ldp-text, #272833);
 			font-size: 32px;
 			font-weight: 600;
 		}
@@ -1047,7 +1075,7 @@
 		}
 
 		.trend.neutral {
-			color: #6b6c7e;
+			color: var(--ldp-muted, #6b6c7e);
 		}
 
 		.chart {
@@ -1057,18 +1085,18 @@
 		}
 
 		.area {
-			fill: rgba(11, 95, 255, 0.12);
+			fill: var(--ldp-accent-soft, rgba(11, 95, 255, 0.12));
 		}
 
 		.line {
 			fill: none;
-			stroke: #0b5fff;
+			stroke: var(--ldp-accent, #0b5fff);
 			stroke-width: 2;
 			vector-effect: non-scaling-stroke;
 		}
 
 		.column {
-			fill: #0b5fff;
+			fill: var(--ldp-accent, #0b5fff);
 		}
 
 		.axis {
@@ -1088,7 +1116,7 @@
 		}
 
 		.bar-label {
-			color: #272833;
+			color: var(--ldp-text, #272833);
 			display: flex;
 			font-size: 13px;
 			gap: 8px;
@@ -1104,14 +1132,14 @@
 		}
 
 		.bar-track {
-			background: #f1f2f5;
+			background: var(--ldp-subtle, #f1f2f5);
 			border-radius: 3px;
 			height: 6px;
 			margin-top: 3px;
 		}
 
 		.bar-fill {
-			background: #0b5fff;
+			background: var(--ldp-accent, #0b5fff);
 			border-radius: 3px;
 			height: 6px;
 		}
@@ -1133,13 +1161,13 @@
 		}
 
 		.column-bar {
-			background: #0b5fff;
+			background: var(--ldp-accent, #0b5fff);
 			border-radius: 3px 3px 0 0;
 		}
 
 		.column-value,
 		.column-label {
-			color: #272833;
+			color: var(--ldp-text, #272833);
 			font-size: 11px;
 			overflow: hidden;
 			text-align: center;
@@ -1148,7 +1176,7 @@
 		}
 
 		.column-label {
-			color: #6b6c7e;
+			color: var(--ldp-muted, #6b6c7e);
 			margin-top: 4px;
 		}
 
@@ -1166,7 +1194,7 @@
 		}
 
 		.donut-total {
-			fill: #272833;
+			fill: var(--ldp-text, #272833);
 			font-size: 6px;
 			font-weight: 600;
 		}
@@ -1181,7 +1209,7 @@
 
 		.legend li {
 			align-items: center;
-			color: #272833;
+			color: var(--ldp-text, #272833);
 			display: flex;
 			font-size: 13px;
 			gap: 8px;
@@ -1207,7 +1235,7 @@
 		}
 
 		.table th {
-			color: #6b6c7e;
+			color: var(--ldp-muted, #6b6c7e);
 			font-size: 11px;
 			font-weight: 600;
 			text-align: right;
@@ -1221,8 +1249,8 @@
 		}
 
 		.table td {
-			border-top: 1px solid #f1f2f5;
-			color: #272833;
+			border-top: 1px solid var(--ldp-subtle, #f1f2f5);
+			color: var(--ldp-text, #272833);
 			padding: 6px 0;
 			text-align: right;
 		}
@@ -1241,7 +1269,7 @@
 
 		.heatmap-day,
 		.heatmap-hour {
-			color: #6b6c7e;
+			color: var(--ldp-muted, #6b6c7e);
 			font-size: 11px;
 		}
 
@@ -1263,7 +1291,7 @@
 
 		.panel {
 			background: #fff;
-			border: 1px solid #e7e7ed;
+			border: 1px solid var(--ldp-border, #e7e7ed);
 			border-radius: 8px;
 			box-shadow: 0 4px 16px rgba(39, 40, 51, 0.16);
 			box-sizing: border-box;
@@ -1281,7 +1309,7 @@
 		}
 
 		.panel label {
-			color: #272833;
+			color: var(--ldp-text, #272833);
 			display: block;
 			font-size: 12px;
 			font-weight: 600;
@@ -1313,7 +1341,7 @@
 		}
 
 		.hint {
-			color: #6b6c7e;
+			color: var(--ldp-muted, #6b6c7e);
 			font-size: 11px;
 			font-weight: 400;
 		}
@@ -1326,7 +1354,7 @@
 		}
 
 		.actions button {
-			border: 1px solid #cdced9;
+			border: 1px solid var(--ldp-border-strong, #cdced9);
 			border-radius: 4px;
 			cursor: pointer;
 			font: inherit;
@@ -1335,8 +1363,8 @@
 		}
 
 		.actions .primary {
-			background: #0b5fff;
-			border-color: #0b5fff;
+			background: var(--ldp-accent, #0b5fff);
+			border-color: var(--ldp-accent, #0b5fff);
 			color: #fff;
 		}
 	`;
@@ -1389,6 +1417,8 @@
 
 			this.attachShadow({mode: 'open'}).innerHTML =
 				`<style>${STYLE}</style><div class="card"><div class="empty">Loading...</div></div>`;
+
+			readPalette(this);
 
 			this._key = getInstanceKey(this);
 
@@ -1461,9 +1491,12 @@
 					chart
 				);
 
-				const rangeLabel = variables.rangeKey
-					? `last ${variables.rangeKey} days`
-					: `${variables.rangeStart} → ${variables.rangeEnd}`;
+				const rangeLabel =
+					variables.rangeKey === 0
+						? 'last 24 hours'
+						: variables.rangeKey
+							? `last ${variables.rangeKey} days`
+							: `${variables.rangeStart} → ${variables.rangeEnd}`;
 
 				this._get('status').textContent =
 					`${rangeLabel} · ${Math.round(performance.now() - startedAt)} ms`;

@@ -1,0 +1,411 @@
+{
+	"pageElement": {
+		"pageElements": [
+			{
+				"definition": {
+					"fragment": {
+						"key": "sl-dashboard-header"
+					},
+					"fragmentConfig": {},
+					"fragmentFields": []
+				},
+				"type": "Fragment"
+			},
+			{
+				"definition": {
+					"cssClasses": [
+						"sl-dashboard"
+					],
+					"layout": {
+						"widthType": "Fixed"
+					}
+				},
+				"pageElements": [
+					{
+						"definition": {
+							"gutters": true,
+							"modulesPerRow": 3,
+							"numberOfColumns": 3,
+							"reverseOrder": false,
+							"rowViewports": [
+								{
+									"id": "landscapeMobile",
+									"rowViewportDefinition": {
+										"modulesPerRow": 1
+									}
+								},
+								{
+									"id": "portraitMobile",
+									"rowViewportDefinition": {
+										"modulesPerRow": 1
+									}
+								},
+								{
+									"id": "tablet",
+									"rowViewportDefinition": {
+										"modulesPerRow": 1
+									}
+								}
+							],
+							"verticalAlignment": "top"
+						},
+						"pageElements": [
+							{
+								"definition": {
+									"columnViewports": [
+										{
+											"columnViewportDefinition": {
+												"size": 12
+											},
+											"id": "landscapeMobile"
+										},
+										{
+											"columnViewportDefinition": {
+												"size": 12
+											},
+											"id": "portraitMobile"
+										},
+										{
+											"columnViewportDefinition": {
+												"size": 12
+											},
+											"id": "tablet"
+										}
+									],
+									"size": 4
+								},
+								"pageElements": [
+									{
+										"definition": {
+											"widgetInstance": {
+												"widgetConfig": {
+													"portletSetupPortletDecoratorId": "barebone"
+												},
+												"widgetInstanceId": "visitors",
+												"widgetName": "com_liferay_client_extension_web_internal_portlet_ClientExtensionEntryPortlet_26689402450212_52b9ea1e_eb7b_9cf2_96a4_3d964b3a548d"
+											}
+										},
+										"type": "Widget"
+									}
+								],
+								"type": "Column"
+							},
+							{
+								"definition": {
+									"columnViewports": [
+										{
+											"columnViewportDefinition": {
+												"size": 12
+											},
+											"id": "landscapeMobile"
+										},
+										{
+											"columnViewportDefinition": {
+												"size": 12
+											},
+											"id": "portraitMobile"
+										},
+										{
+											"columnViewportDefinition": {
+												"size": 12
+											},
+											"id": "tablet"
+										}
+									],
+									"size": 4
+								},
+								"pageElements": [
+									{
+										"definition": {
+											"widgetInstance": {
+												"widgetConfig": {
+													"portletSetupPortletDecoratorId": "barebone"
+												},
+												"widgetInstanceId": "sessions",
+												"widgetName": "com_liferay_client_extension_web_internal_portlet_ClientExtensionEntryPortlet_26689402450212_52b9ea1e_eb7b_9cf2_96a4_3d964b3a548d"
+											}
+										},
+										"type": "Widget"
+									}
+								],
+								"type": "Column"
+							},
+							{
+								"definition": {
+									"columnViewports": [
+										{
+											"columnViewportDefinition": {
+												"size": 12
+											},
+											"id": "landscapeMobile"
+										},
+										{
+											"columnViewportDefinition": {
+												"size": 12
+											},
+											"id": "portraitMobile"
+										},
+										{
+											"columnViewportDefinition": {
+												"size": 12
+											},
+											"id": "tablet"
+										}
+									],
+									"size": 4
+								},
+								"pageElements": [
+									{
+										"definition": {
+											"widgetInstance": {
+												"widgetConfig": {
+													"portletSetupPortletDecoratorId": "barebone"
+												},
+												"widgetInstanceId": "bouncerate",
+												"widgetName": "com_liferay_client_extension_web_internal_portlet_ClientExtensionEntryPortlet_26689402450212_52b9ea1e_eb7b_9cf2_96a4_3d964b3a548d"
+											}
+										},
+										"type": "Widget"
+									}
+								],
+								"type": "Column"
+							}
+						],
+						"type": "Row"
+					},
+					{
+						"definition": {
+							"gutters": true,
+							"modulesPerRow": 2,
+							"numberOfColumns": 2,
+							"reverseOrder": false,
+							"rowViewports": [
+								{
+									"id": "landscapeMobile",
+									"rowViewportDefinition": {
+										"modulesPerRow": 1
+									}
+								},
+								{
+									"id": "portraitMobile",
+									"rowViewportDefinition": {
+										"modulesPerRow": 1
+									}
+								},
+								{
+									"id": "tablet",
+									"rowViewportDefinition": {
+										"modulesPerRow": 1
+									}
+								}
+							],
+							"verticalAlignment": "top"
+						},
+						"pageElements": [
+							{
+								"definition": {
+									"columnViewports": [
+										{
+											"columnViewportDefinition": {
+												"size": 12
+											},
+											"id": "landscapeMobile"
+										},
+										{
+											"columnViewportDefinition": {
+												"size": 12
+											},
+											"id": "portraitMobile"
+										},
+										{
+											"columnViewportDefinition": {
+												"size": 12
+											},
+											"id": "tablet"
+										}
+									],
+									"size": 7
+								},
+								"pageElements": [
+									{
+										"definition": {
+											"widgetInstance": {
+												"widgetConfig": {
+													"portletSetupPortletDecoratorId": "barebone"
+												},
+												"widgetInstanceId": "toppages",
+												"widgetName": "com_liferay_client_extension_web_internal_portlet_ClientExtensionEntryPortlet_26689402450212_52b9ea1e_eb7b_9cf2_96a4_3d964b3a548d"
+											}
+										},
+										"type": "Widget"
+									}
+								],
+								"type": "Column"
+							},
+							{
+								"definition": {
+									"columnViewports": [
+										{
+											"columnViewportDefinition": {
+												"size": 12
+											},
+											"id": "landscapeMobile"
+										},
+										{
+											"columnViewportDefinition": {
+												"size": 12
+											},
+											"id": "portraitMobile"
+										},
+										{
+											"columnViewportDefinition": {
+												"size": 12
+											},
+											"id": "tablet"
+										}
+									],
+									"size": 5
+								},
+								"pageElements": [
+									{
+										"definition": {
+											"widgetInstance": {
+												"widgetConfig": {
+													"portletSetupPortletDecoratorId": "barebone"
+												},
+												"widgetInstanceId": "acquisition",
+												"widgetName": "com_liferay_client_extension_web_internal_portlet_ClientExtensionEntryPortlet_26689402450212_52b9ea1e_eb7b_9cf2_96a4_3d964b3a548d"
+											}
+										},
+										"type": "Widget"
+									}
+								],
+								"type": "Column"
+							}
+						],
+						"type": "Row"
+					},
+					{
+						"definition": {
+							"gutters": true,
+							"modulesPerRow": 2,
+							"numberOfColumns": 2,
+							"reverseOrder": false,
+							"rowViewports": [
+								{
+									"id": "landscapeMobile",
+									"rowViewportDefinition": {
+										"modulesPerRow": 1
+									}
+								},
+								{
+									"id": "portraitMobile",
+									"rowViewportDefinition": {
+										"modulesPerRow": 1
+									}
+								},
+								{
+									"id": "tablet",
+									"rowViewportDefinition": {
+										"modulesPerRow": 1
+									}
+								}
+							],
+							"verticalAlignment": "top"
+						},
+						"pageElements": [
+							{
+								"definition": {
+									"columnViewports": [
+										{
+											"columnViewportDefinition": {
+												"size": 12
+											},
+											"id": "landscapeMobile"
+										},
+										{
+											"columnViewportDefinition": {
+												"size": 12
+											},
+											"id": "portraitMobile"
+										},
+										{
+											"columnViewportDefinition": {
+												"size": 12
+											},
+											"id": "tablet"
+										}
+									],
+									"size": 7
+								},
+								"pageElements": [
+									{
+										"definition": {
+											"widgetInstance": {
+												"widgetConfig": {
+													"portletSetupPortletDecoratorId": "barebone"
+												},
+												"widgetInstanceId": "heatmap",
+												"widgetName": "com_liferay_client_extension_web_internal_portlet_ClientExtensionEntryPortlet_26689402450212_52b9ea1e_eb7b_9cf2_96a4_3d964b3a548d"
+											}
+										},
+										"type": "Widget"
+									}
+								],
+								"type": "Column"
+							},
+							{
+								"definition": {
+									"columnViewports": [
+										{
+											"columnViewportDefinition": {
+												"size": 12
+											},
+											"id": "landscapeMobile"
+										},
+										{
+											"columnViewportDefinition": {
+												"size": 12
+											},
+											"id": "portraitMobile"
+										},
+										{
+											"columnViewportDefinition": {
+												"size": 12
+											},
+											"id": "tablet"
+										}
+									],
+									"size": 5
+								},
+								"pageElements": [
+									{
+										"definition": {
+											"widgetInstance": {
+												"widgetConfig": {
+													"portletSetupPortletDecoratorId": "barebone"
+												},
+												"widgetInstanceId": "devices",
+												"widgetName": "com_liferay_client_extension_web_internal_portlet_ClientExtensionEntryPortlet_26689402450212_52b9ea1e_eb7b_9cf2_96a4_3d964b3a548d"
+											}
+										},
+										"type": "Widget"
+									}
+								],
+								"type": "Column"
+							}
+						],
+						"type": "Row"
+					}
+				],
+				"type": "Section"
+			}
+		],
+		"type": "Root"
+	},
+	"settings": {
+		"masterPage": {
+			"key": "swell-lab"
+		}
+	}
+}
