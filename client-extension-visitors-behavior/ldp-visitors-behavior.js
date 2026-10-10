@@ -25,7 +25,7 @@
 		{key: 90, label: 'Last 90 days'},
 	];
 
-	const DEFAULT_CONFIG = {metric: METRICS[0].id, rangeKey: 0};
+	const DEFAULT_CONFIG = {aiInsight: false, metric: METRICS[0].id, rangeKey: 0};
 
 	const QUERY = `
 		query VisitorsBehavior($channelId: String!, $interval: String!, $rangeKey: Int) {
@@ -106,6 +106,47 @@
 		select:hover {
 			border-color: var(--ldp-accent, #0b5fff);
 			outline: none;
+		}
+
+		.controls {
+			align-items: center;
+			display: flex;
+			gap: 12px;
+		}
+
+		.check {
+			align-items: center;
+			color: var(--ldp-muted, #6b6c7e);
+			cursor: pointer;
+			display: flex;
+			font-size: 13px;
+			gap: 6px;
+		}
+
+		.insight {
+			background: var(--ldp-subtle, #f1f2f5);
+			border-radius: 8px;
+			margin-top: 12px;
+			padding: 12px 14px;
+		}
+
+		.insight-label {
+			color: var(--ldp-accent, #0b5fff);
+			font-size: 11px;
+			font-weight: 700;
+			letter-spacing: 0.06em;
+			text-transform: uppercase;
+		}
+
+		.insight-text {
+			color: var(--ldp-text, #272833);
+			font-size: 14px;
+			line-height: 1.5;
+			margin: 4px 0 0;
+		}
+
+		.insight-error {
+			color: var(--ldp-muted, #6b6c7e);
 		}
 
 		.tabs {
@@ -295,6 +336,165 @@
 		return response.status === 204 ? null : response.json();
 	}
 
+	// AI Hub insight. The DXP hands out the AI Hub token; the browser then
+	// talks to AI Hub directly: it subscribes to a server-sent event stream,
+	// starts the agent with the stream key, and reads the answer from the
+	// event named after the agent.
+
+	const INSIGHT_AGENT_ERC = '';
+
+	const INSIGHT_TIMEOUT = 60000;
+
+	function compact(value, depth = 0) {
+		if (Array.isArray(value)) {
+			return value.slice(-31).map((item) => compact(item, depth + 1));
+		}
+
+		if (value && typeof value === 'object') {
+			return depth > 4
+				? null
+				: Object.fromEntries(
+						Object.entries(value).map(([key, item]) => [
+							key,
+							compact(item, depth + 1),
+						])
+					);
+		}
+
+		return typeof value === 'number' ? Math.round(value * 1000) / 1000 : value;
+	}
+
+	async function requestInsight(metrics) {
+		if (!INSIGHT_AGENT_ERC) {
+			throw new Error('The AI Hub insight agent is not configured yet.');
+		}
+
+		const token = await request('/o/ai-hub-cell/v1.0/authorization-tokens', {
+			method: 'POST',
+		});
+
+		const controller = new AbortController();
+		const timer = setTimeout(() => controller.abort(), INSIGHT_TIMEOUT);
+
+		try {
+			const response = await fetch(
+				`${token.serviceURL}/o/ai-hub/v1.0/agent-instances/subscribe`,
+				{
+					headers: {
+						Accept: 'text/event-stream',
+						Authorization: `Bearer ${token.accessToken}`,
+					},
+					signal: controller.signal,
+				}
+			);
+
+			if (!response.ok) {
+				throw new Error(`AI Hub returned ${response.status}`);
+			}
+
+			const reader = response.body.getReader();
+			const decoder = new TextDecoder();
+
+			let buffer = '';
+
+			while (true) {
+				const {done, value} = await reader.read();
+
+				if (done) {
+					throw new Error('AI Hub closed the stream without an answer.');
+				}
+
+				buffer += decoder.decode(value, {stream: true});
+
+				let end;
+
+				while ((end = buffer.indexOf('\n\n')) >= 0) {
+					const block = buffer.slice(0, end);
+
+					buffer = buffer.slice(end + 2);
+
+					const name = block.match(/^event: ?(.*)$/m)?.[1];
+					const data = block
+						.split('\n')
+						.filter((line) => line.startsWith('data:'))
+						.map((line) => line.slice(5).trim())
+						.join('\n');
+
+					if (name === 'Subscribe') {
+						const started = await fetch(
+							`${token.serviceURL}/o/ai-hub/v1.0/agent-instances`,
+							{
+								body: JSON.stringify({
+									agentDefinitionExternalReferenceCode:
+										INSIGHT_AGENT_ERC,
+									context: {metrics: JSON.stringify(metrics)},
+									sseEventSinkKey: data,
+								}),
+								headers: {
+									'Accept': 'application/json',
+									'Authorization': `Bearer ${token.accessToken}`,
+									'Content-Type': 'application/json',
+									'Liferay-AI-Hub-Cell-On-Behalf-Of': token.userToken,
+								},
+								method: 'POST',
+							}
+						);
+
+						if (!started.ok) {
+							throw new Error(`AI Hub returned ${started.status}`);
+						}
+					}
+					else if (name === INSIGHT_AGENT_ERC) {
+						return JSON.parse(data).data;
+					}
+					else if (name === 'Agent Invocation Failed') {
+						throw new Error('The AI Hub agent could not answer.');
+					}
+				}
+			}
+		}
+		catch (error) {
+			if (error.name === 'AbortError') {
+				throw new Error('AI Hub took too long to answer.');
+			}
+
+			throw error;
+		}
+		finally {
+			clearTimeout(timer);
+
+			controller.abort();
+		}
+	}
+
+	function escape(text) {
+		return String(text ?? '').replace(
+			/[&<>"']/g,
+			(character) =>
+				({
+					'"': '&quot;',
+					'&': '&amp;',
+					"'": '&#39;',
+					'<': '&lt;',
+					'>': '&gt;',
+				})[character]
+		);
+	}
+
+	function renderInsight(state) {
+		const text =
+			state.status === 'loading'
+				? 'Asking AI Hub...'
+				: state.status === 'error'
+					? state.message
+					: state.text;
+
+		return `
+			<div class="insight-label">✦ AI insight</div>
+			<p class="insight-text${state.status === 'error' ? ' insight-error' : ''}">${escape(text)}</p>
+		`;
+	}
+
 	let channelIdPromise;
 
 	function getChannelId() {
@@ -342,6 +542,7 @@
 			const entry = await request(getEntryURL(key));
 
 			return {
+				aiInsight: Boolean(entry.aiInsight),
 				metric: METRICS.some(({id}) => id === entry.chart)
 					? entry.chart
 					: DEFAULT_CONFIG.metric,
@@ -357,9 +558,10 @@
 		}
 	}
 
-	function saveConfig(key, {metric, rangeKey}) {
+	function saveConfig(key, {aiInsight, metric, rangeKey}) {
 		return request(getEntryURL(key), {
 			body: JSON.stringify({
+				aiInsight: Boolean(aiInsight),
 				chart: metric,
 				metric: 'visitorsBehavior',
 				rangeKey,
@@ -581,6 +783,9 @@
 				if (event.target.name === 'rangeKey') {
 					this._update({rangeKey: Number(event.target.value)});
 				}
+				else if (event.target.name === 'aiInsight') {
+					this._update({aiInsight: event.target.checked});
+				}
 			});
 
 			this.shadowRoot.addEventListener('pointermove', (event) => this._hover(event));
@@ -624,6 +829,53 @@
 			}
 
 			this._render();
+			this._requestInsight();
+		}
+
+		async _requestInsight() {
+			if (!this._config.aiInsight || !this._data) {
+				return;
+			}
+
+			const metric = METRICS.find(({id}) => id === this._config.metric) || METRICS[0];
+			const range = RANGES.find(({key}) => key === this._config.rangeKey) || RANGES[0];
+			const data = this._data[metric.id] || {};
+
+			const metrics = {
+				format: metric.format,
+				metric: metric.label,
+				period: range.label,
+				trend: data.trend,
+				value: data.value,
+				valuesOverTime: compact(data.histogram?.metrics || []),
+			};
+
+			const key = JSON.stringify(metrics);
+
+			if (this._insight?.key !== key || this._insight.status === 'error') {
+				this._insight = {key, status: 'loading'};
+
+				this._showInsight();
+
+				try {
+					this._insight = {key, status: 'done', text: await requestInsight(metrics)};
+				}
+				catch (error) {
+					this._insight = {key, message: error.message, status: 'error'};
+				}
+			}
+
+			if (this._insight.key === key) {
+				this._showInsight();
+			}
+		}
+
+		_showInsight() {
+			const element = this.shadowRoot.querySelector('[data-role="insight"]');
+
+			if (element) {
+				element.innerHTML = renderInsight(this._insight);
+			}
 		}
 
 		_update(change) {
@@ -636,6 +888,7 @@
 			}
 			else {
 				this._render();
+				this._requestInsight();
 			}
 
 			if (this._key) {
@@ -726,13 +979,20 @@
 							<div class="eyebrow">LDP · Site</div>
 							<div class="title">Visitors Behavior</div>
 						</div>
-						<select aria-label="Period" name="rangeKey">
-							${RANGES.map(({key, label}) => `<option ${key === range.key ? 'selected' : ''} value="${key}">${label}</option>`).join('')}
-						</select>
+						<div class="controls">
+							<label class="check">
+								<input ${this._config.aiInsight ? 'checked' : ''} name="aiInsight" type="checkbox" />
+								AI insight
+							</label>
+							<select aria-label="Period" name="rangeKey">
+								${RANGES.map(({key, label}) => `<option ${key === range.key ? 'selected' : ''} value="${key}">${label}</option>`).join('')}
+							</select>
+						</div>
 					</div>
 					<div class="tabs" role="tablist">${tabs}</div>
 					<div class="chart-label">${metric.label}</div>
 					${body}
+					${this._config.aiInsight ? '<div class="insight" data-role="insight"></div>' : ''}
 					<div class="status">${range.label.toLowerCase()}${this._elapsed ? ` · ${this._elapsed} ms` : ''}</div>
 				</section>
 			`;

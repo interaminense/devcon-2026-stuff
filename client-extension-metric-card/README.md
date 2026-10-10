@@ -70,4 +70,15 @@ The card reads CSS custom properties, which reach into its shadow root, so a pag
 
 ## Cloud Demo
 
-On the team's cloud DXP the script is hosted in Guest Documents & Media (`/documents/d/guest/ldp-metric-card-js?v=2`), so no local server is needed. See `../surf-site/DESIGN.md` for the dashboard page built with it.
+On the team's cloud DXP the script is hosted in Guest Documents & Media (`/documents/d/guest/ldp-metric-card-js?v=4`), so no local server is needed. See `../surf-site/DESIGN.md` for the dashboard page built with it.
+
+## AI Insight
+
+The cog's panel has a *Show AI insight* checkbox, off by default and kept in the Object's `aiInsight` Boolean field. When it is on, the card sends a compact JSON summary of what it shows (metric, group, period, and the extracted data) to an AI Hub agent and renders the answer in a footer:
+
+1. `POST /o/ai-hub-cell/v1.0/authorization-tokens` on the DXP returns `accessToken`, `userToken`, and `serviceURL`.
+1. The browser subscribes to `{serviceURL}/o/ai-hub/v1.0/agent-instances/subscribe` (server-sent events) with the access token; the `Subscribe` event carries the stream key.
+1. `POST {serviceURL}/o/ai-hub/v1.0/agent-instances` starts the agent with `context: {metrics}`, the stream key, and the `Liferay-AI-Hub-Cell-On-Behalf-Of: userToken` header.
+1. The answer arrives in the event named after the agent's ERC (`JSON.parse(data).data`); failures arrive as `Agent Invocation Failed`. The card gives up after 60 seconds.
+
+The agent is `INSIGHT_AGENT_ERC` in the script (empty until the *DevCon 2026 · LDP Metric Insight* agent exists in AI Hub). Requirements: feature flag LPD-62272 on, *Instance Settings → AI Hub* configured, and the DXP origin listed as the AI Hub account's Environment URL **without a trailing slash** (CORS matches the origin as an exact string). The answer is cached per card until the data changes.

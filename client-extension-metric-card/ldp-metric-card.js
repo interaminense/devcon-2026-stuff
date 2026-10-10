@@ -352,6 +352,7 @@
 	];
 
 	const DEFAULT_CONFIG = {
+		aiInsight: false,
 		chart: '',
 		metric: 'visitorsMetric',
 		range: {key: 30},
@@ -578,6 +579,7 @@
 			const custom = Boolean(entry.rangeStart && entry.rangeEnd);
 
 			return {
+				aiInsight: Boolean(entry.aiInsight),
 				chart: entry.chart || '',
 				metric: entry.metric,
 				range: custom
@@ -602,9 +604,10 @@
 		}
 	}
 
-	function saveConfig(key, {chart, metric, range, title}) {
+	function saveConfig(key, {aiInsight, chart, metric, range, title}) {
 		return request(getEntryURL(key), {
 			body: JSON.stringify({
+				aiInsight: Boolean(aiInsight),
 				chart,
 				metric,
 				rangeEnd: range.end || null,
@@ -614,6 +617,151 @@
 			}),
 			method: 'PUT',
 		});
+	}
+
+	// AI Hub insight. The DXP hands out the AI Hub token; the browser then
+	// talks to AI Hub directly: it subscribes to a server-sent event stream,
+	// starts the agent with the stream key, and reads the answer from the
+	// event named after the agent.
+
+	const INSIGHT_AGENT_ERC = '';
+
+	const INSIGHT_TIMEOUT = 60000;
+
+	function compact(value, depth = 0) {
+		if (Array.isArray(value)) {
+			return value.slice(-31).map((item) => compact(item, depth + 1));
+		}
+
+		if (value && typeof value === 'object') {
+			return depth > 4
+				? null
+				: Object.fromEntries(
+						Object.entries(value).map(([key, item]) => [
+							key,
+							compact(item, depth + 1),
+						])
+					);
+		}
+
+		return typeof value === 'number' ? Math.round(value * 1000) / 1000 : value;
+	}
+
+	async function requestInsight(metrics) {
+		if (!INSIGHT_AGENT_ERC) {
+			throw new Error('The AI Hub insight agent is not configured yet.');
+		}
+
+		const token = await request('/o/ai-hub-cell/v1.0/authorization-tokens', {
+			method: 'POST',
+		});
+
+		const controller = new AbortController();
+		const timer = setTimeout(() => controller.abort(), INSIGHT_TIMEOUT);
+
+		try {
+			const response = await fetch(
+				`${token.serviceURL}/o/ai-hub/v1.0/agent-instances/subscribe`,
+				{
+					headers: {
+						Accept: 'text/event-stream',
+						Authorization: `Bearer ${token.accessToken}`,
+					},
+					signal: controller.signal,
+				}
+			);
+
+			if (!response.ok) {
+				throw new Error(`AI Hub returned ${response.status}`);
+			}
+
+			const reader = response.body.getReader();
+			const decoder = new TextDecoder();
+
+			let buffer = '';
+
+			while (true) {
+				const {done, value} = await reader.read();
+
+				if (done) {
+					throw new Error('AI Hub closed the stream without an answer.');
+				}
+
+				buffer += decoder.decode(value, {stream: true});
+
+				let end;
+
+				while ((end = buffer.indexOf('\n\n')) >= 0) {
+					const block = buffer.slice(0, end);
+
+					buffer = buffer.slice(end + 2);
+
+					const name = block.match(/^event: ?(.*)$/m)?.[1];
+					const data = block
+						.split('\n')
+						.filter((line) => line.startsWith('data:'))
+						.map((line) => line.slice(5).trim())
+						.join('\n');
+
+					if (name === 'Subscribe') {
+						const started = await fetch(
+							`${token.serviceURL}/o/ai-hub/v1.0/agent-instances`,
+							{
+								body: JSON.stringify({
+									agentDefinitionExternalReferenceCode:
+										INSIGHT_AGENT_ERC,
+									context: {metrics: JSON.stringify(metrics)},
+									sseEventSinkKey: data,
+								}),
+								headers: {
+									'Accept': 'application/json',
+									'Authorization': `Bearer ${token.accessToken}`,
+									'Content-Type': 'application/json',
+									'Liferay-AI-Hub-Cell-On-Behalf-Of': token.userToken,
+								},
+								method: 'POST',
+							}
+						);
+
+						if (!started.ok) {
+							throw new Error(`AI Hub returned ${started.status}`);
+						}
+					}
+					else if (name === INSIGHT_AGENT_ERC) {
+						return JSON.parse(data).data;
+					}
+					else if (name === 'Agent Invocation Failed') {
+						throw new Error('The AI Hub agent could not answer.');
+					}
+				}
+			}
+		}
+		catch (error) {
+			if (error.name === 'AbortError') {
+				throw new Error('AI Hub took too long to answer.');
+			}
+
+			throw error;
+		}
+		finally {
+			clearTimeout(timer);
+
+			controller.abort();
+		}
+	}
+
+	function renderInsight(state) {
+		const text =
+			state.status === 'loading'
+				? 'Asking AI Hub...'
+				: state.status === 'error'
+					? state.message
+					: state.text;
+
+		return `
+			<div class="insight-label">✦ AI insight</div>
+			<p class="insight-text${state.status === 'error' ? ' insight-error' : ''}">${escape(text)}</p>
+		`;
 	}
 
 	const DEFAULT_PALETTE = [
@@ -1335,6 +1483,43 @@
 			width: 100%;
 		}
 
+		.panel label.check {
+			align-items: center;
+			display: flex;
+			gap: 8px;
+		}
+
+		.panel label.check input {
+			margin: 0;
+			width: auto;
+		}
+
+		.insight {
+			background: var(--ldp-subtle, #f1f2f5);
+			border-radius: 8px;
+			margin-top: 12px;
+			padding: 10px 12px;
+		}
+
+		.insight-label {
+			color: var(--ldp-accent, #0b5fff);
+			font-size: 11px;
+			font-weight: 700;
+			letter-spacing: 0.06em;
+			text-transform: uppercase;
+		}
+
+		.insight-text {
+			color: var(--ldp-text, #272833);
+			font-size: 13px;
+			line-height: 1.5;
+			margin: 4px 0 0;
+		}
+
+		.insight-error {
+			color: var(--ldp-muted, #6b6c7e);
+		}
+
 		.dates {
 			display: none;
 			gap: 8px;
@@ -1464,6 +1649,7 @@
 						}
 					</div>
 					<div data-role="body"><div class="empty">Loading...</div></div>
+					${this._config.aiInsight ? '<div class="insight" data-role="insight"></div>' : ''}
 					<div class="status">
 						<span data-role="status"></span>
 						<span class="save-status" data-role="save-status">${escape(this._saveStatus || '')}</span>
@@ -1508,11 +1694,53 @@
 
 				this._get('status').textContent =
 					`${rangeLabel} · ${Math.round(performance.now() - startedAt)} ms`;
+
+				if (this._config.aiInsight) {
+					this._loadInsight({
+						data: compact(metric.extract(data)),
+						group: metric.group,
+						metric: this._config.title || metric.label,
+						period: rangeLabel,
+					});
+				}
 			}
 			catch (error) {
 				this._get('body').innerHTML =
 					`<div class="error">${escape(error.message)}</div>`;
 				this._get('status').textContent = '';
+			}
+		}
+
+		async _loadInsight(metrics) {
+			const key = JSON.stringify(metrics);
+
+			if (this._insight?.key !== key || this._insight.status === 'error') {
+				this._insight = {key, status: 'loading'};
+
+				this._showInsight();
+
+				try {
+					this._insight = {
+						key,
+						status: 'done',
+						text: await requestInsight(metrics),
+					};
+				}
+				catch (error) {
+					this._insight = {key, message: error.message, status: 'error'};
+				}
+			}
+
+			if (this._insight.key === key) {
+				this._showInsight();
+			}
+		}
+
+		_showInsight() {
+			const element = this._get('insight');
+
+			if (element) {
+				element.innerHTML = renderInsight(this._insight);
 			}
 		}
 
@@ -1550,6 +1778,10 @@
 				<label>
 					Title
 					<input data-role="title" placeholder="${escape(currentMetric.label)}" type="text" value="${escape(title)}" />
+				</label>
+				<label class="check">
+					<input ${this._config.aiInsight ? 'checked' : ''} data-role="ai-insight" type="checkbox" />
+					Show AI insight
 				</label>
 				<div class="actions">
 					<button data-role="cancel" type="button">Cancel</button>
@@ -1626,6 +1858,7 @@
 			}
 
 			this._config = {
+				aiInsight: this._get('ai-insight').checked,
 				chart: this._get('chart').value,
 				metric: this._get('metric').value,
 				range,

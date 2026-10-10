@@ -67,6 +67,16 @@
 			},
 			"name": "title",
 			"required": false
+		},
+		{
+			"DBType": "Boolean",
+			"businessType": "Boolean",
+			"externalReferenceCode": "LDP_METRIC_CARD_AI_INSIGHT",
+			"label": {
+				"en_US": "AI Insight"
+			},
+			"name": "aiInsight",
+			"required": false
 		}
 	],
 	"objectFolderExternalReferenceCode": "DEVCON_2026",

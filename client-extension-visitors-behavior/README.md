@@ -20,7 +20,11 @@ A full-width card with the site activity metrics of LDP (Unique Visitors, Sessio
 | Item | Value |
 |---|---|
 | Document | `ldp-visitors-behavior.js` in Guest Documents & Media |
-| Client extension | *LDP Visitors Behavior*, Custom Element `ldp-visitors-behavior`, instanceable, URL `…/documents/d/guest/ldp-visitors-behavior-js?v=4` |
+| Client extension | *LDP Visitors Behavior*, Custom Element `ldp-visitors-behavior`, instanceable, URL `…/documents/d/guest/ldp-visitors-behavior-js?v=5` |
 | Placement | First row of the Swell Lab dashboard, instance id `behavior` |
 
 After uploading a new version, bump `?v=` in the client extension URL, or signed-in users keep the old script for up to 10 minutes.
+
+## AI Insight
+
+An *AI insight* checkbox next to the period, off by default and kept in the Object's `aiInsight` field, adds a footer with an AI Hub agent's reading of the selected metric (label, period, value, trend, and values over time). The AI Hub client is the same as in `../client-extension-metric-card` (see its README); the two scripts each carry a copy so that either works alone.
