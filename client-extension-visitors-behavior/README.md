@@ -20,7 +20,7 @@ A full-width card with the site activity metrics of LDP (Unique Visitors, Sessio
 | Item | Value |
 |---|---|
 | Document | `ldp-visitors-behavior.js` in Guest Documents & Media |
-| Client extension | *LDP Visitors Behavior*, Custom Element `ldp-visitors-behavior`, instanceable, URL `…/documents/d/guest/ldp-visitors-behavior-js?v=6` |
+| Client extension | *LDP Visitors Behavior*, Custom Element `ldp-visitors-behavior`, instanceable, URL `…/documents/d/guest/ldp-visitors-behavior-js?v=7` |
 | Placement | First row of the Swell Lab dashboard, instance id `behavior` |
 
 After uploading a new version, bump `?v=` in the client extension URL, or signed-in users keep the old script for up to 10 minutes.

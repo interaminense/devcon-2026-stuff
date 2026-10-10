@@ -647,7 +647,55 @@
 		return typeof value === 'number' ? Math.round(value * 1000) / 1000 : value;
 	}
 
-	async function requestInsight(metrics) {
+	// The firewall in front of AI Hub rejects request bodies that carry
+	// nested JSON (objects or arrays inside the context string), so the
+	// summary goes as plain text lines, without URLs
+
+	function toText(value, prefix = '') {
+		if (Array.isArray(value)) {
+			const items = value
+				.map((item) =>
+					item && typeof item === 'object'
+						? Object.entries(item)
+								.filter(([, field]) => !isLink(field))
+								.map(([key, field]) => `${key} ${field ?? 'n/a'}`)
+								.join(', ')
+						: String(item)
+				)
+				.join('; ');
+
+			return `${prefix}: ${items || 'none'}`;
+		}
+
+		if (value && typeof value === 'object') {
+			return Object.entries(value)
+				.filter(([, field]) => !isLink(field))
+				.map(([key, field]) =>
+					toText(field, prefix ? `${prefix} ${key}` : key)
+				)
+				.join('\n');
+		}
+
+		return `${prefix}: ${value ?? 'n/a'}`;
+	}
+
+	function isLink(value) {
+		return typeof value === 'string' && /^https?:/.test(value);
+	}
+
+	// One agent call at a time, so a page full of cards does not burst
+
+	let insightQueue = Promise.resolve();
+
+	function requestInsight(metrics) {
+		const next = insightQueue.then(() => callInsightAgent(metrics));
+
+		insightQueue = next.catch(() => {});
+
+		return next;
+	}
+
+	async function callInsightAgent(metrics) {
 		if (!INSIGHT_AGENT_ERC) {
 			throw new Error('The AI Hub insight agent is not configured yet.');
 		}
@@ -710,7 +758,7 @@
 								body: JSON.stringify({
 									agentDefinitionExternalReferenceCode:
 										INSIGHT_AGENT_ERC,
-									context: {metrics: JSON.stringify(metrics)},
+									context: {metrics: toText(metrics)},
 									sseEventSinkKey: data,
 								}),
 								headers: {

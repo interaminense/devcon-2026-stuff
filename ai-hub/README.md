@@ -19,20 +19,21 @@ Publish the workflow; an unpublished workflow does not show up in the agent form
 **Prompt** (system message):
 
 ```
-You are an analytics assistant for Swell Lab, a surf school website. You receive a JSON summary of one Liferay Data Platform metric for the whole site, as shown on a dashboard card: the metric name, the period, the current value, the change against the previous period when available, and the values over time or the breakdown.
+You are an analytics assistant for Swell Lab, a surf school website. You receive a summary of one Liferay Data Platform metric for the whole site, as shown on a dashboard card: the metric name, the period, the current value, the change against the previous period when available, and the values over time or the breakdown.
 
 Write an insight for a marketing manager in at most three short sentences:
 1. What the number says, citing the value and the period.
 2. The most notable pattern in the data (a peak, a drop, a trend, or the leading item).
 3. One concrete action for the surf school, based only on the data.
 
-Rules: plain text, no markdown, no headings, no lists. Never invent numbers that are not in the JSON. Times are in UTC. Rates are ratios between 0 and 1 (0.5 means 50%) and durations are in milliseconds. If the data is empty or too small to conclude anything, say so in one sentence and suggest collecting more traffic first.
+Rules: plain text, no markdown, no headings, no lists. Never invent numbers that are not in the summary. Times are in UTC. Rates are ratios between 0 and 1 (0.5 means 50%) and durations are in milliseconds. If the data is empty or too small to conclude anything, say so in one sentence and suggest collecting more traffic first.
 ```
 
 **User message**:
 
 ```
-Metric summary (JSON): {{metrics}}
+Metric summary:
+{{metrics}}
 ```
 
 Variables enter the prompt and the user message as `{{name}}`, and only those declared as the node's input variables are replaced.
@@ -53,6 +54,10 @@ In AI Hub, *Agents → New*:
 
 ## How the Cards Call It
 
-`POST {serviceURL}/o/ai-hub/v1.0/agent-instances` with `agentDefinitionExternalReferenceCode: "DEVCON_2026_LDP_METRIC_INSIGHT"`, `context: {"metrics": "<JSON string>"}`, and the server-sent events key. The answer arrives in the event named `DEVCON_2026_LDP_METRIC_INSIGHT`, whose data is `{"nodeName": "ldpMetricInsight", "data": "<insight text>"}`. See `../client-extension-metric-card/README.md`.
+`POST {serviceURL}/o/ai-hub/v1.0/agent-instances` with `agentDefinitionExternalReferenceCode: "DEVCON_2026_LDP_METRIC_INSIGHT"`, `context: {"metrics": "<plain text summary>"}`, and the server-sent events key. The answer arrives in the event named `DEVCON_2026_LDP_METRIC_INSIGHT`, whose data is `{"nodeName": "ldpMetricInsight", "data": "<insight text>"}`. See `../client-extension-metric-card/README.md`.
 
 These settings come from the AI Hub source as built on 2026-06-09; the current AI Hub UI may label things differently.
+
+## Firewall
+
+AI Hub sits behind a firewall that rejects request bodies whose context carries nested JSON, answering with an HTML 403 without CORS headers. The cards therefore send the summary as plain text lines (`metric: ...`, `period: ...`, `valuesOverTime: key ..., value ...; ...`). The prompt above refers to "a summary" for that reason; an agent created with the earlier "JSON summary" wording still works.
