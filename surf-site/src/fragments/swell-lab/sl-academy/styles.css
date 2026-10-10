@@ -13,3 +13,13 @@
 .sl-academy__item {
 	position: relative;
 }
+
+.sl-academy__more {
+	align-self: flex-start;
+	background: none;
+	border: 0;
+	cursor: pointer;
+	font: inherit;
+	font-weight: 600;
+	text-align: left;
+}

@@ -4,7 +4,7 @@ A JavaScript client extension that, for signed-in users, outlines the content bl
 
 ## How It Works
 
-1. **Clicks.** Each block of the `sl-academy` fragment sends `Analytics.track('surfContentClicked', {contentId, contentTitle, position})` when its link is clicked.
+1. **Clicks.** Each block of the `sl-academy` fragment has a fake *Read more* button that navigates nowhere and only sends `Analytics.track('surfContentClicked', {contentId, contentTitle, position})`.
 1. **Counting.** The advisor finds the event definition with `eventDefinitions(eventType: CUSTOM, keyword: "surfContentClicked")` and counts clicks per block with `eventAnalysisResult`, broken down by the `contentId` attribute. LDP creates the definition on the first click, so no definition means no clicks yet.
 1. **Share.** Each block's share of all the clicks on the page, over the last 24 hours (`RANGE_KEY`). Every block shows it in a badge (`✦ 18% of clicks`); counts and positions stay out of the UI.
 1. **Outline.** Blocks below the average share (1 ÷ number of blocks) are outlined, at most two: red for the weakest, orange for the next. Only their badges open a suggestion.

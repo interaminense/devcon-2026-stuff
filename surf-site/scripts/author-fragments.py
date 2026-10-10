@@ -1035,7 +1035,7 @@ def academy_card(index, content_id, image, tag, title, text, href):
 
 				<p class="sl-card__text" data-content-text data-lfr-editable-id="text-{index}" data-lfr-editable-type="text">{text}</p>
 
-				<a class="sl-card__link" data-lfr-editable-id="link-{index}" data-lfr-editable-type="link" href="{href}">Read more &rarr;</a>
+				<button class="sl-card__link sl-academy__more" data-lfr-editable-id="more-{index}" data-lfr-editable-type="text" type="button">Read more &rarr;</button>
 			</div>
 		</article>"""
 
@@ -1061,14 +1061,24 @@ fragment(
 .sl-academy__item {
 	position: relative;
 }
+
+.sl-academy__more {
+	align-self: flex-start;
+	background: none;
+	border: 0;
+	cursor: pointer;
+	font: inherit;
+	font-weight: 600;
+	text-align: left;
+}
 """,
 	"""
-// Every click on a content block sends the surfContentClicked custom event to
-// LDP, with the block's id, its current title, and its position on the page
+// "Read more" goes nowhere: it only sends the surfContentClicked custom event
+// to LDP, with the block's id, its current title, and its position on the page
 
 fragmentElement.querySelectorAll('[data-content-id]').forEach((item, index) => {
 	item.addEventListener('click', (event) => {
-		if (!event.target.closest('a')) {
+		if (!event.target.closest('.sl-academy__more')) {
 			return;
 		}
 

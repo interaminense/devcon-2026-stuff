@@ -1,9 +1,9 @@
-// Every click on a content block sends the surfContentClicked custom event to
-// LDP, with the block's id, its current title, and its position on the page
+// "Read more" goes nowhere: it only sends the surfContentClicked custom event
+// to LDP, with the block's id, its current title, and its position on the page
 
 fragmentElement.querySelectorAll('[data-content-id]').forEach((item, index) => {
 	item.addEventListener('click', (event) => {
-		if (!event.target.closest('a')) {
+		if (!event.target.closest('.sl-academy__more')) {
 			return;
 		}
 

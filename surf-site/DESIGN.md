@@ -50,7 +50,7 @@ Layout rows (`.lfr-layout-structure-item-row`) have `overflow: hidden`, which cl
 
 ## Learn Page and Content Advisor
 
-`/learn` (Surf Academy, added on 2026-10-10, in the main navigation) holds the `sl-academy` fragment: twelve content blocks with a fixed `data-content-id`, editable title and text, and a link that sends the `surfContentClicked` custom event (`contentId`, `contentTitle`, `position`). One block, *Information* at position 5, is weak on purpose (generic title, one-line text) so the advisor has something to point at in the demo. The *LDP Content Advisor* client extension (`../client-extension-content-advisor`) outlines the blocks with the lowest click rate for signed-in users and asks an AI Hub agent how to improve them.
+`/learn` (Surf Academy, added on 2026-10-10, in the main navigation) holds the `sl-academy` fragment: twelve content blocks with a fixed `data-content-id`, editable title and text, and a fake *Read more* button that only sends the `surfContentClicked` custom event (`contentId`, `contentTitle`, `position`). One block, *Information* at position 5, is weak on purpose (generic title, one-line text) so the advisor has something to point at in the demo. The *LDP Content Advisor* client extension (`../client-extension-content-advisor`) outlines the blocks with the lowest click rate for signed-in users and asks an AI Hub agent how to improve them.
 
 ## Out of Scope
 
