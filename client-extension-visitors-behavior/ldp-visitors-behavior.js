@@ -7,13 +7,18 @@
 
 	const OBJECT_URL = '/o/c/ldpmetriccards';
 
+	// Visitors and bounce rate come from the site query, which counts each
+	// visitor and session once, like the Sites screen of LDP. The page query
+	// without canonicalUrl adds up the pages, which is right for views and
+	// entrances but counts a visitor once per page seen.
+
 	const METRICS = [
-		{format: 'number', id: 'visitorsMetric', label: 'Unique Visitors'},
-		{format: 'number', id: 'viewsMetric', label: 'Views'},
-		{format: 'percent', id: 'bounceRateMetric', label: 'Bounce Rate'},
-		{format: 'duration', id: 'avgTimeOnPageMetric', label: 'Time On Page'},
-		{format: 'number', id: 'entrancesMetric', label: 'Entrances'},
-		{format: 'percent', id: 'exitRateMetric', label: 'Exit Rate'},
+		{format: 'number', id: 'visitorsMetric', label: 'Unique Visitors', source: 'site'},
+		{format: 'number', id: 'viewsMetric', label: 'Views', source: 'page'},
+		{format: 'percent', id: 'bounceRateMetric', label: 'Bounce Rate', source: 'site'},
+		{format: 'duration', id: 'avgTimeOnPageMetric', label: 'Time On Page', source: 'page'},
+		{format: 'number', id: 'entrancesMetric', label: 'Entrances', source: 'page'},
+		{format: 'percent', id: 'exitRateMetric', label: 'Exit Rate', source: 'page'},
 	];
 
 	const RANGES = [
@@ -25,29 +30,35 @@
 
 	const DEFAULT_CONFIG = {metric: METRICS[0].id, rangeKey: 0};
 
-	// Without canonicalUrl, the page query returns the metrics of every page
-	// of the property together
+	function metricFields(source) {
+		return METRICS.filter((metric) => metric.source === source)
+			.map(
+				({id}) => `
+					${id} {
+						histogram {
+							metrics {
+								key
+								value
+							}
+						}
+						trend {
+							percentage
+							trendClassification
+						}
+						value
+					}
+				`
+			)
+			.join('');
+	}
 
 	const QUERY = `
-		query VisitorsBehavior($channelId: String, $rangeKey: Int) {
+		query VisitorsBehavior($channelId: String!, $interval: String!, $rangeKey: Int) {
 			page(channelId: $channelId, rangeKey: $rangeKey) {
-				${METRICS.map(
-					({id}) => `
-						${id} {
-							histogram {
-								metrics {
-									key
-									value
-								}
-							}
-							trend {
-								percentage
-								trendClassification
-							}
-							value
-						}
-					`
-				).join('')}
+				${metricFields('page')}
+			}
+			site(channelId: $channelId, interval: $interval, rangeKey: $rangeKey) {
+				${metricFields('site')}
 			}
 		}
 	`;
@@ -600,6 +611,7 @@
 						query: QUERY,
 						variables: {
 							channelId: await getChannelId(),
+							interval: this._config.rangeKey === 0 ? 'H' : 'D',
 							rangeKey: this._config.rangeKey,
 						},
 					}),
@@ -610,7 +622,9 @@
 					throw new Error(errors[0].message);
 				}
 
-				this._data = data.page || {};
+				this._data = Object.fromEntries(
+					METRICS.map(({id, source}) => [id, data[source]?.[id]])
+				);
 				this._elapsed = Math.round(performance.now() - startedAt);
 			}
 			catch (error) {

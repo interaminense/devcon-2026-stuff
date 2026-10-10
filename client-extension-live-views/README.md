@@ -44,3 +44,7 @@ curl \
 `viewableBy` only applies when a document is created; a `PUT` keeps the permissions it already has.
 
 Signed-in users keep getting the previous version for up to 10 minutes (`max-age=600`) unless the URL changes. After each upload, bump the `?v=` parameter in the client extension's JavaScript URL (it is `?v=2` now). The same applies to the metric card.
+
+## Navigation
+
+Liferay moves between pages without reloading the document (SPA navigation), so the card listens to Liferay's `endNavigate` event: it clears the counts of the previous page, starts minimized again if the new page holds metric cards, and polls right away. The script also mounts the card again after a navigation if the body content was replaced. The client extension URL is `?v=3` since this change.

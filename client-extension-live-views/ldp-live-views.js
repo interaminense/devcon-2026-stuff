@@ -362,11 +362,36 @@
 
 			this.clock = setInterval(() => this.renderFooter(), 1000);
 
+			// Liferay navigates between pages without reloading the document,
+			// so the card has to start over for the new page by itself
+
+			this.navigationHandle = Liferay.on?.('endNavigate', () =>
+				this.onNavigate()
+			);
+
 			this.render();
 			this.start();
 		}
 
+		onNavigate() {
+			this.error = null;
+			this.lastUpdate = null;
+			this.recent = [];
+			this.state = null;
+
+			this.collapsed = Boolean(document.querySelector('ldp-metric-card'));
+
+			this.stop();
+			this.render();
+
+			if (!document.hidden) {
+				this.start();
+			}
+		}
+
 		disconnectedCallback() {
+			this.navigationHandle?.detach();
+
 			this.stop();
 
 			clearInterval(this.clock);
@@ -612,4 +637,8 @@
 	else {
 		mount();
 	}
+
+	// In case a navigation replaces the body content, mount the card again
+
+	window.Liferay?.on?.('endNavigate', mount);
 })();
