@@ -42,7 +42,9 @@ The journey Home → Lessons or Trips → Book feeds the metrics shown in the de
 
 Fixed instance ids make the Object keys predictable, so each card's starting configuration was written to the Object before anyone opened the page.
 
-Site metrics (visitors, sessions, acquisition, devices, heatmap) come from LDP batch processing and stay empty until it runs for a new property; page metrics show up in about 40 seconds. The *Most visited pages* card starts on the last 24 hours for that reason.
+All cards start on the last 24 hours. Page metrics show up in about 40 seconds; site metrics (visitors, sessions, acquisition, devices, heatmap) come from LDP batch processing and appeared within a few hours of connecting the property.
+
+Layout rows (`.lfr-layout-structure-item-row`) have `overflow: hidden`, which clipped the card's settings popover at the bottom of each row. `sl-dashboard-header` sets them back to `overflow: visible` inside `.sl-dashboard`.
 
 ## Out of Scope
 

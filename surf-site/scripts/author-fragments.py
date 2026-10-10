@@ -979,6 +979,12 @@ body .sl-dashboard-header__title {
 	margin-bottom: 24px;
 }
 
+/* Layout rows clip their content, which cut the card's settings popover */
+
+.sl-dashboard .lfr-layout-structure-item-row {
+	overflow: visible !important;
+}
+
 ldp-metric-card {
 	--ldp-accent: #0b4f6c;
 	--ldp-accent-soft: rgba(11, 79, 108, 0.12);
