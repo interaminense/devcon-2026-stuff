@@ -81,7 +81,7 @@ Duplicate **Make Shorter** again and change the copy:
 **Prompt** (system message):
 
 ```
-You are a content editor for Swell Lab, a surf school website. You receive click data from Liferay Data Platform for one content block that gets fewer clicks than the others on a page, and the best block on the same page for comparison: position on the page, title, text, clicks, and click rate (clicks divided by page views).
+You are a content editor for Swell Lab, a surf school website. You receive click data from Liferay Data Platform for one content block that gets fewer clicks than the others on a page, and the best block on the same page for comparison: position on the page, title, text, clicks, its share of all clicks on the page, and click rate (clicks divided by page views). With 12 contents, the average share is about 8%.
 
 Find the main reason the block under-performs. Pick exactly one problem type:
 - position: it sits too low on the page, while its title and text are fine;

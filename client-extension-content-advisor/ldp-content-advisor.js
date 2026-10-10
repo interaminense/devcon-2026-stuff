@@ -27,18 +27,28 @@
 		}
 
 		.ldp-advisor-badge {
-			background: var(--ldp-advisor-color);
+			background: rgba(11, 79, 108, 0.88);
 			border: 0;
 			border-radius: 999px;
 			box-shadow: 0 4px 12px rgba(29, 43, 54, 0.25);
 			color: #fff;
-			cursor: pointer;
+			cursor: default;
 			font: 600 12px/1 Inter, system-ui, sans-serif;
 			left: 12px;
 			padding: 8px 12px;
 			position: absolute;
 			top: 12px;
 			z-index: 5;
+		}
+
+		.ldp-advisor-badge:disabled {
+			color: #fff;
+			opacity: 1;
+		}
+
+		.ldp-advisor-badge--weak {
+			background: var(--ldp-advisor-color);
+			cursor: pointer;
 		}
 
 		.ldp-advisor-popover {
@@ -251,7 +261,8 @@
 			`title: ${block.title}`,
 			`text: ${block.text}`,
 			`clicks: ${block.clicks}`,
-			`click rate: ${percent(block.rate)}`,
+			`share of all clicks on the page: ${percent(block.share)}`,
+			`click rate (clicks per page view): ${percent(block.rate)}`,
 		].join('\n');
 	}
 
@@ -260,7 +271,8 @@
 			`page: ${document.title.split(' - ')[0]}`,
 			`period: ${RANGE_LABEL}`,
 			`page views: ${analysis.views}`,
-			`average click rate: ${percent(analysis.average)}`,
+			`total clicks on the page: ${analysis.totalClicks}`,
+			`average share per content: ${percent(analysis.average)}`,
 			'',
 			describe(weak, 'CONTENT TO IMPROVE'),
 			'',
@@ -431,22 +443,25 @@
 					getPageViews(),
 				]);
 
+				const totalClicks = this.blocks.reduce(
+					(sum, block) => sum + (clicks.get(block.id) || 0),
+					0
+				);
+
+				// Each block's share of all the clicks on the page drives both
+				// the ranking and the badge; the rate per page view only goes
+				// to the agent
+
 				for (const block of this.blocks) {
 					block.clicks = clicks.get(block.id) || 0;
 					block.rate = views ? block.clicks / views : 0;
+					block.share = totalClicks ? block.clicks / totalClicks : 0;
 					block.total = this.blocks.length;
 				}
 
-				const average =
-					this.blocks.reduce((sum, block) => sum + block.rate, 0) /
-					this.blocks.length;
+				const average = 1 / this.blocks.length;
 
-				this.analysis = {average, views};
-
-				const totalClicks = this.blocks.reduce(
-					(sum, block) => sum + block.clicks,
-					0
-				);
+				this.analysis = {average, totalClicks, views};
 
 				if (!totalClicks) {
 					this.weak = [];
@@ -456,12 +471,13 @@
 					return;
 				}
 
-				const ranked = [...this.blocks].sort((a, b) => a.rate - b.rate);
+				const ranked = [...this.blocks].sort((a, b) => a.share - b.share);
+
 
 				this.best = ranked[ranked.length - 1];
 
 				this.weak = ranked
-					.filter((block) => block.rate < average)
+					.filter((block) => block.share < average)
 					.slice(0, COLORS.length);
 
 				this.renderToggle(
@@ -518,25 +534,41 @@
 				return;
 			}
 
-			(this.weak || []).forEach((block, index) => {
-				block.element.classList.add('ldp-advisor-weak');
-				block.element.style.setProperty('--ldp-advisor-color', COLORS[index]);
+			// Every block gets a badge with its share of the clicks; only the
+			// weakest ones are outlined and can ask the agent
+
+			for (const block of this.blocks || []) {
+				const index = (this.weak || []).indexOf(block);
 
 				const badge = document.createElement('button');
 
 				badge.className = 'ldp-advisor-badge';
+				badge.textContent = `✦ ${percent(block.share)} of clicks`;
 				badge.type = 'button';
-				badge.textContent = `✦ ${block.clicks} ${block.clicks === 1 ? 'click' : 'clicks'} · ${percent(block.rate)} · position ${block.position}`;
 
-				badge.addEventListener('click', (event) => {
-					event.preventDefault();
-					event.stopPropagation();
+				if (index >= 0) {
+					block.element.classList.add('ldp-advisor-weak');
+					block.element.style.setProperty(
+						'--ldp-advisor-color',
+						COLORS[index]
+					);
 
-					this.openSuggestion(block);
-				});
+					badge.classList.add('ldp-advisor-badge--weak');
+					badge.title = 'Ask AI Hub how to improve this content';
+
+					badge.addEventListener('click', (event) => {
+						event.preventDefault();
+						event.stopPropagation();
+
+						this.openSuggestion(block);
+					});
+				}
+				else {
+					badge.disabled = true;
+				}
 
 				block.element.appendChild(badge);
-			});
+			}
 		}
 
 		async openSuggestion(block) {

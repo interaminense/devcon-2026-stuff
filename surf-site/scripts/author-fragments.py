@@ -1014,6 +1014,12 @@ ACADEMY_CONTENTS = [
 	("wetsuit-guide", "surf-shack.jpg", "Gear", "Wetsuit thickness by season", "Cold feet end sessions early. Which thickness to wear in every month of the year in southern Brazil.", "/book"),
 	("surf-info", "spot-reef.jpg", "General", "Information", "Some information about surfing.", "/lessons"),
 	("lineup-etiquette", "lesson-advanced.jpg", "Culture", "Surf etiquette: who has priority", "Drop-ins are the fastest way to make enemies. The five lineup rules every surfer should know before paddling out.", "/spots"),
+	("wave-choice", "hero-barrel.jpg", "Ocean", "Choose the right wave", "Not every wave is yours. How to spot the ones that will carry you, and the ones that will close out on your head.", "/spots"),
+	("paddle-power", "trip-portugal.jpg", "Technique", "Paddle longer, not harder", "Most beginners run out of energy in ten minutes. Fix your arm stroke and body position to stay out twice as long.", "/lessons"),
+	("forecast-basics", "trip-costa-rica.jpg", "Ocean", "Read a surf forecast in 3 steps", "Swell size, period, and wind direction. The three numbers that tell you if tomorrow is worth the early alarm.", "/spots"),
+	("trip-packing", "trip-bali.jpg", "Trips", "The surf trip packing list", "Board bag, leash, wax, reef booties, and the one item everyone forgets. Pack once, surf the whole week.", "/trips"),
+	("post-surf-stretch", "spot-reef.jpg", "Body", "A 10-minute stretch after surfing", "Shoulders, lower back, and hips take the hit. A short routine on the sand that keeps you surfing tomorrow.", "/lessons"),
+	("sun-care", "spot-sunset-beach.jpg", "Body", "Sun care for long sessions", "Reef-safe sunscreen, zinc, and when to reapply. Protect your skin without hurting the reefs you surf.", "/book"),
 ]
 
 
