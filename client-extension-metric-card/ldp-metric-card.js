@@ -925,12 +925,20 @@
 	function renderHeatmap(cells) {
 		const grid = Array.from({length: 7}, () => Array(24).fill(0));
 
+		// LDP answers in UTC; shift each cell to the viewer's time zone, as the
+		// LDP screens do
+
+		const offset = -new Date().getTimezoneOffset() / 60;
+
 		for (const {colDimension, rowDimension, value} of cells || []) {
 			const day = Number.parseInt(colDimension, 10);
 			const hour = Number.parseInt(rowDimension, 10);
 
 			if (day >= 0 && day < 7 && hour >= 0 && hour < 24) {
-				grid[day][hour] = value || 0;
+				const shifted = day * 24 + hour + offset;
+				const index = ((Math.round(shifted) % 168) + 168) % 168;
+
+				grid[Math.floor(index / 24)][index % 24] += value || 0;
 			}
 		}
 
@@ -951,7 +959,7 @@
 							.map((hour) => {
 								const value = grid[day][hour];
 
-								return `<span class="heatmap-cell" style="background: color-mix(in srgb, var(--ldp-accent, #0b5fff) ${value ? Math.round(15 + (value / max) * 85) : 4}%, transparent)" title="${label} ${hour}:00 UTC: ${value}"></span>`;
+								return `<span class="heatmap-cell" style="background: color-mix(in srgb, var(--ldp-accent, #0b5fff) ${value ? Math.round(15 + (value / max) * 85) : 4}%, transparent)" title="${label} ${hour}:00: ${value}"></span>`;
 							})
 							.join('')}
 					`

@@ -7,18 +7,15 @@
 
 	const OBJECT_URL = '/o/c/ldpmetriccards';
 
-	// Visitors and bounce rate come from the site query, which counts each
-	// visitor and session once, like the Sites screen of LDP. The page query
-	// without canonicalUrl adds up the pages, which is right for views and
-	// entrances but counts a visitor once per page seen.
+	// Site metrics only, as on the Sites screen of LDP: each visitor and
+	// session counts once. Page metrics belong to the live page views card.
 
 	const METRICS = [
-		{format: 'number', id: 'visitorsMetric', label: 'Unique Visitors', source: 'site'},
-		{format: 'number', id: 'viewsMetric', label: 'Views', source: 'page'},
-		{format: 'percent', id: 'bounceRateMetric', label: 'Bounce Rate', source: 'site'},
-		{format: 'duration', id: 'avgTimeOnPageMetric', label: 'Time On Page', source: 'page'},
-		{format: 'number', id: 'entrancesMetric', label: 'Entrances', source: 'page'},
-		{format: 'percent', id: 'exitRateMetric', label: 'Exit Rate', source: 'page'},
+		{format: 'number', id: 'visitorsMetric', label: 'Unique Visitors'},
+		{format: 'number', id: 'sessionsMetric', label: 'Sessions'},
+		{format: 'ratio', id: 'sessionsPerVisitorMetric', label: 'Sessions/Visitor'},
+		{format: 'duration', id: 'sessionDurationMetric', label: 'Session Duration'},
+		{format: 'percent', id: 'bounceRateMetric', label: 'Bounce Rate'},
 	];
 
 	const RANGES = [
@@ -30,35 +27,26 @@
 
 	const DEFAULT_CONFIG = {metric: METRICS[0].id, rangeKey: 0};
 
-	function metricFields(source) {
-		return METRICS.filter((metric) => metric.source === source)
-			.map(
-				({id}) => `
-					${id} {
-						histogram {
-							metrics {
-								key
-								value
-							}
-						}
-						trend {
-							percentage
-							trendClassification
-						}
-						value
-					}
-				`
-			)
-			.join('');
-	}
-
 	const QUERY = `
 		query VisitorsBehavior($channelId: String!, $interval: String!, $rangeKey: Int) {
-			page(channelId: $channelId, rangeKey: $rangeKey) {
-				${metricFields('page')}
-			}
 			site(channelId: $channelId, interval: $interval, rangeKey: $rangeKey) {
-				${metricFields('site')}
+				${METRICS.map(
+					({id}) => `
+						${id} {
+							histogram {
+								metrics {
+									key
+									value
+								}
+							}
+							trend {
+								percentage
+								trendClassification
+							}
+							value
+						}
+					`
+				).join('')}
 			}
 		}
 	`;
@@ -123,7 +111,7 @@
 		.tabs {
 			display: grid;
 			gap: 4px;
-			grid-template-columns: repeat(6, minmax(0, 1fr));
+			grid-template-columns: repeat(5, minmax(0, 1fr));
 			margin: 16px 0 8px;
 		}
 
@@ -390,6 +378,10 @@
 			return {number: Math.round(value * 1000) / 10, unit: '%'};
 		}
 
+		if (format === 'ratio') {
+			return {number: Math.round(value * 10) / 10, unit: ''};
+		}
+
 		if (format === 'duration') {
 			const seconds = Math.round(value / 1000);
 
@@ -405,7 +397,7 @@
 			};
 		}
 
-		return {number: Math.round(value).toLocaleString(), unit: ''};
+		return {number: (Math.round(value * 10) / 10).toLocaleString(), unit: ''};
 	}
 
 	function formatText(value, format) {
@@ -622,9 +614,7 @@
 					throw new Error(errors[0].message);
 				}
 
-				this._data = Object.fromEntries(
-					METRICS.map(({id, source}) => [id, data[source]?.[id]])
-				);
+				this._data = data.site || {};
 				this._elapsed = Math.round(performance.now() - startedAt);
 			}
 			catch (error) {
