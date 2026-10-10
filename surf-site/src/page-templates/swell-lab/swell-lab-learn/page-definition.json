@@ -1,0 +1,80 @@
+{
+	"pageElement": {
+		"pageElements": [
+			{
+				"definition": {
+					"fragment": {
+						"key": "sl-page-hero"
+					},
+					"fragmentConfig": {},
+					"fragmentFields": [
+						{
+							"id": "text",
+							"value": {
+								"text": {
+									"value_i18n": {
+										"en_US": "Guides from our coaches to help you surf better, on land and in the water."
+									}
+								}
+							}
+						},
+						{
+							"id": "title",
+							"value": {
+								"text": {
+									"value_i18n": {
+										"en_US": "Surf Academy"
+									}
+								}
+							}
+						},
+						{
+							"id": "image",
+							"value": {
+								"fragmentImage": {
+									"description": {
+										"value_i18n": {
+											"en_US": ""
+										}
+									},
+									"url": {
+										"value_i18n": {
+											"en_US": "/documents/d/guest/spot-sunset-beach-jpg?download=true"
+										}
+									}
+								}
+							}
+						}
+					]
+				},
+				"type": "Fragment"
+			},
+			{
+				"definition": {
+					"fragment": {
+						"key": "sl-academy"
+					},
+					"fragmentConfig": {},
+					"fragmentFields": []
+				},
+				"type": "Fragment"
+			},
+			{
+				"definition": {
+					"fragment": {
+						"key": "sl-cta"
+					},
+					"fragmentConfig": {},
+					"fragmentFields": []
+				},
+				"type": "Fragment"
+			}
+		],
+		"type": "Root"
+	},
+	"settings": {
+		"masterPage": {
+			"key": "swell-lab"
+		}
+	}
+}

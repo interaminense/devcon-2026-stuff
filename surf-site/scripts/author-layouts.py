@@ -253,6 +253,15 @@ TEMPLATES["swell-lab-dashboard"] = (
 	],
 )
 
+TEMPLATES["swell-lab-learn"] = (
+	"Swell Lab Learn",
+	[
+		banner_fragment("Surf Academy", "Guides from our coaches to help you surf better, on land and in the water.", "spot-sunset-beach"),
+		fragment("sl-academy"),
+		fragment("sl-cta"),
+	],
+)
+
 collection = os.path.join(ROOT, "page-templates/swell-lab")
 
 write_json(os.path.join(collection, "page-template-collection.json"), {"name": "Swell Lab"})

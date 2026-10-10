@@ -61,3 +61,57 @@ These settings come from the AI Hub source as built on 2026-06-09; the current A
 ## Firewall
 
 AI Hub sits behind a firewall that rejects request bodies whose context carries nested JSON, answering with an HTML 403 without CORS headers. The cards therefore send the summary as plain text lines (`metric: ...`, `period: ...`, `valuesOverTime: key ..., value ...; ...`). The prompt above refers to "a summary" for that reason; an agent created with the earlier "JSON summary" wording still works.
+
+# AI Hub Agent: DevCon 2026 · LDP Content Advisor
+
+Used by the Content Advisor client extension on `/learn`. It receives one under-performing content block of the page (its position, title, text, clicks, and click rate) plus the best block for comparison, and suggests how to improve it.
+
+## Workflow
+
+Duplicate **Make Shorter** again and change the copy:
+
+| Setting | Value |
+|---|---|
+| Workflow name | `DevCon 2026 LDP Content Advisor` |
+| LLM node name | `ldpContentAdvisor` |
+| Input variables | `[{"name":"contents","type":"string"}]` |
+| Output variables | `[{"name":"suggestions","type":"string"}]` |
+| Tools / RAG | none |
+
+**Prompt** (system message):
+
+```
+You are a content editor for Swell Lab, a surf school website. You receive click data from Liferay Data Platform for one content block that gets fewer clicks than the others on a page, and the best block on the same page for comparison: position on the page, title, text, clicks, and click rate (clicks divided by page views).
+
+Find the main reason the block under-performs. Pick exactly one problem type:
+- position: it sits too low on the page, while its title and text are fine;
+- unappealing: the title is generic and promises no clear benefit;
+- poor text: the text is too short, vague, or has no call to action.
+
+Answer in exactly four lines, with these labels and nothing else:
+Problem: <position, unappealing, or poor text> - <one short sentence citing the numbers>
+Suggestion: <one concrete action for the page admin>
+New title: <a better title, at most 8 words>
+New text: <a better text, at most 30 words, in the tone of the best block>
+
+Rules: plain text, no markdown. Never invent numbers that are not in the data. If the problem is only the position, still write a new title and text that keep the original meaning.
+```
+
+**User message**:
+
+```
+Content data:
+{{contents}}
+```
+
+## Agent Definition
+
+| Field | Value |
+|---|---|
+| Enable agent | on |
+| Title | `DevCon 2026 · LDP Content Advisor` |
+| External reference code | `DEVCON_2026_LDP_CONTENT_ADVISOR` |
+| Description | `Suggests how to improve an under-performing content block of the Swell Lab site (DEVCON 2026), from its Liferay Data Platform click data. Use only for LDP content advice.` |
+| Input variables | `contents` |
+| Output variable | `suggestions` |
+| Workflow | `DevCon 2026 LDP Content Advisor` |

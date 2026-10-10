@@ -28,6 +28,7 @@ fragment(
 			<a href="/lessons">Lessons</a>
 			<a href="/trips">Trips</a>
 			<a href="/spots">Spots</a>
+			<a href="/learn">Learn</a>
 		</nav>
 
 		<a class="sl-button sl-button--accent" data-lfr-editable-id="cta" data-lfr-editable-type="link" href="/book">Book a lesson</a>
@@ -1003,6 +1004,77 @@ ldp-visitors-behavior {
 }
 """,
 	icon="analytics",
+)
+
+
+ACADEMY_CONTENTS = [
+	("board-guide", "lesson-beginner.jpg", "Gear", "How to pick your first board", "Volume, length, and shape decide how fast you stand up. A simple guide to choosing the foam board that makes your first waves easy.", "/lessons"),
+	("tide-101", "spot-sunset-beach.jpg", "Ocean", "Read the tide like a local", "Low, mid, or high? Learn the three tide windows that turn a flat beach into perfect peaks, with real examples from Praia do Rosa.", "/spots"),
+	("pop-up-drill", "lesson-intermediate.jpg", "Technique", "The 5-minute pop-up drill", "Practice the move that gets you on your feet. Do it at home before your first lesson and stand up on day one.", "/lessons"),
+	("wetsuit-guide", "surf-shack.jpg", "Gear", "Wetsuit thickness by season", "Cold feet end sessions early. Which thickness to wear in every month of the year in southern Brazil.", "/book"),
+	("surf-info", "spot-reef.jpg", "General", "Information", "Some information about surfing.", "/lessons"),
+	("lineup-etiquette", "lesson-advanced.jpg", "Culture", "Surf etiquette: who has priority", "Drop-ins are the fastest way to make enemies. The five lineup rules every surfer should know before paddling out.", "/spots"),
+]
+
+
+def academy_card(index, content_id, image, tag, title, text, href):
+	return f"""
+		<article class="sl-card sl-academy__item" data-content-id="{content_id}">
+			<img alt="" class="sl-card__image" data-lfr-editable-id="image-{index}" data-lfr-editable-type="image" src="[resources:{image}]" />
+
+			<div class="sl-card__body">
+				<span class="sl-tag" data-lfr-editable-id="tag-{index}" data-lfr-editable-type="text">{tag}</span>
+
+				<h3 class="sl-card__title" data-content-title data-lfr-editable-id="title-{index}" data-lfr-editable-type="text">{title}</h3>
+
+				<p class="sl-card__text" data-content-text data-lfr-editable-id="text-{index}" data-lfr-editable-type="text">{text}</p>
+
+				<a class="sl-card__link" data-lfr-editable-id="link-{index}" data-lfr-editable-type="link" href="{href}">Read more &rarr;</a>
+			</div>
+		</article>"""
+
+
+fragment(
+	"sl-academy",
+	"Swell Lab Academy",
+	f"""
+<section class="sl-section sl-academy">
+	<div class="sl-container">
+		<div class="sl-section__eyebrow" data-lfr-editable-id="eyebrow" data-lfr-editable-type="text">Surf Academy</div>
+
+		<h2 class="sl-section__title" data-lfr-editable-id="title" data-lfr-editable-type="text">Learn before you paddle out</h2>
+
+		<p class="sl-section__lead" data-lfr-editable-id="lead" data-lfr-editable-type="text">Short guides from our coaches. Read one tonight and surf better tomorrow.</p>
+
+		<div class="sl-grid">{"".join(academy_card(i + 1, *content) for i, content in enumerate(ACADEMY_CONTENTS))}
+		</div>
+	</div>
+</section>
+""",
+	CARD_LINK_CSS + """
+.sl-academy__item {
+	position: relative;
+}
+""",
+	"""
+// Every click on a content block sends the surfContentClicked custom event to
+// LDP, with the block's id, its current title, and its position on the page
+
+fragmentElement.querySelectorAll('[data-content-id]').forEach((item, index) => {
+	item.addEventListener('click', (event) => {
+		if (!event.target.closest('a')) {
+			return;
+		}
+
+		window.Analytics?.track('surfContentClicked', {
+			contentId: item.dataset.contentId,
+			contentTitle: item.querySelector('[data-content-title]')?.textContent.trim(),
+			position: index + 1,
+		});
+	});
+});
+""",
+	icon="cards2",
 )
 
 

@@ -341,9 +341,10 @@
 
 			this.classList.add('ldp-live');
 
-			// Start minimized over the dashboard so it does not cover the cards
+			// Start minimized over the dashboard and the content advisor, so it does
+			// not cover the page
 
-			this.collapsed = Boolean(document.querySelector('ldp-metric-card'));
+			this.collapsed = Boolean(document.querySelector('ldp-metric-card, [data-content-id]'));
 
 			this.addEventListener('click', (event) => this.onClick(event));
 			this.addEventListener('mousemove', (event) => this.onHover(event));
@@ -379,7 +380,7 @@
 			this.recent = [];
 			this.state = null;
 
-			this.collapsed = Boolean(document.querySelector('ldp-metric-card'));
+			this.collapsed = Boolean(document.querySelector('ldp-metric-card, [data-content-id]'));
 
 			this.stop();
 			this.render();

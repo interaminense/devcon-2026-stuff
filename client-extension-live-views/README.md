@@ -47,4 +47,4 @@ Signed-in users keep getting the previous version for up to 10 minutes (`max-age
 
 ## Navigation
 
-Liferay moves between pages without reloading the document (SPA navigation), so the card listens to Liferay's `endNavigate` event: it clears the counts of the previous page, starts minimized again if the new page holds metric cards, and polls right away. The script also mounts the card again after a navigation if the body content was replaced. The client extension URL is `?v=3` since this change.
+Liferay moves between pages without reloading the document (SPA navigation), so the card listens to Liferay's `endNavigate` event: it clears the counts of the previous page, starts minimized again if the new page holds metric cards, and polls right away. The script also mounts the card again after a navigation if the body content was replaced. The client extension URL is `?v=4` now; since then the card also starts minimized on pages with content advisor blocks.

@@ -48,6 +48,10 @@ All cards start on the last 24 hours. Page metrics show up in about 40 seconds; 
 
 Layout rows (`.lfr-layout-structure-item-row`) have `overflow: hidden`, which clipped the card's settings popover at the bottom of each row. `sl-dashboard-header` sets them back to `overflow: visible` inside `.sl-dashboard`.
 
+## Learn Page and Content Advisor
+
+`/learn` (Surf Academy, added on 2026-10-10, in the main navigation) holds the `sl-academy` fragment: six content blocks with a fixed `data-content-id`, editable title and text, and a link that sends the `surfContentClicked` custom event (`contentId`, `contentTitle`, `position`). One block, *Information* at position 5, is weak on purpose (generic title, one-line text) so the advisor has something to point at in the demo. The *LDP Content Advisor* client extension (`../client-extension-content-advisor`) outlines the blocks with the lowest click rate for signed-in users and asks an AI Hub agent how to improve them.
+
 ## Out of Scope
 
 A coded theme, real Commerce, multilingual content, and a blog.
