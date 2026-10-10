@@ -27,28 +27,58 @@
 		}
 
 		.ldp-advisor-badge {
-			background: rgba(11, 79, 108, 0.88);
-			border: 0;
-			border-radius: 999px;
-			box-shadow: 0 4px 12px rgba(29, 43, 54, 0.25);
-			color: #fff;
-			cursor: default;
-			font: 600 12px/1 Inter, system-ui, sans-serif;
+			align-items: center;
+			display: flex;
+			gap: 6px;
 			left: 12px;
-			padding: 8px 12px;
 			position: absolute;
 			top: 12px;
 			z-index: 5;
 		}
 
-		.ldp-advisor-badge:disabled {
+		.ldp-advisor-label {
+			background: rgba(11, 79, 108, 0.88);
+			border-radius: 999px;
+			box-shadow: 0 4px 12px rgba(29, 43, 54, 0.25);
+			box-sizing: border-box;
 			color: #fff;
-			opacity: 1;
+			font: 600 12px/1 Inter, system-ui, sans-serif;
+			height: 30px;
+			padding: 9px 12px;
 		}
 
-		.ldp-advisor-badge--weak {
+		.ldp-advisor-badge--weak .ldp-advisor-label {
 			background: var(--ldp-advisor-color);
+		}
+
+		.ldp-advisor-ai {
+			align-items: center;
+			background: #fff;
+			border: 2px solid var(--ldp-advisor-color);
+			border-radius: 50%;
+			box-shadow: 0 4px 12px rgba(29, 43, 54, 0.25);
+			box-sizing: border-box;
+			color: var(--ldp-advisor-color);
 			cursor: pointer;
+			display: flex;
+			height: 30px;
+			justify-content: center;
+			padding: 0;
+			transition: transform 0.15s ease;
+			width: 30px;
+		}
+
+		.ldp-advisor-ai:hover,
+		.ldp-advisor-ai:focus-visible {
+			background: var(--ldp-advisor-color);
+			color: #fff;
+			outline: none;
+			transform: scale(1.08);
+		}
+
+		.ldp-advisor-ai svg {
+			height: 16px;
+			width: 16px;
 		}
 
 		.ldp-advisor-popover {
@@ -122,6 +152,11 @@
 	`;
 
 	const COLORS = ['#e2574f', '#e0932b'];
+
+	// Sparkles, the usual AI mark
+
+	const AI_ICON =
+		'<svg aria-hidden="true" fill="currentColor" viewBox="0 0 24 24"><path d="M10 2.5l1.6 4.9a4 4 0 0 0 2.5 2.5L19 11.5l-4.9 1.6a4 4 0 0 0-2.5 2.5L10 20.5l-1.6-4.9a4 4 0 0 0-2.5-2.5L1 11.5l4.9-1.6a4 4 0 0 0 2.5-2.5z"/><path d="M19 1l.7 2.1a1.5 1.5 0 0 0 1 1L23 4.8l-2.1.7a1.5 1.5 0 0 0-1 1L19 8.6l-.7-2.1a1.5 1.5 0 0 0-1-1L15 4.8l2.1-.7a1.5 1.5 0 0 0 1-1z"/></svg>';
 
 	async function request(url, options = {}) {
 		const response = await fetch(url, {
@@ -552,17 +587,17 @@
 				return;
 			}
 
-			// Every block gets a badge with its share of the clicks; only the
-			// weakest ones are outlined and can ask the agent
+			// Every block gets a label with its share of the clicks; the
+			// weakest ones are outlined and get a round AI button next to the
+			// label that opens the agent's suggestion
 
 			for (const block of this.blocks || []) {
 				const index = (this.weak || []).indexOf(block);
 
-				const badge = document.createElement('button');
+				const badge = document.createElement('div');
 
 				badge.className = 'ldp-advisor-badge';
-				badge.textContent = `✦ ${percent(block.share)} of clicks`;
-				badge.type = 'button';
+				badge.innerHTML = `<span class="ldp-advisor-label">${percent(block.share)} of clicks</span>`;
 
 				if (index >= 0) {
 					block.element.classList.add('ldp-advisor-weak');
@@ -572,17 +607,27 @@
 					);
 
 					badge.classList.add('ldp-advisor-badge--weak');
-					badge.title = 'Ask AI Hub how to improve this content';
 
-					badge.addEventListener('click', (event) => {
+					const button = document.createElement('button');
+
+					button.className = 'ldp-advisor-ai';
+					button.innerHTML = AI_ICON;
+					button.title = 'AI suggestion';
+					button.type = 'button';
+
+					button.setAttribute(
+						'aria-label',
+						`Ask AI Hub how to improve "${block.title}"`
+					);
+
+					button.addEventListener('click', (event) => {
 						event.preventDefault();
 						event.stopPropagation();
 
 						this.openSuggestion(block);
 					});
-				}
-				else {
-					badge.disabled = true;
+
+					badge.appendChild(button);
 				}
 
 				block.element.appendChild(badge);

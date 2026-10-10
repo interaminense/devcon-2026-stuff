@@ -6,9 +6,9 @@ A JavaScript client extension that, for signed-in users, outlines the content bl
 
 1. **Clicks.** Each block of the `sl-academy` fragment has a fake *Read more* button that navigates nowhere and only sends `Analytics.track('surfContentClicked', {contentId, contentTitle, position})`.
 1. **Counting.** The advisor finds the event definition with `eventDefinitions(eventType: CUSTOM, keyword: "surfContentClicked")` and counts clicks per block with `eventAnalysisResult`, broken down by the `contentId` attribute. LDP creates the definition on the first click, so no definition means no clicks yet.
-1. **Share.** Each block's share of all the clicks on the page, over the last 24 hours (`RANGE_KEY`). Every block shows it in a badge (`✦ 18% of clicks`); counts and positions stay out of the UI.
-1. **Outline.** Blocks below the average share (1 ÷ number of blocks) are outlined, at most two: red for the weakest, orange for the next. Only their badges open a suggestion.
-1. **Suggestion.** Clicking an outlined block's badge sends its position, title, text, clicks, share, and click rate per page view (`page(canonicalUrl, rangeKey)`), plus the best block for comparison, to the `DEVCON_2026_LDP_CONTENT_ADVISOR` agent (see `../ai-hub/README.md`) as plain text, and shows the answer (problem, suggestion, new title, new text) in a popover. Answers are cached until the data changes.
+1. **Share.** Each block's share of all the clicks on the page, over the last 24 hours (`RANGE_KEY`). Every block shows it in a label (`18% of clicks`); counts and positions stay out of the UI.
+1. **Outline.** Blocks below the average share (1 ÷ number of blocks) are outlined, at most two: red for the weakest, orange for the next. Next to their label sits a round AI button (sparkles icon) that opens the suggestion.
+1. **Suggestion.** Clicking an outlined block's AI button sends its position, title, text, clicks, share, and click rate per page view (`page(canonicalUrl, rangeKey)`), plus the best block for comparison, to the `DEVCON_2026_LDP_CONTENT_ADVISOR` agent (see `../ai-hub/README.md`) as plain text, and shows the answer (problem, suggestion, new title, new text) in a popover. Answers are cached until the data changes.
 1. **Toggle.** A floating *Content advisor: on/off* button hides the outlines.
 
 The title and text are read from the page itself, so after the admin edits a block in the page editor, the next analysis uses the new copy.
@@ -18,7 +18,7 @@ The title and text are read from the page itself, so after the admin edits a blo
 | Item | Value |
 |---|---|
 | Document | `ldp-content-advisor.js` in Guest Documents & Media, viewable by anyone (guests load it but it does nothing for them) |
-| Client extension | *LDP Content Advisor*, type JavaScript, URL `…/documents/d/guest/ldp-content-advisor-js?v=4` |
+| Client extension | *LDP Content Advisor*, type JavaScript, URL `…/documents/d/guest/ldp-content-advisor-js?v=5` |
 | Applied in | *Site Builder → Pages → Configuration → Design → JavaScript*, *In Page Bottom* |
 
 ## Gotchas
