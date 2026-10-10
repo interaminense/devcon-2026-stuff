@@ -178,20 +178,26 @@ METRIC_CARD_PORTLET = (
 	"26689402450212_52b9ea1e_eb7b_9cf2_96a4_3d964b3a548d"
 )
 
+VISITORS_BEHAVIOR_PORTLET = (
+	"com_liferay_client_extension_web_internal_portlet_ClientExtensionEntryPortlet_"
+	"26689402450212_e518ecf2_d2d7_b8b6_e580_97a62088fdf0"
+)
+
 DASHBOARD_ROWS = [
+	[(12, "behavior", VISITORS_BEHAVIOR_PORTLET)],
 	[(4, "visitors"), (4, "sessions"), (4, "bouncerate")],
 	[(7, "toppages"), (5, "acquisition")],
 	[(7, "heatmap"), (5, "devices")],
 ]
 
 
-def metric_card(instance_id):
+def metric_card(instance_id, portlet=METRIC_CARD_PORTLET):
 	return {
 		"definition": {
 			"widgetInstance": {
 				"widgetConfig": {"portletSetupPortletDecoratorId": "barebone"},
 				"widgetInstanceId": instance_id,
-				"widgetName": METRIC_CARD_PORTLET,
+				"widgetName": portlet,
 			}
 		},
 		"type": "Widget",
@@ -222,10 +228,11 @@ def row(columns):
 					],
 					"size": size,
 				},
-				"pageElements": [metric_card(instance_id)],
+				"pageElements": [metric_card(*column[1:])],
 				"type": "Column",
 			}
-			for size, instance_id in columns
+			for column in columns
+			for size in [column[0]]
 		],
 		"type": "Row",
 	}
