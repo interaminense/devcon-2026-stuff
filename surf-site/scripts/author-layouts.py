@@ -276,4 +276,45 @@ for key, (name, elements) in TEMPLATES.items():
 		},
 	)
 
-print("style book, master page, and", len(TEMPLATES), "page templates")
+# Utility pages
+
+sign_in = os.path.join(ROOT, "utility-pages/layout-utility-page-template/SWELL-LAB-SIGN-IN")
+
+write_json(
+	os.path.join(sign_in, "utility-page.json"),
+	{"externalReferenceCode": "SWELL-LAB-SIGN-IN", "name": "Swell Lab Sign In", "type": "Login"},
+)
+write_json(
+	os.path.join(sign_in, "page-definition.json"),
+	{
+		"pageElement": {
+			"pageElements": [
+				{
+					"definition": {"fragment": {"key": "sl-sign-in"}, "fragmentConfig": {}, "fragmentFields": []},
+					"pageElements": [
+						{
+							"definition": {"fragmentDropZoneId": "form"},
+							"pageElements": [
+								{
+									"definition": {
+										"widgetInstance": {
+											"widgetConfig": {"portletSetupPortletDecoratorId": "borderless"},
+											"widgetName": "com_liferay_login_web_portlet_LoginPortlet",
+										}
+									},
+									"type": "Widget",
+								}
+							],
+							"type": "FragmentDropZone",
+						}
+					],
+					"type": "Fragment",
+				}
+			],
+			"type": "Root",
+		},
+		"settings": {"masterPage": {"key": "swell-lab"}},
+	},
+)
+
+print("style book, master page,", len(TEMPLATES), "page templates, and 1 utility page")

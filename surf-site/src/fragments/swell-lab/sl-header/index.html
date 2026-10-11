@@ -11,8 +11,14 @@
 			<a href="/trips">Trips</a>
 			<a href="/spots">Spots</a>
 			<a href="/learn">Learn</a>
+			<a class="sl-header__signed-in" hidden href="/dashboard">Dashboard</a>
 		</nav>
 
-		<a class="sl-button sl-button--accent" data-lfr-editable-id="cta" data-lfr-editable-type="link" href="/book">Book a lesson</a>
+		<div class="sl-header__actions">
+			<a class="sl-header__account sl-header__signed-out" href="/c/portal/login">Sign in</a>
+			<a class="sl-header__account sl-header__signed-in" hidden href="/c/portal/logout">Sign out</a>
+
+			<a class="sl-button sl-button--accent" data-lfr-editable-id="cta" data-lfr-editable-type="link" href="/book">Book a lesson</a>
+		</div>
 	</div>
 </header>

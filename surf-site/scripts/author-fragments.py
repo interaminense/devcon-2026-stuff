@@ -29,9 +29,15 @@ fragment(
 			<a href="/trips">Trips</a>
 			<a href="/spots">Spots</a>
 			<a href="/learn">Learn</a>
+			<a class="sl-header__signed-in" hidden href="/dashboard">Dashboard</a>
 		</nav>
 
-		<a class="sl-button sl-button--accent" data-lfr-editable-id="cta" data-lfr-editable-type="link" href="/book">Book a lesson</a>
+		<div class="sl-header__actions">
+			<a class="sl-header__account sl-header__signed-out" href="/c/portal/login">Sign in</a>
+			<a class="sl-header__account sl-header__signed-in" hidden href="/c/portal/logout">Sign out</a>
+
+			<a class="sl-button sl-button--accent" data-lfr-editable-id="cta" data-lfr-editable-type="link" href="/book">Book a lesson</a>
+		</div>
 	</div>
 </header>
 """,
@@ -216,6 +222,27 @@ body h4,
 	color: var(--sl-accent-dark);
 }
 
+.sl-header__actions {
+	align-items: center;
+	display: flex;
+	gap: 20px;
+}
+
+.sl-header__account {
+	color: var(--sl-primary);
+	font-weight: 600;
+	text-decoration: none;
+}
+
+.sl-header__account:hover {
+	color: var(--sl-accent-dark);
+	text-decoration: none;
+}
+
+.sl-header [hidden] {
+	display: none !important;
+}
+
 @media (max-width: 640px) {
 	.sl-header__inner {
 		gap: 12px 16px;
@@ -236,6 +263,27 @@ body h4,
 	.sl-header .sl-button {
 		padding: 10px 18px;
 	}
+
+	.sl-header__actions {
+		gap: 14px;
+	}
+}
+""",
+	"""
+const signedIn = themeDisplay.isSignedIn();
+
+fragmentElement.querySelectorAll('.sl-header__signed-in').forEach((element) => {
+	element.hidden = !signedIn;
+});
+
+fragmentElement.querySelectorAll('.sl-header__signed-out').forEach((element) => {
+	element.hidden = signedIn;
+});
+
+const signIn = fragmentElement.querySelector('.sl-header__signed-out');
+
+if (signIn && !signedIn && !location.pathname.includes('sign-in')) {
+	signIn.href = '/c/portal/login?redirect=' + encodeURIComponent(location.pathname + location.search);
 }
 """,
 	icon="nav",
@@ -1091,6 +1139,211 @@ fragmentElement.querySelectorAll('[data-content-id]').forEach((item, index) => {
 });
 """,
 	icon="cards2",
+)
+
+
+fragment(
+	"sl-sign-in",
+	"Swell Lab Sign In",
+	"""
+<section class="sl-sign-in">
+	<div class="sl-container">
+		<div class="sl-sign-in__card">
+			<div class="sl-sign-in__photo" style="background-image: url('[resources:hero-barrel.jpg]');">
+				<div class="sl-sign-in__photo-text">
+					<p class="sl-sign-in__eyebrow">Swell Lab crew</p>
+
+					<p class="sl-sign-in__quote" data-lfr-editable-id="quote" data-lfr-editable-type="text">Check the bookings, the lineup, and how the site is doing today.</p>
+				</div>
+			</div>
+
+			<div class="sl-sign-in__body">
+				<h1 class="sl-sign-in__title" data-lfr-editable-id="title" data-lfr-editable-type="text">Welcome back</h1>
+
+				<p class="sl-sign-in__lead" data-lfr-editable-id="lead" data-lfr-editable-type="text">Sign in to open the surf school dashboard.</p>
+
+				<lfr-drop-zone data-lfr-drop-zone-id="form"></lfr-drop-zone>
+			</div>
+		</div>
+	</div>
+</section>
+""",
+	"""
+.sl-sign-in {
+	padding: 64px 0 96px;
+}
+
+.sl-sign-in__card {
+	background-color: var(--sl-white);
+	border-radius: 24px;
+	box-shadow: 0 24px 60px rgba(11, 79, 108, 0.12);
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	margin: 0 auto;
+	max-width: 980px;
+	overflow: hidden;
+}
+
+.sl-sign-in__photo {
+	background-position: center;
+	background-size: cover;
+	display: flex;
+	min-height: 520px;
+	position: relative;
+}
+
+.sl-sign-in__photo::before {
+	background: linear-gradient(180deg, rgba(11, 79, 108, 0) 35%, rgba(11, 79, 108, 0.85) 100%);
+	content: '';
+	inset: 0;
+	position: absolute;
+}
+
+.sl-sign-in__photo-text {
+	align-self: flex-end;
+	color: var(--sl-white);
+	padding: 36px;
+	position: relative;
+}
+
+.sl-sign-in__eyebrow {
+	color: var(--sl-accent);
+	font-size: 13px;
+	font-weight: 600;
+	letter-spacing: 0.12em;
+	margin-bottom: 8px;
+	text-transform: uppercase;
+}
+
+.sl-sign-in__quote {
+	font-family: Poppins, Inter, system-ui, sans-serif;
+	font-size: 22px;
+	font-weight: 600;
+	line-height: 1.35;
+	margin: 0;
+}
+
+.sl-sign-in__body {
+	padding: 56px 48px;
+}
+
+.sl-sign-in .sl-sign-in__title {
+	font-size: 34px;
+	margin-bottom: 8px;
+}
+
+.sl-sign-in__lead {
+	color: var(--sl-muted);
+	margin-bottom: 28px;
+}
+
+.sl-sign-in .portlet-header,
+.sl-sign-in .portlet-title-default,
+.sl-sign-in .portlet-options {
+	display: none;
+}
+
+.sl-sign-in .portlet-content,
+.sl-sign-in .portlet-body {
+	background: none;
+	border: 0;
+	padding: 0;
+}
+
+.sl-sign-in .sign-in-form .panel,
+.sl-sign-in .sign-in-form .panel-body {
+	background: none;
+	border: 0;
+	margin: 0;
+	padding: 0;
+}
+
+.sl-sign-in .sign-in-form .form-group {
+	margin-bottom: 18px;
+}
+
+.sl-sign-in .sign-in-form label {
+	color: var(--sl-primary);
+	font-size: 14px;
+	font-weight: 600;
+}
+
+.sl-sign-in .sign-in-form .form-control {
+	background-color: var(--sl-sand);
+	border: 2px solid transparent;
+	border-radius: 12px;
+	color: var(--sl-ink);
+	height: 48px;
+	padding: 0 16px;
+}
+
+.sl-sign-in .sign-in-form .form-control:focus {
+	background-color: var(--sl-white);
+	border-color: var(--sl-accent);
+	box-shadow: 0 0 0 4px rgba(32, 201, 195, 0.18);
+}
+
+.sl-sign-in .sign-in-form .btn-primary {
+	background-color: var(--sl-accent);
+	border: 0;
+	border-radius: 999px;
+	color: var(--sl-primary);
+	font-weight: 600;
+	padding: 12px 26px;
+	width: 100%;
+}
+
+.sl-sign-in .sign-in-form .btn-primary:hover,
+.sl-sign-in .sign-in-form .btn-primary:focus {
+	background-color: var(--sl-accent-dark);
+	color: var(--sl-white);
+}
+
+.sl-sign-in .sign-in-form .button-holder {
+	margin-top: 8px;
+}
+
+.sl-sign-in .navigation {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px 20px;
+	justify-content: center;
+	margin-top: 20px;
+}
+
+.sl-sign-in .navigation a {
+	color: var(--sl-primary);
+	font-size: 14px;
+	font-weight: 500;
+}
+
+.sl-sign-in .navigation a:hover {
+	color: var(--sl-accent-dark);
+}
+
+.sl-sign-in .alert {
+	border-radius: 12px;
+}
+
+@media (max-width: 760px) {
+	.sl-sign-in {
+		padding: 32px 0 64px;
+	}
+
+	.sl-sign-in__card {
+		grid-template-columns: 1fr;
+	}
+
+	.sl-sign-in__photo {
+		min-height: 200px;
+	}
+
+	.sl-sign-in__body {
+		padding: 36px 24px;
+	}
+}
+""",
+	icon="user",
 )
 
 

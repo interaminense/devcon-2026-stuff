@@ -1,0 +1,173 @@
+.sl-sign-in {
+	padding: 64px 0 96px;
+}
+
+.sl-sign-in__card {
+	background-color: var(--sl-white);
+	border-radius: 24px;
+	box-shadow: 0 24px 60px rgba(11, 79, 108, 0.12);
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	margin: 0 auto;
+	max-width: 980px;
+	overflow: hidden;
+}
+
+.sl-sign-in__photo {
+	background-position: center;
+	background-size: cover;
+	display: flex;
+	min-height: 520px;
+	position: relative;
+}
+
+.sl-sign-in__photo::before {
+	background: linear-gradient(180deg, rgba(11, 79, 108, 0) 35%, rgba(11, 79, 108, 0.85) 100%);
+	content: '';
+	inset: 0;
+	position: absolute;
+}
+
+.sl-sign-in__photo-text {
+	align-self: flex-end;
+	color: var(--sl-white);
+	padding: 36px;
+	position: relative;
+}
+
+.sl-sign-in__eyebrow {
+	color: var(--sl-accent);
+	font-size: 13px;
+	font-weight: 600;
+	letter-spacing: 0.12em;
+	margin-bottom: 8px;
+	text-transform: uppercase;
+}
+
+.sl-sign-in__quote {
+	font-family: Poppins, Inter, system-ui, sans-serif;
+	font-size: 22px;
+	font-weight: 600;
+	line-height: 1.35;
+	margin: 0;
+}
+
+.sl-sign-in__body {
+	padding: 56px 48px;
+}
+
+.sl-sign-in .sl-sign-in__title {
+	font-size: 34px;
+	margin-bottom: 8px;
+}
+
+.sl-sign-in__lead {
+	color: var(--sl-muted);
+	margin-bottom: 28px;
+}
+
+.sl-sign-in .portlet-header,
+.sl-sign-in .portlet-title-default,
+.sl-sign-in .portlet-options {
+	display: none;
+}
+
+.sl-sign-in .portlet-content,
+.sl-sign-in .portlet-body {
+	background: none;
+	border: 0;
+	padding: 0;
+}
+
+.sl-sign-in .sign-in-form .panel,
+.sl-sign-in .sign-in-form .panel-body {
+	background: none;
+	border: 0;
+	margin: 0;
+	padding: 0;
+}
+
+.sl-sign-in .sign-in-form .form-group {
+	margin-bottom: 18px;
+}
+
+.sl-sign-in .sign-in-form label {
+	color: var(--sl-primary);
+	font-size: 14px;
+	font-weight: 600;
+}
+
+.sl-sign-in .sign-in-form .form-control {
+	background-color: var(--sl-sand);
+	border: 2px solid transparent;
+	border-radius: 12px;
+	color: var(--sl-ink);
+	height: 48px;
+	padding: 0 16px;
+}
+
+.sl-sign-in .sign-in-form .form-control:focus {
+	background-color: var(--sl-white);
+	border-color: var(--sl-accent);
+	box-shadow: 0 0 0 4px rgba(32, 201, 195, 0.18);
+}
+
+.sl-sign-in .sign-in-form .btn-primary {
+	background-color: var(--sl-accent);
+	border: 0;
+	border-radius: 999px;
+	color: var(--sl-primary);
+	font-weight: 600;
+	padding: 12px 26px;
+	width: 100%;
+}
+
+.sl-sign-in .sign-in-form .btn-primary:hover,
+.sl-sign-in .sign-in-form .btn-primary:focus {
+	background-color: var(--sl-accent-dark);
+	color: var(--sl-white);
+}
+
+.sl-sign-in .sign-in-form .button-holder {
+	margin-top: 8px;
+}
+
+.sl-sign-in .navigation {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px 20px;
+	justify-content: center;
+	margin-top: 20px;
+}
+
+.sl-sign-in .navigation a {
+	color: var(--sl-primary);
+	font-size: 14px;
+	font-weight: 500;
+}
+
+.sl-sign-in .navigation a:hover {
+	color: var(--sl-accent-dark);
+}
+
+.sl-sign-in .alert {
+	border-radius: 12px;
+}
+
+@media (max-width: 760px) {
+	.sl-sign-in {
+		padding: 32px 0 64px;
+	}
+
+	.sl-sign-in__card {
+		grid-template-columns: 1fr;
+	}
+
+	.sl-sign-in__photo {
+		min-height: 200px;
+	}
+
+	.sl-sign-in__body {
+		padding: 36px 24px;
+	}
+}

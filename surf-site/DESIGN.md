@@ -48,6 +48,12 @@ All cards start on the last 24 hours. Page metrics show up in about 40 seconds; 
 
 Layout rows (`.lfr-layout-structure-item-row`) have `overflow: hidden`, which clipped the card's settings popover at the bottom of each row. `sl-dashboard-header` sets them back to `overflow: visible` inside `.sl-dashboard`.
 
+## Sign In
+
+The header shows *Sign in* to guests and *Dashboard* plus *Sign out* to signed-in users; the `sl-header` fragment script toggles them with `themeDisplay.isSignedIn()`, so the menu needs no page permissions. *Sign in* opens `/c/portal/login?redirect=<current page>`, so the visitor comes back to the same page.
+
+`/c/portal/login` redirects to the site's default *Login* utility page. The default one (`/sign-in`) used the Classic master, so `src/utility-pages` adds *Swell Lab Sign In* (`SWELL-LAB-SIGN-IN`, `/swell-lab-sign-in`): the Swell Lab master and the `sl-sign-in` fragment (a photo panel and a drop zone holding the Sign In widget, restyled by the fragment CSS). It is marked as the default Login utility page; the stock `/sign-in` stays as a fallback.
+
 ## Learn Page and Content Advisor
 
 `/learn` (Surf Academy, added on 2026-10-10, in the main navigation) holds the `sl-academy` fragment: twelve content blocks with a fixed `data-content-id`, editable title and text, and a fake *Read more* button that only sends the `surfContentClicked` custom event (`contentId`, `contentTitle`, `position`). One block, *Information* at position 5, is weak on purpose (generic title, one-line text) so the advisor has something to point at in the demo. The *LDP Content Advisor* client extension (`../client-extension-content-advisor`) outlines the blocks with the lowest click rate for signed-in users and asks an AI Hub agent how to improve them.
@@ -73,6 +79,7 @@ To rebuild:
 1. *Design → Style Books → Import* `dist/swell-lab-style-book.zip`, then mark *Swell Lab* as the default for the Classic theme.
 1. *Design → Fragments → Import* `dist/swell-lab-fragments.zip`. The photos and the logo travel as fragment resources.
 1. *Design → Page Templates → Masters → Import* `dist/swell-lab-pages.zip`. The Fragments import does not pick up master pages or page templates on this version, even though the code suggests it should.
+1. *Site Builder → Pages → Utility Pages → Import* `dist/swell-lab-utility-pages.zip`, then *Mark as Default* on *Swell Lab Sign In*.
 1. Add each page from the *Swell Lab* page template set (Home, Lessons, Trips, Spots, Book) with **no page selected**, or the pages become children of the selected one, then publish each.
 1. Create the Object: `DXP_URL=... DXP_USER=... DXP_PASSWORD=... objects/create-object-definition.sh surf-site/objects/surf-booking.object-definition.json` from the repo root.
 1. Give the Guest role the *Add Object Entry* permission on Surf Bookings, so anonymous visitors can book.

@@ -1,0 +1,43 @@
+{
+	"pageElement": {
+		"pageElements": [
+			{
+				"definition": {
+					"fragment": {
+						"key": "sl-sign-in"
+					},
+					"fragmentConfig": {},
+					"fragmentFields": []
+				},
+				"pageElements": [
+					{
+						"definition": {
+							"fragmentDropZoneId": "form"
+						},
+						"pageElements": [
+							{
+								"definition": {
+									"widgetInstance": {
+										"widgetConfig": {
+											"portletSetupPortletDecoratorId": "borderless"
+										},
+										"widgetName": "com_liferay_login_web_portlet_LoginPortlet"
+									}
+								},
+								"type": "Widget"
+							}
+						],
+						"type": "FragmentDropZone"
+					}
+				],
+				"type": "Fragment"
+			}
+		],
+		"type": "Root"
+	},
+	"settings": {
+		"masterPage": {
+			"key": "swell-lab"
+		}
+	}
+}

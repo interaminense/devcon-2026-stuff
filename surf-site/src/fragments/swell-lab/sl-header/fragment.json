@@ -2,6 +2,7 @@
 	"cssPath": "styles.css",
 	"htmlPath": "index.html",
 	"icon": "nav",
+	"jsPath": "main.js",
 	"name": "Swell Lab Header",
 	"type": "section"
 }
