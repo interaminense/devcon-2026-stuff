@@ -291,7 +291,7 @@ code = {n: (DEMO / f).read_text().rstrip('\n') for n, f in {
 
 parts = []
 
-p = Part('A', 'LDP connected to DXP', 'Topic 04')
+p = Part('1', 'LDP connected to DXP', 'Topic 04')
 p.step('say', 'Before any code: the data lives in LDP, and DXP is already connected to it. The card asks DXP, and DXP asks LDP.')
 p.step('ui', '''<ol>
 	<li>Tab 2: Control Panel &rarr; Instance Settings &rarr; Platform &rarr; <b>Analytics Cloud</b>. Point at <b>Connected</b>.</li>
@@ -302,7 +302,7 @@ p.step('ui', '''<ol>
 p.step('say', 'One property is one channel. The channel ID is all the card needs to know whose data to ask for.')
 parts.append(p)
 
-p = Part('B', 'The first client extension', 'Topic 04')
+p = Part('2', 'The first client extension', 'Topic 04')
 p.step('code', code_block('ldp-demo-card.js', None, code[1], 'A Custom Element is a plain web component: a class and a tag name.'))
 p.step('ui', '<p><strong>Host it in Documents and Media</strong></p><ol><li>Tab 3: check the site is <b>DEVCON Demo</b> &rarr; Content &amp; Data &rarr; <b>Documents and Media</b>.</li><li><b>New</b> &rarr; <b>File Upload</b> &rarr; pick the file &rarr; <b>Publish</b>.</li></ol>'
 	+ values([v('Title', 'ldp-demo-card.js'), plain('URL it gets', f'<code>{DOC_URL}</code>')]))
@@ -314,14 +314,14 @@ p.step('ui', '<p><strong>Put it on a page</strong></p><ol><li>Tab 5: DEVCON Demo
 p.step('check', '&ldquo;Hello, DEVCON 2026!&rdquo; on the page.')
 parts.append(p)
 
-p = Part('C', 'Real LDP data', 'Topic 04')
+p = Part('3', 'Real LDP data', 'Topic 04')
 p.step('say', 'The card calls DXP on the same origin, with the user&rsquo;s session and the CSRF token. DXP forwards the GraphQL query to LDP. No LDP token in the browser.')
 p.step('code', code_block('ldp-demo-card.js', code[1], code[2], 'Point at <code>CHANNEL_ID</code>, <code>RANGE_KEY = 7</code>, the <code>site</code> query and the <code>x-csrf-token</code> header.'))
 p.step(*ship(2))
 p.step('check', '&ldquo;Unique visitors: N&rdquo;, the same N as LDP on Last 7 days.')
 parts.append(p)
 
-p = Part('D', 'Two instances, one card', 'Topic 04')
+p = Part('4', 'Two instances, one card', 'Topic 04')
 p.step('say', 'Now a real card: a metric picker, the value, and the trend against the previous period, which LDP computes for us.')
 p.step('code', code_block('ldp-demo-card.js', code[2], code[3], 'Point at <code>METRICS</code> and <code>formatTrend</code>. The config lives only in memory.'))
 p.step(*ship(3))
@@ -330,7 +330,7 @@ p.step('check', 'After the reload the right card is back to Unique visitors.')
 p.step('say', 'The setting was in memory, so it is gone. A dashboard has to remember each card, separately, and we do not want a backend for that.')
 parts.append(p)
 
-p = Part('E', 'Persistence with Objects', 'Topic 05')
+p = Part('5', 'Persistence with Objects', 'Topic 05')
 p.step('ui', '<p><strong>Create the Object</strong></p><ol><li>Control Panel &rarr; Object &rarr; <b>Objects</b> &rarr; folder <b>DEVCON Demo</b> &rarr; <b>Create New Object</b> &rarr; fill in &rarr; <b>Save</b>.</li></ol>'
 	+ values([v('Label', 'Demo Card Config'), v('Plural Label', 'Demo Card Configs'), v('Object Name', 'DemoCardConfig')])
 	+ '<ol start="2"><li><b>Fields</b> &rarr; <b>Add Field</b> &rarr; fill in &rarr; <b>Save</b>.</li></ol>'
@@ -344,7 +344,7 @@ p.step('check', 'Right card stays on Sessions after the reload.')
 p.step('warn', 'A red <code>GET &hellip; 404</code> in DevTools on first load is expected: that card was never configured. After the select changes you see <code>PUT 200</code>.')
 parts.append(p)
 
-p = Part('F', 'AI Hub insight', 'Topic 05')
+p = Part('6', 'AI Hub insight', 'Topic 05')
 p.step('say', 'An AI Hub agent is an agent definition plus a workflow with an LLM node. The card sends what it shows; AI Hub never reads LDP itself.')
 p.step('ui', '<p><strong>Show the agent</strong> (already created)</p><ol><li>Tab 6: AI Hub &rarr; <b>Agent Builder</b> &rarr; <b>DevCon 2026 &middot; Demo LDP Metric Insight</b> &rarr; &#8942; &rarr; <b>View</b>.</li></ol>'
 	+ values([v('External reference code', 'DEVCON_2026_DEMO_LDP_METRIC_INSIGHT'), v('Input variables', 'metrics'), v('Output variable', 'insight')]))
@@ -363,7 +363,7 @@ TROUBLE = [
 	('Widget missing in Widgets', 'Check the CX was published; search <code>LDP Demo Card</code>.'),
 	('Card empty, <code>customElements.define</code> error', 'HTML Element Name must be <code>ldp-demo-card</code>.'),
 	('Trend shows &ldquo;Previous period: 0&rdquo;', 'No traffic in the 7 days before. Nothing to fix live.'),
-	('Config lost after reload in E', 'Object published? Field Name exactly <code>metric</code>?'),
+	('Config lost after reload in part 5', 'Object published? Field Name exactly <code>metric</code>?'),
 	('<code>AI Hub is not available: &hellip; 404</code>', 'Agent missing or disabled. Check the ERC.'),
 	('<code>Failed to fetch</code> on the insight', 'Click again (transient firewall block).'),
 	('<code>network error</code> after a long wait', 'The agent never answered: the workflow prompt is empty.'),

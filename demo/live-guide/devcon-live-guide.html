@@ -170,26 +170,26 @@ html { scroll-behavior: smooth; }
 
 	<nav class="agenda" id="agenda" aria-label="Agenda">
 		<h2 class="agenda-title">Agenda</h2>
-		<ol><li><a href="#part-a"><span class="a-letter">A</span><span class="a-title">LDP connected to DXP</span><span class="a-topic">Topic 04</span></a></li><li><a href="#part-b"><span class="a-letter">B</span><span class="a-title">The first client extension</span><span class="a-topic">Topic 04</span></a></li><li><a href="#part-c"><span class="a-letter">C</span><span class="a-title">Real LDP data</span><span class="a-topic">Topic 04</span></a></li><li><a href="#part-d"><span class="a-letter">D</span><span class="a-title">Two instances, one card</span><span class="a-topic">Topic 04</span></a></li><li><a href="#part-e"><span class="a-letter">E</span><span class="a-title">Persistence with Objects</span><span class="a-topic">Topic 05</span></a></li><li><a href="#part-f"><span class="a-letter">F</span><span class="a-title">AI Hub insight</span><span class="a-topic">Topic 05</span></a></li><li><a href="#trouble"><span class="a-letter">?</span><span class="a-title">If something breaks</span><span class="a-topic">Quick fixes</span></a></li></ol>
+		<ol><li><a href="#part-1"><span class="a-letter">1</span><span class="a-title">LDP connected to DXP</span><span class="a-topic">Topic 04</span></a></li><li><a href="#part-2"><span class="a-letter">2</span><span class="a-title">The first client extension</span><span class="a-topic">Topic 04</span></a></li><li><a href="#part-3"><span class="a-letter">3</span><span class="a-title">Real LDP data</span><span class="a-topic">Topic 04</span></a></li><li><a href="#part-4"><span class="a-letter">4</span><span class="a-title">Two instances, one card</span><span class="a-topic">Topic 04</span></a></li><li><a href="#part-5"><span class="a-letter">5</span><span class="a-title">Persistence with Objects</span><span class="a-topic">Topic 05</span></a></li><li><a href="#part-6"><span class="a-letter">6</span><span class="a-title">AI Hub insight</span><span class="a-topic">Topic 05</span></a></li><li><a href="#trouble"><span class="a-letter">?</span><span class="a-title">If something breaks</span><span class="a-topic">Quick fixes</span></a></li></ol>
 	</nav>
 	<a class="to-agenda" href="#agenda">Agenda &uarr;</a>
 
 	
-<section class="part" id="part-a">
+<section class="part" id="part-1">
 	<header class="part-head">
-		<span class="letter">A</span>
+		<span class="letter">1</span>
 		<div><h2>LDP connected to DXP</h2><span class="topic">Topic 04</span></div>
 	</header>
 	<ol class="steps">
 <li class="step k-say">
-	<label class="done"><input id="done-A1" type="checkbox" data-key="A1"><span class="sr">Done</span></label>
+	<label class="done"><input id="done-11" type="checkbox" data-key="11"><span class="sr">Done</span></label>
 	<div class="step-body">
 		<span class="kind">Say</span>
 		<p>Before any code: the data lives in LDP, and DXP is already connected to it. The card asks DXP, and DXP asks LDP.</p>
 	</div>
 </li>
 <li class="step k-ui">
-	<label class="done"><input id="done-A2" type="checkbox" data-key="A2"><span class="sr">Done</span></label>
+	<label class="done"><input id="done-12" type="checkbox" data-key="12"><span class="sr">Done</span></label>
 	<div class="step-body">
 		<span class="kind">In the UI</span>
 		<ol>
@@ -201,21 +201,21 @@ html { scroll-behavior: smooth; }
 	</div>
 </li>
 <li class="step k-say">
-	<label class="done"><input id="done-A3" type="checkbox" data-key="A3"><span class="sr">Done</span></label>
+	<label class="done"><input id="done-13" type="checkbox" data-key="13"><span class="sr">Done</span></label>
 	<div class="step-body">
 		<span class="kind">Say</span>
 		<p>One property is one channel. The channel ID is all the card needs to know whose data to ask for.</p>
 	</div>
 </li></ol>
 </section>
-<section class="part" id="part-b">
+<section class="part" id="part-2">
 	<header class="part-head">
-		<span class="letter">B</span>
+		<span class="letter">2</span>
 		<div><h2>The first client extension</h2><span class="topic">Topic 04</span></div>
 	</header>
 	<ol class="steps">
 <li class="step k-code">
-	<label class="done"><input id="done-B1" type="checkbox" data-key="B1"><span class="sr">Done</span></label>
+	<label class="done"><input id="done-21" type="checkbox" data-key="21"><span class="sr">Done</span></label>
 	<div class="step-body">
 		<span class="kind">In the editor</span>
 		
@@ -231,56 +231,56 @@ html { scroll-behavior: smooth; }
 	</div>
 </li>
 <li class="step k-ui">
-	<label class="done"><input id="done-B2" type="checkbox" data-key="B2"><span class="sr">Done</span></label>
+	<label class="done"><input id="done-22" type="checkbox" data-key="22"><span class="sr">Done</span></label>
 	<div class="step-body">
 		<span class="kind">In the UI</span>
 		<p><strong>Host it in Documents and Media</strong></p><ol><li>Tab 3: check the site is <b>DEVCON Demo</b> &rarr; Content &amp; Data &rarr; <b>Documents and Media</b>.</li><li><b>New</b> &rarr; <b>File Upload</b> &rarr; pick the file &rarr; <b>Publish</b>.</li></ol><div class="table-scroll"><table class="values"><tbody><tr><th scope="row">Title</th><td><code>ldp-demo-card.js</code></td><td><button class="copy" type="button" data-copy="c2">Copy</button></td></tr><tr><th scope="row">URL it gets</th><td colspan="2"><code>/documents/d/devcon-demo/ldp-demo-card-js</code></td></tr></tbody></table></div>
 	</div>
 </li>
 <li class="step k-ui">
-	<label class="done"><input id="done-B3" type="checkbox" data-key="B3"><span class="sr">Done</span></label>
+	<label class="done"><input id="done-23" type="checkbox" data-key="23"><span class="sr">Done</span></label>
 	<div class="step-body">
 		<span class="kind">In the UI</span>
 		<p><strong>Register the Custom Element</strong></p><ol><li>Tab 4: Applications &rarr; <b>Client Extensions</b> &rarr; <b>New</b> &rarr; <b>Add Custom Element</b>.</li><li>Fill in the fields below &rarr; <b>Publish</b>.</li></ol><div class="table-scroll"><table class="values"><tbody><tr><th scope="row">Name</th><td><code>LDP Demo Card</code></td><td><button class="copy" type="button" data-copy="c3">Copy</button></td></tr><tr><th scope="row">HTML Element Name</th><td><code>ldp-demo-card</code></td><td><button class="copy" type="button" data-copy="c4">Copy</button></td></tr><tr><th scope="row">JavaScript URL</th><td><code>/documents/d/devcon-demo/ldp-demo-card-js?v=1</code></td><td><button class="copy" type="button" data-copy="c5">Copy</button></td></tr><tr><th scope="row">Instanceable</th><td colspan="2"><span class="pill">checked</span></td></tr></tbody></table></div>
 	</div>
 </li>
 <li class="step k-say">
-	<label class="done"><input id="done-B4" type="checkbox" data-key="B4"><span class="sr">Done</span></label>
+	<label class="done"><input id="done-24" type="checkbox" data-key="24"><span class="sr">Done</span></label>
 	<div class="step-body">
 		<span class="kind">Say</span>
 		<p>Instanceable lets the same card go on a page twice, each with its own configuration. That is the whole dashboard idea.</p>
 	</div>
 </li>
 <li class="step k-ui">
-	<label class="done"><input id="done-B5" type="checkbox" data-key="B5"><span class="sr">Done</span></label>
+	<label class="done"><input id="done-25" type="checkbox" data-key="25"><span class="sr">Done</span></label>
 	<div class="step-body">
 		<span class="kind">In the UI</span>
 		<p><strong>Put it on a page</strong></p><ol><li>Tab 5: DEVCON Demo &rarr; Site Builder &rarr; <b>Pages</b> &rarr; <b>New</b>.</li><li><b>Basic Templates</b> &rarr; <b>Blank</b> &rarr; name below &rarr; <b>Add</b>.</li><li><b>Components</b> panel &rarr; <b>Fragments</b> &rarr; Layout Elements &rarr; drag <b>Grid</b>. Set <b>Number of Modules</b> to 2.</li><li><b>Widgets</b> tab &rarr; search the name below &rarr; drag it into the <b>left</b> module &rarr; <b>Publish</b>.</li></ol><div class="table-scroll"><table class="values"><tbody><tr><th scope="row">Page name</th><td><code>Demo</code></td><td><button class="copy" type="button" data-copy="c6">Copy</button></td></tr><tr><th scope="row">Widget search</th><td><code>LDP Demo Card</code></td><td><button class="copy" type="button" data-copy="c7">Copy</button></td></tr></tbody></table></div>
 	</div>
 </li>
 <li class="step k-check">
-	<label class="done"><input id="done-B6" type="checkbox" data-key="B6"><span class="sr">Done</span></label>
+	<label class="done"><input id="done-26" type="checkbox" data-key="26"><span class="sr">Done</span></label>
 	<div class="step-body">
 		<span class="kind">Expect</span>
 		<p>&ldquo;Hello, DEVCON 2026!&rdquo; on the page.</p>
 	</div>
 </li></ol>
 </section>
-<section class="part" id="part-c">
+<section class="part" id="part-3">
 	<header class="part-head">
-		<span class="letter">C</span>
+		<span class="letter">3</span>
 		<div><h2>Real LDP data</h2><span class="topic">Topic 04</span></div>
 	</header>
 	<ol class="steps">
 <li class="step k-say">
-	<label class="done"><input id="done-C1" type="checkbox" data-key="C1"><span class="sr">Done</span></label>
+	<label class="done"><input id="done-31" type="checkbox" data-key="31"><span class="sr">Done</span></label>
 	<div class="step-body">
 		<span class="kind">Say</span>
 		<p>The card calls DXP on the same origin, with the user&rsquo;s session and the CSRF token. DXP forwards the GraphQL query to LDP. No LDP token in the browser.</p>
 	</div>
 </li>
 <li class="step k-code">
-	<label class="done"><input id="done-C2" type="checkbox" data-key="C2"><span class="sr">Done</span></label>
+	<label class="done"><input id="done-32" type="checkbox" data-key="32"><span class="sr">Done</span></label>
 	<div class="step-body">
 		<span class="kind">In the editor</span>
 		
@@ -296,7 +296,7 @@ html { scroll-behavior: smooth; }
 	</div>
 </li>
 <li class="step k-ui">
-	<label class="done"><input id="done-C3" type="checkbox" data-key="C3"><span class="sr">Done</span></label>
+	<label class="done"><input id="done-33" type="checkbox" data-key="33"><span class="sr">Done</span></label>
 	<div class="step-body">
 		<span class="kind">In the UI</span>
 		<p><strong>Ship version 2</strong></p>
@@ -310,28 +310,28 @@ html { scroll-behavior: smooth; }
 	</div>
 </li>
 <li class="step k-check">
-	<label class="done"><input id="done-C4" type="checkbox" data-key="C4"><span class="sr">Done</span></label>
+	<label class="done"><input id="done-34" type="checkbox" data-key="34"><span class="sr">Done</span></label>
 	<div class="step-body">
 		<span class="kind">Expect</span>
 		<p>&ldquo;Unique visitors: N&rdquo;, the same N as LDP on Last 7 days.</p>
 	</div>
 </li></ol>
 </section>
-<section class="part" id="part-d">
+<section class="part" id="part-4">
 	<header class="part-head">
-		<span class="letter">D</span>
+		<span class="letter">4</span>
 		<div><h2>Two instances, one card</h2><span class="topic">Topic 04</span></div>
 	</header>
 	<ol class="steps">
 <li class="step k-say">
-	<label class="done"><input id="done-D1" type="checkbox" data-key="D1"><span class="sr">Done</span></label>
+	<label class="done"><input id="done-41" type="checkbox" data-key="41"><span class="sr">Done</span></label>
 	<div class="step-body">
 		<span class="kind">Say</span>
 		<p>Now a real card: a metric picker, the value, and the trend against the previous period, which LDP computes for us.</p>
 	</div>
 </li>
 <li class="step k-code">
-	<label class="done"><input id="done-D2" type="checkbox" data-key="D2"><span class="sr">Done</span></label>
+	<label class="done"><input id="done-42" type="checkbox" data-key="42"><span class="sr">Done</span></label>
 	<div class="step-body">
 		<span class="kind">In the editor</span>
 		
@@ -347,7 +347,7 @@ html { scroll-behavior: smooth; }
 	</div>
 </li>
 <li class="step k-ui">
-	<label class="done"><input id="done-D3" type="checkbox" data-key="D3"><span class="sr">Done</span></label>
+	<label class="done"><input id="done-43" type="checkbox" data-key="43"><span class="sr">Done</span></label>
 	<div class="step-body">
 		<span class="kind">In the UI</span>
 		<p><strong>Ship version 3</strong></p>
@@ -361,49 +361,49 @@ html { scroll-behavior: smooth; }
 	</div>
 </li>
 <li class="step k-ui">
-	<label class="done"><input id="done-D4" type="checkbox" data-key="D4"><span class="sr">Done</span></label>
+	<label class="done"><input id="done-44" type="checkbox" data-key="44"><span class="sr">Done</span></label>
 	<div class="step-body">
 		<span class="kind">In the UI</span>
 		<ol><li>Edit the Demo page &rarr; drag a second <b>LDP Demo Card</b> into the <b>right</b> module &rarr; <b>Publish</b>.</li><li>Right card &rarr; select <b>Sessions</b>.</li><li>Reload the page.</li></ol>
 	</div>
 </li>
 <li class="step k-check">
-	<label class="done"><input id="done-D5" type="checkbox" data-key="D5"><span class="sr">Done</span></label>
+	<label class="done"><input id="done-45" type="checkbox" data-key="45"><span class="sr">Done</span></label>
 	<div class="step-body">
 		<span class="kind">Expect</span>
 		<p>After the reload the right card is back to Unique visitors.</p>
 	</div>
 </li>
 <li class="step k-say">
-	<label class="done"><input id="done-D6" type="checkbox" data-key="D6"><span class="sr">Done</span></label>
+	<label class="done"><input id="done-46" type="checkbox" data-key="46"><span class="sr">Done</span></label>
 	<div class="step-body">
 		<span class="kind">Say</span>
 		<p>The setting was in memory, so it is gone. A dashboard has to remember each card, separately, and we do not want a backend for that.</p>
 	</div>
 </li></ol>
 </section>
-<section class="part" id="part-e">
+<section class="part" id="part-5">
 	<header class="part-head">
-		<span class="letter">E</span>
+		<span class="letter">5</span>
 		<div><h2>Persistence with Objects</h2><span class="topic">Topic 05</span></div>
 	</header>
 	<ol class="steps">
 <li class="step k-ui">
-	<label class="done"><input id="done-E1" type="checkbox" data-key="E1"><span class="sr">Done</span></label>
+	<label class="done"><input id="done-51" type="checkbox" data-key="51"><span class="sr">Done</span></label>
 	<div class="step-body">
 		<span class="kind">In the UI</span>
 		<p><strong>Create the Object</strong></p><ol><li>Control Panel &rarr; Object &rarr; <b>Objects</b> &rarr; folder <b>DEVCON Demo</b> &rarr; <b>Create New Object</b> &rarr; fill in &rarr; <b>Save</b>.</li></ol><div class="table-scroll"><table class="values"><tbody><tr><th scope="row">Label</th><td><code>Demo Card Config</code></td><td><button class="copy" type="button" data-copy="c12">Copy</button></td></tr><tr><th scope="row">Plural Label</th><td><code>Demo Card Configs</code></td><td><button class="copy" type="button" data-copy="c13">Copy</button></td></tr><tr><th scope="row">Object Name</th><td><code>DemoCardConfig</code></td><td><button class="copy" type="button" data-copy="c14">Copy</button></td></tr></tbody></table></div><ol start="2"><li><b>Fields</b> &rarr; <b>Add Field</b> &rarr; fill in &rarr; <b>Save</b>.</li></ol><div class="table-scroll"><table class="values"><tbody><tr><th scope="row">Label</th><td><code>Metric</code></td><td><button class="copy" type="button" data-copy="c15">Copy</button></td></tr><tr><th scope="row">Field Name</th><td><code>metric</code></td><td><button class="copy" type="button" data-copy="c16">Copy</button></td></tr><tr><th scope="row">Type</th><td colspan="2"><span class="pill">Text</span></td></tr></tbody></table></div><ol start="3"><li><b>Details</b> &rarr; Scope <b>Company</b> &rarr; <b>Publish</b>.</li></ol>
 	</div>
 </li>
 <li class="step k-say">
-	<label class="done"><input id="done-E2" type="checkbox" data-key="E2"><span class="sr">Done</span></label>
+	<label class="done"><input id="done-52" type="checkbox" data-key="52"><span class="sr">Done</span></label>
 	<div class="step-body">
 		<span class="kind">Say</span>
 		<p>Publishing the Object gives us a REST API for free, at /o/c/democardconfigs. Each entry is keyed by the widget instance id, which DXP already generates.</p>
 	</div>
 </li>
 <li class="step k-code">
-	<label class="done"><input id="done-E3" type="checkbox" data-key="E3"><span class="sr">Done</span></label>
+	<label class="done"><input id="done-53" type="checkbox" data-key="53"><span class="sr">Done</span></label>
 	<div class="step-body">
 		<span class="kind">In the editor</span>
 		
@@ -419,7 +419,7 @@ html { scroll-behavior: smooth; }
 	</div>
 </li>
 <li class="step k-ui">
-	<label class="done"><input id="done-E4" type="checkbox" data-key="E4"><span class="sr">Done</span></label>
+	<label class="done"><input id="done-54" type="checkbox" data-key="54"><span class="sr">Done</span></label>
 	<div class="step-body">
 		<span class="kind">In the UI</span>
 		<p><strong>Ship version 4</strong></p>
@@ -433,56 +433,56 @@ html { scroll-behavior: smooth; }
 	</div>
 </li>
 <li class="step k-ui">
-	<label class="done"><input id="done-E5" type="checkbox" data-key="E5"><span class="sr">Done</span></label>
+	<label class="done"><input id="done-55" type="checkbox" data-key="55"><span class="sr">Done</span></label>
 	<div class="step-body">
 		<span class="kind">In the UI</span>
 		<ol><li>Right card &rarr; select <b>Sessions</b>.</li><li>Reload the page.</li></ol>
 	</div>
 </li>
 <li class="step k-check">
-	<label class="done"><input id="done-E6" type="checkbox" data-key="E6"><span class="sr">Done</span></label>
+	<label class="done"><input id="done-56" type="checkbox" data-key="56"><span class="sr">Done</span></label>
 	<div class="step-body">
 		<span class="kind">Expect</span>
 		<p>Right card stays on Sessions after the reload.</p>
 	</div>
 </li>
 <li class="step k-warn">
-	<label class="done"><input id="done-E7" type="checkbox" data-key="E7"><span class="sr">Done</span></label>
+	<label class="done"><input id="done-57" type="checkbox" data-key="57"><span class="sr">Done</span></label>
 	<div class="step-body">
 		<span class="kind">Heads up</span>
 		<p>A red <code>GET &hellip; 404</code> in DevTools on first load is expected: that card was never configured. After the select changes you see <code>PUT 200</code>.</p>
 	</div>
 </li></ol>
 </section>
-<section class="part" id="part-f">
+<section class="part" id="part-6">
 	<header class="part-head">
-		<span class="letter">F</span>
+		<span class="letter">6</span>
 		<div><h2>AI Hub insight</h2><span class="topic">Topic 05</span></div>
 	</header>
 	<ol class="steps">
 <li class="step k-say">
-	<label class="done"><input id="done-F1" type="checkbox" data-key="F1"><span class="sr">Done</span></label>
+	<label class="done"><input id="done-61" type="checkbox" data-key="61"><span class="sr">Done</span></label>
 	<div class="step-body">
 		<span class="kind">Say</span>
 		<p>An AI Hub agent is an agent definition plus a workflow with an LLM node. The card sends what it shows; AI Hub never reads LDP itself.</p>
 	</div>
 </li>
 <li class="step k-ui">
-	<label class="done"><input id="done-F2" type="checkbox" data-key="F2"><span class="sr">Done</span></label>
+	<label class="done"><input id="done-62" type="checkbox" data-key="62"><span class="sr">Done</span></label>
 	<div class="step-body">
 		<span class="kind">In the UI</span>
 		<p><strong>Show the agent</strong> (already created)</p><ol><li>Tab 6: AI Hub &rarr; <b>Agent Builder</b> &rarr; <b>DevCon 2026 &middot; Demo LDP Metric Insight</b> &rarr; &#8942; &rarr; <b>View</b>.</li></ol><div class="table-scroll"><table class="values"><tbody><tr><th scope="row">External reference code</th><td><code>DEVCON_2026_DEMO_LDP_METRIC_INSIGHT</code></td><td><button class="copy" type="button" data-copy="c19">Copy</button></td></tr><tr><th scope="row">Input variables</th><td><code>metrics</code></td><td><button class="copy" type="button" data-copy="c20">Copy</button></td></tr><tr><th scope="row">Output variable</th><td><code>insight</code></td><td><button class="copy" type="button" data-copy="c21">Copy</button></td></tr></tbody></table></div>
 	</div>
 </li>
 <li class="step k-say">
-	<label class="done"><input id="done-F3" type="checkbox" data-key="F3"><span class="sr">Done</span></label>
+	<label class="done"><input id="done-63" type="checkbox" data-key="63"><span class="sr">Done</span></label>
 	<div class="step-body">
 		<span class="kind">Say</span>
 		<p>The external reference code is the agent&rsquo;s address. It is the only thing the card needs to know about it.</p>
 	</div>
 </li>
 <li class="step k-ui">
-	<label class="done"><input id="done-F4" type="checkbox" data-key="F4"><span class="sr">Done</span></label>
+	<label class="done"><input id="done-64" type="checkbox" data-key="64"><span class="sr">Done</span></label>
 	<div class="step-body">
 		<span class="kind">In the UI</span>
 		<p><strong>Show the workflow</strong></p><ol><li><b>View Workflow</b> &rarr; click the node <code>ldpMetricInsight</code>.</li></ol><div class="table-scroll"><table class="values"><tbody><tr><th scope="row">User message</th><td><code>Metric summary:
@@ -492,7 +492,7 @@ Write at most three short sentences for a marketing manager: what the number say
 	</div>
 </li>
 <li class="step k-code">
-	<label class="done"><input id="done-F5" type="checkbox" data-key="F5"><span class="sr">Done</span></label>
+	<label class="done"><input id="done-65" type="checkbox" data-key="65"><span class="sr">Done</span></label>
 	<div class="step-body">
 		<span class="kind">In the editor</span>
 		
@@ -508,7 +508,7 @@ Write at most three short sentences for a marketing manager: what the number say
 	</div>
 </li>
 <li class="step k-ui">
-	<label class="done"><input id="done-F6" type="checkbox" data-key="F6"><span class="sr">Done</span></label>
+	<label class="done"><input id="done-66" type="checkbox" data-key="66"><span class="sr">Done</span></label>
 	<div class="step-body">
 		<span class="kind">In the UI</span>
 		<p><strong>Ship version 5</strong></p>
@@ -522,21 +522,21 @@ Write at most three short sentences for a marketing manager: what the number say
 	</div>
 </li>
 <li class="step k-ui">
-	<label class="done"><input id="done-F7" type="checkbox" data-key="F7"><span class="sr">Done</span></label>
+	<label class="done"><input id="done-67" type="checkbox" data-key="67"><span class="sr">Done</span></label>
 	<div class="step-body">
 		<span class="kind">In the UI</span>
 		<ol><li>Right card &rarr; <b>&#10022; AI insight</b>.</li></ol>
 	</div>
 </li>
 <li class="step k-check">
-	<label class="done"><input id="done-F8" type="checkbox" data-key="F8"><span class="sr">Done</span></label>
+	<label class="done"><input id="done-68" type="checkbox" data-key="68"><span class="sr">Done</span></label>
 	<div class="step-body">
 		<span class="kind">Expect</span>
 		<p>&ldquo;Asking AI Hub&hellip;&rdquo;, then two or three sentences citing the value, the previous period and one action.</p>
 	</div>
 </li>
 <li class="step k-say">
-	<label class="done"><input id="done-F9" type="checkbox" data-key="F9"><span class="sr">Done</span></label>
+	<label class="done"><input id="done-69" type="checkbox" data-key="69"><span class="sr">Done</span></label>
 	<div class="step-body">
 		<span class="kind">Say</span>
 		<p>We format the text before sending it: plain labeled lines. Easier for the model, and the firewall in front of AI Hub rejects nested JSON.</p>
@@ -546,7 +546,7 @@ Write at most three short sentences for a marketing manager: what the number say
 
 	<section class="trouble" id="trouble">
 		<header class="part-head"><span class="letter">?</span><div><h2>If something breaks</h2><span class="topic">Quick fixes</span></div></header>
-		<div class="table-scroll"><table><tbody><tr><th scope="row">The page still runs the previous step</th><td>Bump <code>?v=</code> in the CX and hard reload.</td></tr><tr><th scope="row">Widget missing in Widgets</th><td>Check the CX was published; search <code>LDP Demo Card</code>.</td></tr><tr><th scope="row">Card empty, <code>customElements.define</code> error</th><td>HTML Element Name must be <code>ldp-demo-card</code>.</td></tr><tr><th scope="row">Trend shows &ldquo;Previous period: 0&rdquo;</th><td>No traffic in the 7 days before. Nothing to fix live.</td></tr><tr><th scope="row">Config lost after reload in E</th><td>Object published? Field Name exactly <code>metric</code>?</td></tr><tr><th scope="row"><code>AI Hub is not available: &hellip; 404</code></th><td>Agent missing or disabled. Check the ERC.</td></tr><tr><th scope="row"><code>Failed to fetch</code> on the insight</th><td>Click again (transient firewall block).</td></tr><tr><th scope="row"><code>network error</code> after a long wait</th><td>The agent never answered: the workflow prompt is empty.</td></tr></tbody></table></div>
+		<div class="table-scroll"><table><tbody><tr><th scope="row">The page still runs the previous step</th><td>Bump <code>?v=</code> in the CX and hard reload.</td></tr><tr><th scope="row">Widget missing in Widgets</th><td>Check the CX was published; search <code>LDP Demo Card</code>.</td></tr><tr><th scope="row">Card empty, <code>customElements.define</code> error</th><td>HTML Element Name must be <code>ldp-demo-card</code>.</td></tr><tr><th scope="row">Trend shows &ldquo;Previous period: 0&rdquo;</th><td>No traffic in the 7 days before. Nothing to fix live.</td></tr><tr><th scope="row">Config lost after reload in part 5</th><td>Object published? Field Name exactly <code>metric</code>?</td></tr><tr><th scope="row"><code>AI Hub is not available: &hellip; 404</code></th><td>Agent missing or disabled. Check the ERC.</td></tr><tr><th scope="row"><code>Failed to fetch</code> on the insight</th><td>Click again (transient firewall block).</td></tr><tr><th scope="row"><code>network error</code> after a long wait</th><td>The agent never answered: the workflow prompt is empty.</td></tr></tbody></table></div>
 	</section>
 
 	<footer class="foot">
