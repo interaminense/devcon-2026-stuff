@@ -293,7 +293,6 @@ page = f'''<title>DEVCON Live Demo Guide</title>
 	--warn: #ff8a7a;
 	--code-bg: #070b17;
 	--code-new: #f4f7ff;
-	--code-new-bg: rgba(91, 157, 255, 0.18);
 	--code-old: #4a5576;
 	--display: 'Bricolage Grotesque', 'Segoe UI', system-ui, sans-serif;
 	--body: 'IBM Plex Sans', 'Segoe UI', system-ui, sans-serif;
@@ -329,7 +328,9 @@ h1 {{ font: 800 clamp(30px, 6vw, 46px)/1.05 var(--display); letter-spacing: -0.0
 .bar a b {{ color: var(--accent); font-family: var(--mono); margin-right: 4px; }}
 .bar a:hover, .bar a:focus-visible {{ border-color: var(--accent); color: var(--fg); }}
 .bar .spacer {{ flex: 1; }}
-.toggle {{ align-items: center; color: var(--muted); display: flex; flex: none; font-size: 13px; gap: 6px; }}
+.toggles {{ display: flex; flex-wrap: wrap; gap: 8px 20px; }}
+.toggle {{ align-items: center; color: var(--muted); cursor: pointer; display: flex; flex: none; font-size: 13px; gap: 6px; }}
+body.no-say .k-say {{ display: none; }}
 
 .part {{ padding-top: 40px; scroll-margin-top: 56px; }}
 .part-head {{ align-items: center; display: flex; gap: 14px; margin-bottom: 18px; }}
@@ -381,9 +382,8 @@ h2 {{ font: 700 24px/1.15 var(--display); margin: 0; text-wrap: balance; }}
 .ln {{ color: var(--code-old); padding: 0 12px 0 14px; text-align: right; user-select: none; }}
 .lc {{ padding-right: 16px; white-space: pre; }}
 .old {{ color: var(--code-old); }}
-.new {{ background: var(--code-new-bg); border-radius: 3px; color: var(--code-new); }}
+.new {{ color: var(--code-new); }}
 body.flat .old {{ color: #b9c3dc; }}
-body.flat .new {{ background: none; }}
 .code-note {{ color: var(--muted); font-size: 14px; margin: 8px 0 0; }}
 
 .trouble {{ padding-top: 48px; }}
@@ -418,7 +418,10 @@ html {{ scroll-behavior: smooth; }}
 			<code>{e(LOGIN)}</code>
 			{copy_button(LOGIN)}
 		</div>
-		<label class="toggle"><input id="flat" type="checkbox"> Show code without the change highlight</label>
+		<div class="toggles">
+			<label class="toggle"><input id="no-say" type="checkbox"> Hide the &ldquo;Say&rdquo; boxes</label>
+			<label class="toggle"><input id="flat" type="checkbox"> Show code without the change highlight</label>
+		</div>
 	</header>
 
 	<nav class="bar" aria-label="Parts">
@@ -502,15 +505,17 @@ html {{ scroll-behavior: smooth; }}
 		}}
 	}});
 
-	const flat = document.getElementById('flat');
+	for (const id of ['flat', 'no-say']) {{
+		const toggle = document.getElementById(id);
 
-	flat.checked = store.get('flat') === '1';
-	document.body.classList.toggle('flat', flat.checked);
+		toggle.checked = store.get(id) === '1';
+		document.body.classList.toggle(id, toggle.checked);
 
-	flat.addEventListener('change', () => {{
-		document.body.classList.toggle('flat', flat.checked);
-		store.set('flat', flat.checked ? '1' : null);
-	}});
+		toggle.addEventListener('change', () => {{
+			document.body.classList.toggle(id, toggle.checked);
+			store.set(id, toggle.checked ? '1' : null);
+		}});
+	}}
 }})();
 </script>
 '''
