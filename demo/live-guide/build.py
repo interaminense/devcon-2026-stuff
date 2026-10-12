@@ -225,7 +225,7 @@ p.step('ui', '<p><strong>Show the agent</strong> (already created)</p><ol><li>Ta
 	+ values([v('External reference code', 'DEVCON_2026_DEMO_LDP_METRIC_INSIGHT'), v('Input variables', 'metrics'), v('Output variable', 'insight')]))
 p.step('say', 'The external reference code is the agent&rsquo;s address. It is the only thing the card needs to know about it.')
 p.step('ui', '<p><strong>Show the workflow</strong></p><ol><li><b>View Workflow</b> &rarr; click the node <code>ldpMetricInsight</code>.</li></ol>'
-	+ values([v('User message', 'Metric summary:\n{{metrics}}'), v('Tools', '[]'), v('RAG', '{}'), plain('Prompt', copy_button(PROMPT, 'Copy prompt'))]))
+	+ values([v('User message', 'Metric summary:\n{{metrics}}'), v('Tools', '[]'), v('RAG', '{}'), v('Prompt', PROMPT)]))
 p.step('code', code_block('ldp-demo-card.js', code[4], code[5], 'Point at <code>AGENT_ERC</code>, <code>askAgent</code> (token &rarr; stream &rarr; start the agent &rarr; answer on the event named after it) and <code>describe</code> (plain text lines, never nested JSON).'))
 p.step(*ship(5))
 p.step('ui', '<ol><li>Right card &rarr; <b>&#10022; AI insight</b>.</li></ol>')
@@ -304,11 +304,11 @@ page = f'''<title>DEVCON Live Demo Guide</title>
 body {{
 	background: var(--bg);
 	color: var(--fg);
-	font: 15px/1.6 var(--body);
+	font: 17px/1.6 var(--body);
 	padding-inline: 16px;
 }}
 
-.wrap {{ margin: 0 auto; max-width: 880px; padding-block: 32px 96px; }}
+.wrap {{ margin: 0 auto; max-width: 1180px; padding-block: 32px 96px; }}
 
 a {{ color: var(--accent); }}
 
@@ -324,18 +324,18 @@ h1 {{ font: 800 clamp(30px, 6vw, 46px)/1.05 var(--display); letter-spacing: -0.0
 .login code {{ background: none; flex: 1 1 280px; min-width: 0; padding: 0; }}
 
 .bar {{ align-items: center; background: color-mix(in srgb, var(--bg) 88%, transparent); backdrop-filter: blur(8px); border-bottom: 1px solid var(--line); display: flex; gap: 6px; margin-inline: -16px; overflow-x: auto; padding: 10px 16px; position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; }}
-.bar a {{ border: 1px solid var(--line); border-radius: 999px; color: var(--muted); flex: none; font-size: 13px; padding: 5px 12px; text-decoration: none; }}
+.bar a {{ border: 1px solid var(--line); border-radius: 999px; color: var(--muted); flex: none; font-size: 15px; padding: 5px 12px; text-decoration: none; }}
 .bar a b {{ color: var(--accent); font-family: var(--mono); margin-right: 4px; }}
 .bar a:hover, .bar a:focus-visible {{ border-color: var(--accent); color: var(--fg); }}
 .bar .spacer {{ flex: 1; }}
 .toggles {{ display: flex; flex-wrap: wrap; gap: 8px 20px; }}
-.toggle {{ align-items: center; color: var(--muted); cursor: pointer; display: flex; flex: none; font-size: 13px; gap: 6px; }}
+.toggle {{ align-items: center; color: var(--muted); cursor: pointer; display: flex; flex: none; font-size: 15px; gap: 6px; }}
 body.no-say .k-say {{ display: none; }}
 
 .part {{ padding-top: 40px; scroll-margin-top: 56px; }}
 .part-head {{ align-items: center; display: flex; gap: 14px; margin-bottom: 18px; }}
 .letter {{ align-items: center; background: var(--accent-soft); border: 1px solid var(--accent); border-radius: 10px; color: var(--accent); display: flex; flex: none; font: 800 22px/1 var(--display); height: 44px; justify-content: center; width: 44px; }}
-h2 {{ font: 700 24px/1.15 var(--display); margin: 0; text-wrap: balance; }}
+h2 {{ font: 700 28px/1.15 var(--display); margin: 0; text-wrap: balance; }}
 .topic {{ color: var(--muted); font: 500 12px/1 var(--mono); letter-spacing: 0.08em; text-transform: uppercase; }}
 
 .steps {{ display: grid; gap: 10px; list-style: none; margin: 0; padding: 0; }}
@@ -345,12 +345,12 @@ h2 {{ font: 700 24px/1.15 var(--display); margin: 0; text-wrap: balance; }}
 .step-body > * {{ max-width: 100%; min-width: 0; }}
 .step-body p {{ margin: 0; }}
 .step-body ol {{ display: grid; gap: 4px; margin: 0; padding-left: 20px; }}
-.kind {{ font: 600 11px/1 var(--mono); letter-spacing: 0.12em; text-transform: uppercase; }}
+.kind {{ font: 600 12px/1 var(--mono); letter-spacing: 0.12em; text-transform: uppercase; }}
 .k-ui .kind {{ color: var(--accent); }}
 .k-code .kind {{ color: var(--fg); }}
 .k-say {{ background: transparent; border-style: dashed; border-color: color-mix(in srgb, var(--say) 45%, transparent); }}
 .k-say .kind {{ color: var(--say); }}
-.k-say p {{ font-size: 17px; font-style: italic; line-height: 1.5; }}
+.k-say p {{ font-size: 19px; font-style: italic; line-height: 1.5; }}
 .k-check {{ border-color: color-mix(in srgb, var(--check) 40%, transparent); }}
 .k-check .kind {{ color: var(--check); }}
 .k-warn {{ border-color: color-mix(in srgb, var(--warn) 40%, transparent); }}
@@ -369,22 +369,22 @@ h2 {{ font: 700 24px/1.15 var(--display); margin: 0; text-wrap: balance; }}
 .values td code {{ white-space: pre-wrap; }}
 .pill {{ background: var(--accent-soft); border-radius: 999px; color: var(--accent); font-size: 13px; padding: 2px 10px; }}
 
-.copy {{ background: var(--surface-2); border: 1px solid var(--line); border-radius: 8px; color: var(--fg); cursor: pointer; font: 500 12px/1 var(--body); padding: 7px 10px; white-space: nowrap; }}
+.copy {{ background: var(--surface-2); border: 1px solid var(--line); border-radius: 8px; color: var(--fg); cursor: pointer; font: 500 14px/1 var(--body); padding: 8px 12px; white-space: nowrap; }}
 .copy:hover, .copy:focus-visible {{ border-color: var(--accent); outline: none; }}
 .copy.ok {{ border-color: var(--check); color: var(--check); }}
 
 .code {{ margin: 0; min-width: 0; }}
 .code figcaption {{ align-items: center; display: flex; flex-wrap: wrap; gap: 8px 12px; margin-bottom: 8px; }}
-.file {{ font: 600 13px/1 var(--mono); }}
-.legend {{ color: var(--muted); flex: 1; font-size: 12px; }}
+.file {{ font: 600 15px/1 var(--mono); }}
+.legend {{ color: var(--muted); flex: 1; font-size: 14px; }}
 .code-scroll {{ background: var(--code-bg); border: 1px solid var(--line); border-radius: 10px; max-height: 70vh; overflow: auto; }}
-.code pre {{ display: grid; font: 13px/1.55 var(--mono); grid-template-columns: auto 1fr; margin: 0; padding: 12px 0; tab-size: 4; }}
+.code pre {{ display: grid; font: 15px/1.6 var(--mono); grid-template-columns: auto 1fr; margin: 0; padding: 12px 0; tab-size: 4; }}
 .ln {{ color: var(--code-old); padding: 0 12px 0 14px; text-align: right; user-select: none; }}
 .lc {{ padding-right: 16px; white-space: pre; }}
 .old {{ color: var(--code-old); }}
 .new {{ color: var(--code-new); }}
 body.flat .old {{ color: #b9c3dc; }}
-.code-note {{ color: var(--muted); font-size: 14px; margin: 8px 0 0; }}
+.code-note {{ color: var(--muted); font-size: 16px; margin: 8px 0 0; }}
 
 .trouble {{ padding-top: 48px; }}
 .trouble table {{ border-collapse: collapse; width: 100%; }}
@@ -392,7 +392,7 @@ body.flat .old {{ color: #b9c3dc; }}
 .trouble th {{ font-weight: 500; width: 45%; }}
 .trouble td {{ color: var(--muted); }}
 
-.foot {{ align-items: center; color: var(--muted); display: flex; flex-wrap: wrap; font-size: 13px; gap: 12px; justify-content: space-between; padding-top: 32px; }}
+.foot {{ align-items: center; color: var(--muted); display: flex; flex-wrap: wrap; font-size: 15px; gap: 12px; justify-content: space-between; padding-top: 32px; }}
 .reset {{ background: none; border: 1px solid var(--line); border-radius: 8px; color: var(--muted); cursor: pointer; font: inherit; padding: 6px 12px; }}
 
 :focus-visible {{ outline: 2px solid var(--accent); outline-offset: 2px; }}
