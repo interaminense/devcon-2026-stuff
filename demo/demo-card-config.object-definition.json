@@ -17,7 +17,7 @@
 			"required": false
 		}
 	],
-	"objectFolderExternalReferenceCode": "DEVCON_2026",
+	"objectFolderExternalReferenceCode": "DEVCON_DEMO",
 	"pluralLabel": {
 		"en_US": "Demo Card Configs"
 	},
