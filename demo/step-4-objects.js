@@ -1,8 +1,8 @@
 // The LDP property (channel) of the Swell Lab site
 const CHANNEL_ID = '845351493326064678';
 
-// 30 = last 30 days (LDP leaves today out)
-const RANGE_KEY = 30;
+// 7 = last 7 days (LDP leaves today out)
+const RANGE_KEY = 7;
 
 // The Liferay Object that keeps each card's configuration
 const OBJECT_URL = '/o/c/democardconfigs';
@@ -162,7 +162,7 @@ class LdpDemoCard extends HTMLElement {
 			${STYLE}
 			<select>${options}</select>
 			<div class="value">...</div>
-			<div class="trend">Last 30 days</div>
+			<div class="trend">Last 7 days</div>
 		`;
 
 		this.querySelector('select').addEventListener('change', (event) => {

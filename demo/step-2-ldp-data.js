@@ -1,8 +1,8 @@
 // The LDP property (channel) of the Swell Lab site
 const CHANNEL_ID = '845351493326064678';
 
-// 30 = last 30 days (LDP leaves today out)
-const RANGE_KEY = 30;
+// 7 = last 7 days (LDP leaves today out)
+const RANGE_KEY = 7;
 
 async function getMetric(metric) {
 	const query = `
