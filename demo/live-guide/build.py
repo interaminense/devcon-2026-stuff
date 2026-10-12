@@ -2,6 +2,7 @@ import difflib
 import html
 import json
 import pathlib
+import re
 
 DEMO = pathlib.Path.home() / 'dev/projects/devcon-2026/devcon-2026-stuff/demo'
 OUT = pathlib.Path(__file__).parent / 'devcon-live-guide.html'
@@ -10,14 +11,9 @@ SITE = 'https://webserver-lctacdemodevcon-prd.lfr.cloud'
 LOGIN = SITE + '/c/portal/login?redirect=/web/devcon-demo'
 DOC_URL = '/documents/d/devcon-demo/ldp-demo-card-js'
 
-PROMPT = '''You are an analytics assistant for Swell Lab, a surf school website. You receive a summary of one Liferay Data Platform metric for the whole site, as shown on a dashboard card: the metric name, the period, the current value, the change against the previous period when available, and the values over time or the breakdown.
+PROMPT = '''You are an analytics assistant. You receive one website metric from Liferay Data Platform: its name, the period, the value, the previous period's value, and the change.
 
-Write an insight for a marketing manager in at most three short sentences:
-1. What the number says, citing the value and the period.
-2. The most notable pattern in the data (a peak, a drop, a trend, or the leading item).
-3. One concrete action for the surf school, based only on the data.
-
-Rules: plain text, no markdown, no headings, no lists. Never invent numbers that are not in the summary. Times are in UTC. Rates are ratios between 0 and 1 (0.5 means 50%) and durations are in milliseconds. If the data is empty or too small to conclude anything, say so in one sentence and suggest collecting more traffic first.'''
+Write at most three short sentences for a marketing manager: what the number says, how it compares with the previous period, and one concrete action. Plain text only. Never invent numbers. If there is too little data, say so in one sentence.'''
 
 e = html.escape
 COPY = {}
@@ -38,13 +34,117 @@ def span(text, cls):
 	return f'<span class="{cls}">{e(text)}</span>' if text else ''
 
 
-def diff_lines(prev, cur):
-	"""One HTML string per line of cur: unchanged parts dimmed, new parts lit."""
+KEYWORDS = {
+	'async', 'await', 'break', 'catch', 'class', 'const', 'continue', 'else',
+	'extends', 'false', 'for', 'function', 'if', 'in', 'let', 'new', 'null',
+	'of', 'return', 'this', 'throw', 'true', 'try', 'typeof', 'undefined',
+	'var', 'while',
+}
+
+
+def syntax_classes(text):
+	"""One syntax class per character of a JavaScript source."""
+
+	classes = ['tx'] * len(text)
+	i = 0
+	n = len(text)
+
+	def mark(start, end, cls):
+		for k in range(start, end):
+			classes[k] = cls
+
+	def template(i):
+		start = i
+		i += 1
+
+		while i < n and text[i] != '`':
+			if text[i] == '\\':
+				i += 2
+
+				continue
+
+			if text[i:i + 2] == '${':
+				mark(start, i, 'st')
+				depth = 1
+				j = i + 2
+
+				while j < n and depth:
+					depth += {'{': 1, '}': -1}.get(text[j], 0)
+					j += 1
+
+				mark(i, i + 2, 'pu')
+				inner(i + 2, j - 1)
+				mark(j - 1, j, 'pu')
+				i = j
+				start = i
+
+				continue
+
+			i += 1
+
+		mark(start, i + 1, 'st')
+
+		return i + 1
+
+	def inner(start, end):
+		sub = syntax_classes(text[start:end])
+
+		for k, cls in enumerate(sub):
+			classes[start + k] = cls
+
+	while i < n:
+		c = text[i]
+
+		if text.startswith('//', i):
+			j = text.find('\n', i)
+			j = n if j < 0 else j
+			mark(i, j, 'cm')
+			i = j
+		elif text.startswith('/*', i):
+			j = text.find('*/', i + 2)
+			j = n if j < 0 else j + 2
+			mark(i, j, 'cm')
+			i = j
+		elif c == '`':
+			i = template(i)
+		elif c in '\'"':
+			j = i + 1
+
+			while j < n and text[j] != c:
+				j += 2 if text[j] == '\\' else 1
+
+			mark(i, j + 1, 'st')
+			i = j + 1
+		elif c.isdigit() and (i == 0 or not (text[i - 1].isalnum() or text[i - 1] == '_')):
+			m = re.match(r'\d+(\.\d+)?', text[i:])
+			mark(i, i + m.end(), 'nu')
+			i += m.end()
+		elif c.isalpha() or c in '_$':
+			m = re.match(r'[\w$]+', text[i:])
+			word = m.group(0)
+			after = text[i + m.end():].lstrip(' ')
+
+			if word in KEYWORDS:
+				mark(i, i + m.end(), 'kw')
+			elif after.startswith('('):
+				mark(i, i + m.end(), 'fn')
+			elif word[0].isupper():
+				mark(i, i + m.end(), 'ty')
+
+			i += m.end()
+		else:
+			i += 1
+
+	return classes
+
+
+def diff_marks(prev, cur):
+	"""For each line of cur, one boolean per character: True when new."""
 
 	cur_lines = cur.split('\n')
 
 	if prev is None:
-		return [span(line, 'new') for line in cur_lines]
+		return [[True] * len(line) for line in cur_lines]
 
 	prev_lines = prev.split('\n')
 	out = []
@@ -53,9 +153,9 @@ def diff_lines(prev, cur):
 
 	for tag, i1, i2, j1, j2 in matcher.get_opcodes():
 		if tag == 'equal':
-			out += [span(line, 'old') for line in cur_lines[j1:j2]]
+			out += [[False] * len(line) for line in cur_lines[j1:j2]]
 		elif tag == 'insert':
-			out += [span(line, 'new') for line in cur_lines[j1:j2]]
+			out += [[True] * len(line) for line in cur_lines[j1:j2]]
 		elif tag == 'replace':
 			old_block = prev_lines[i1:i2]
 
@@ -69,28 +169,53 @@ def diff_lines(prev, cur):
 						best, ratio = candidate, r
 
 				if best is None or ratio < 0.6:
-					out.append(span(line, 'new'))
+					out.append([True] * len(line))
 
 					continue
 
-				parts = []
+				flags = [True] * len(line)
 				chars = difflib.SequenceMatcher(None, best, line, autojunk=False)
 
 				for ctag, _, _, k1, k2 in chars.get_opcodes():
-					parts.append(span(line[k1:k2], 'old' if ctag == 'equal' else 'new'))
+					if ctag == 'equal':
+						for k in range(k1, k2):
+							flags[k] = False
 
-				out.append(''.join(parts))
+				out.append(flags)
 
 	return out
 
 
-def code_block(name, prev, cur, note):
-	lines = diff_lines(prev, cur)
+def render_lines(prev, cur):
+	marks = diff_marks(prev, cur)
+	classes = syntax_classes(cur)
+	lines = []
+	offset = 0
+
+	for line, flags in zip(cur.split('\n'), marks):
+		runs = []
+
+		for k, ch in enumerate(line):
+			cls = classes[offset + k] if flags[k] else 'old'
+
+			if runs and runs[-1][0] == cls:
+				runs[-1][1] += ch
+			else:
+				runs.append([cls, ch])
+
+		lines.append(''.join(f'<span class="{cls}">{e(text)}</span>' for cls, text in runs))
+		offset += len(line) + 1
+
+	return lines
+
+
+def code_block(name, prev, cur, note=''):
 	rows = ''.join(
 		f'<span class="ln">{i}</span><span class="lc">{line or " "}</span>'
-		for i, line in enumerate(lines, 1)
+		for i, line in enumerate(render_lines(prev, cur), 1)
 	)
-	label = 'All new' if prev is None else 'Lit = new since the previous step'
+	label = 'All new' if prev is None else 'Bright = new since the previous step'
+	note_html = f'<p class="code-note">{note}</p>' if note else ''
 
 	return f'''
 <figure class="code">
@@ -100,7 +225,7 @@ def code_block(name, prev, cur, note):
 		{copy_button(cur, 'Copy code')}
 	</figcaption>
 	<div class="code-scroll"><pre>{rows}</pre></div>
-	<p class="code-note">{note}</p>
+	{note_html}
 </figure>'''
 
 
@@ -226,7 +351,7 @@ p.step('ui', '<p><strong>Show the agent</strong> (already created)</p><ol><li>Ta
 p.step('say', 'The external reference code is the agent&rsquo;s address. It is the only thing the card needs to know about it.')
 p.step('ui', '<p><strong>Show the workflow</strong></p><ol><li><b>View Workflow</b> &rarr; click the node <code>ldpMetricInsight</code>.</li></ol>'
 	+ values([v('User message', 'Metric summary:\n{{metrics}}'), v('Tools', '[]'), v('RAG', '{}'), v('Prompt', PROMPT)]))
-p.step('code', code_block('ldp-demo-card.js', code[4], code[5], 'Point at <code>AGENT_ERC</code>, <code>askAgent</code> (token &rarr; stream &rarr; start the agent &rarr; answer on the event named after it) and <code>describe</code> (plain text lines, never nested JSON).'))
+p.step('code', code_block('ldp-demo-card.js', code[4], code[5]))
 p.step(*ship(5))
 p.step('ui', '<ol><li>Right card &rarr; <b>&#10022; AI insight</b>.</li></ol>')
 p.step('check', '&ldquo;Asking AI Hub&hellip;&rdquo;, then two or three sentences citing the value, the previous period and one action.')
@@ -269,11 +394,12 @@ def render_part(part):
 </section>'''
 
 
-nav = ''.join(f'<a href="#part-{p.letter.lower()}"><b>{p.letter}</b> {p.title}</a>' for p in parts)
+nav = ''.join(f'<li><a href="#part-{p.letter.lower()}"><span class="a-letter">{p.letter}</span><span class="a-title">{p.title}</span><span class="a-topic">{p.topic}</span></a></li>' for p in parts)
+nav += '<li><a href="#trouble"><span class="a-letter">?</span><span class="a-title">If something breaks</span><span class="a-topic">Quick fixes</span></a></li>'
 
 trouble = ''.join(f'<tr><th scope="row">{a}</th><td>{b}</td></tr>' for a, b in TROUBLE)
 
-page = f'''<title>DEVCON Live Demo Guide</title>
+page = f'''<title>Live Demo Guide</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&amp;family=IBM+Plex+Sans:wght@400;500;600&amp;family=JetBrains+Mono:wght@400;600&amp;display=swap">
 <style>
@@ -293,6 +419,13 @@ page = f'''<title>DEVCON Live Demo Guide</title>
 	--warn: #ff8a7a;
 	--code-bg: #070b17;
 	--code-new: #f4f7ff;
+	--code-comment: #8f9bbd;
+	--code-keyword: #7fb2ff;
+	--code-string: #f2c78a;
+	--code-number: #f29e74;
+	--code-fn: #8fe3c4;
+	--code-type: #c3a6ff;
+	--line-soft: rgba(38, 50, 82, 0.5);
 	--code-old: #4a5576;
 	--display: 'Bricolage Grotesque', 'Segoe UI', system-ui, sans-serif;
 	--body: 'IBM Plex Sans', 'Segoe UI', system-ui, sans-serif;
@@ -323,16 +456,22 @@ h1 {{ font: 800 clamp(30px, 6vw, 46px)/1.05 var(--display); letter-spacing: -0.0
 .login .label {{ color: var(--muted); font: 600 11px/1 var(--mono); letter-spacing: 0.12em; text-transform: uppercase; }}
 .login code {{ background: none; flex: 1 1 280px; min-width: 0; padding: 0; }}
 
-.bar {{ align-items: center; background: color-mix(in srgb, var(--bg) 88%, transparent); backdrop-filter: blur(8px); border-bottom: 1px solid var(--line); display: flex; gap: 6px; margin-inline: -16px; overflow-x: auto; padding: 10px 16px; position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; }}
-.bar a {{ border: 1px solid var(--line); border-radius: 999px; color: var(--muted); flex: none; font-size: 15px; padding: 5px 12px; text-decoration: none; }}
-.bar a b {{ color: var(--accent); font-family: var(--mono); margin-right: 4px; }}
-.bar a:hover, .bar a:focus-visible {{ border-color: var(--accent); color: var(--fg); }}
-.bar .spacer {{ flex: 1; }}
+.agenda {{ border-block: 1px solid var(--line-soft); margin-top: 8px; padding-block: 18px; scroll-margin-top: 16px; }}
+.agenda-title {{ color: var(--muted); font: 600 12px/1 var(--mono); letter-spacing: 0.14em; margin: 0 0 10px; text-transform: uppercase; }}
+.agenda ol {{ display: grid; list-style: none; margin: 0; padding: 0; }}
+.agenda a {{ align-items: baseline; border-top: 1px solid var(--line-soft); color: var(--fg); display: grid; gap: 16px; grid-template-columns: 2.2em minmax(0, 1fr) auto; padding: 10px 4px; text-decoration: none; }}
+.agenda li:first-child a {{ border-top: 0; }}
+.agenda a:hover .a-title, .agenda a:focus-visible .a-title {{ color: var(--accent); }}
+.a-letter {{ color: var(--accent); font: 800 20px/1 var(--display); }}
+.a-title {{ font: 600 20px/1.3 var(--display); }}
+.a-topic {{ color: var(--muted); font: 500 13px/1 var(--mono); letter-spacing: 0.08em; text-transform: uppercase; }}
+.to-agenda {{ background: var(--surface-2); border: 1px solid var(--line); border-radius: 999px; bottom: calc(16px + env(safe-area-inset-bottom, 0px)); color: var(--fg); font-size: 14px; padding: 8px 14px; position: fixed; right: 16px; text-decoration: none; z-index: 5; }}
+.to-agenda:hover {{ border-color: var(--accent); }}
 .toggles {{ display: flex; flex-wrap: wrap; gap: 8px 20px; }}
 .toggle {{ align-items: center; color: var(--muted); cursor: pointer; display: flex; flex: none; font-size: 15px; gap: 6px; }}
 body.no-say .k-say {{ display: none; }}
 
-.part {{ padding-top: 40px; scroll-margin-top: 56px; }}
+.part {{ padding-top: 40px; scroll-margin-top: 16px; }}
 .part-head {{ align-items: center; display: flex; gap: 14px; margin-bottom: 18px; }}
 .letter {{ align-items: center; background: var(--accent-soft); border: 1px solid var(--accent); border-radius: 10px; color: var(--accent); display: flex; flex: none; font: 800 22px/1 var(--display); height: 44px; justify-content: center; width: 44px; }}
 h2 {{ font: 700 28px/1.15 var(--display); margin: 0; text-wrap: balance; }}
@@ -362,7 +501,7 @@ h2 {{ font: 700 28px/1.15 var(--display); margin: 0; text-wrap: balance; }}
 
 .table-scroll {{ overflow-x: auto; }}
 .values {{ border-collapse: collapse; width: 100%; }}
-.values th, .values td {{ border-top: 1px solid var(--line); padding: 8px 10px 8px 0; text-align: left; vertical-align: middle; }}
+.values th, .values td {{ border-top: 1px solid var(--line-soft); padding: 8px 10px 8px 0; text-align: left; vertical-align: middle; }}
 .values tr:first-child th, .values tr:first-child td {{ border-top: 0; }}
 .values th {{ color: var(--muted); font-weight: 500; white-space: nowrap; width: 1%; }}
 .values td:last-child {{ text-align: right; width: 1%; }}
@@ -382,13 +521,19 @@ h2 {{ font: 700 28px/1.15 var(--display); margin: 0; text-wrap: balance; }}
 .ln {{ color: var(--code-old); padding: 0 12px 0 14px; text-align: right; user-select: none; }}
 .lc {{ padding-right: 16px; white-space: pre; }}
 .old {{ color: var(--code-old); }}
-.new {{ color: var(--code-new); }}
+.tx, .pu {{ color: var(--code-new); }}
+.cm {{ color: var(--code-comment); }}
+.kw {{ color: var(--code-keyword); }}
+.st {{ color: var(--code-string); }}
+.nu {{ color: var(--code-number); }}
+.fn {{ color: var(--code-fn); }}
+.ty {{ color: var(--code-type); }}
 body.flat .old {{ color: #b9c3dc; }}
 .code-note {{ color: var(--muted); font-size: 16px; margin: 8px 0 0; }}
 
 .trouble {{ padding-top: 48px; }}
 .trouble table {{ border-collapse: collapse; width: 100%; }}
-.trouble th, .trouble td {{ border-top: 1px solid var(--line); padding: 10px 12px 10px 0; text-align: left; vertical-align: top; }}
+.trouble th, .trouble td {{ border-top: 1px solid var(--line-soft); padding: 10px 12px 10px 0; text-align: left; vertical-align: top; }}
 .trouble th {{ font-weight: 500; width: 45%; }}
 .trouble td {{ color: var(--muted); }}
 
@@ -411,8 +556,8 @@ html {{ scroll-behavior: smooth; }}
 <div class="wrap">
 	<header class="hero">
 		<span class="eyebrow">DEVCON 2026 &middot; Live demo</span>
-		<h1>One LDP metric card, from an empty site to an AI insight</h1>
-		<p>Follow the parts in order. Lit code is what changed since the previous step; dimmed code was already there.</p>
+		<h1>Live Demo Guide</h1>
+		<p>One LDP metric card, from an empty site to an AI insight. Bright code is what changed since the previous step; dimmed code was already there.</p>
 		<div class="login">
 			<span class="label">Log in</span>
 			<code>{e(LOGIN)}</code>
@@ -424,9 +569,11 @@ html {{ scroll-behavior: smooth; }}
 		</div>
 	</header>
 
-	<nav class="bar" aria-label="Parts">
-		{nav}
+	<nav class="agenda" id="agenda" aria-label="Agenda">
+		<h2 class="agenda-title">Agenda</h2>
+		<ol>{nav}</ol>
 	</nav>
+	<a class="to-agenda" href="#agenda">Agenda &uarr;</a>
 
 	{''.join(render_part(p) for p in parts)}
 
