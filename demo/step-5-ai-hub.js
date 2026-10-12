@@ -18,52 +18,63 @@ const METRICS = {
 const STYLE = `
 	<style>
 		.ldp-demo-card {
-			background: #fff;
-			border-radius: 16px;
-			box-shadow: 0 8px 24px rgba(11, 79, 108, 0.1);
+			background: var(--white);
+			border: 1px solid var(--gray-300);
+			border-radius: var(--border-radius-lg);
+			box-shadow: var(--box-shadow-sm);
+			color: var(--body-color);
 			display: block;
-			font-family: inherit;
-			padding: 20px 24px;
+			font-family: var(--font-family-base);
+			padding: var(--spacer-4);
 		}
 
 		.ldp-demo-card select {
-			border: 1px solid #d5dbe0;
-			border-radius: 8px;
+			background: var(--white);
+			border: 1px solid var(--gray-400);
+			border-radius: var(--border-radius);
+			color: var(--body-color);
 			font: inherit;
-			padding: 4px 8px;
+			font-size: var(--font-size-sm);
+			padding: var(--spacer-1) var(--spacer-2);
 		}
 
 		.ldp-demo-card .value {
-			color: #0b4f6c;
-			font-size: 44px;
-			font-weight: 700;
-			margin: 12px 0 4px;
+			color: var(--dark);
+			font-size: 2.5rem;
+			font-weight: 600;
+			margin: var(--spacer-3) 0 var(--spacer-1);
 		}
 
 		.ldp-demo-card .trend {
-			color: #5b6b77;
-			font-size: 14px;
+			color: var(--secondary);
+			font-size: var(--font-size-sm);
 		}
 
 		.ldp-demo-card .ai {
-			background: #0b4f6c;
+			background: var(--primary);
 			border: 0;
-			border-radius: 999px;
-			color: #fff;
+			border-radius: var(--border-radius);
+			color: var(--white);
 			cursor: pointer;
 			font: inherit;
-			font-size: 13px;
-			margin-top: 14px;
-			padding: 6px 14px;
+			font-size: var(--font-size-sm);
+			margin-top: var(--spacer-3);
+			padding: var(--spacer-1) var(--spacer-3);
+		}
+
+		.ldp-demo-card .ai:hover {
+			background: var(--primary-d1);
 		}
 
 		.ldp-demo-card .insight {
-			background: #f7f3ea;
-			border-radius: 10px;
-			font-size: 14px;
+			background: var(--primary-l3);
+			border-left: 3px solid var(--primary);
+			border-radius: var(--border-radius);
+			color: var(--body-color);
+			font-size: var(--font-size-sm);
 			line-height: 1.5;
-			margin: 12px 0 0;
-			padding: 10px 12px;
+			margin: var(--spacer-3) 0 0;
+			padding: var(--spacer-2) var(--spacer-3);
 		}
 
 		.ldp-demo-card .insight:empty {
