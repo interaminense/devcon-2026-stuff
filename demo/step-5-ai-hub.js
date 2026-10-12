@@ -8,7 +8,7 @@ const RANGE_KEY = 0;
 const OBJECT_URL = '/o/c/democardconfigs';
 
 // The AI Hub agent that writes the insight
-const AGENT_ERC = 'DEVCON_2026_LDP_METRIC_INSIGHT';
+const AGENT_ERC = 'DEVCON_2026_DEMO_LDP_METRIC_INSIGHT';
 
 const METRICS = {
 	sessionsMetric: 'Sessions',
