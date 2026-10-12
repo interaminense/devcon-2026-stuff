@@ -4,7 +4,7 @@ The dashboard cards send a JSON summary of what they show to this agent and prin
 
 ## 1. Workflow
 
-Easiest path: in AI Hub's Process Builder, duplicate the built-in **Make Shorter** workflow (start → `llm` node → end) and change the copy.
+In AI Hub the workflow belongs to an agent and is opened from it. Easiest path: *Agent Builder* → the built-in **Make Shorter** agent → *Actions* → *Duplicate*; then *Actions* → *View* on the copy, fill in the agent fields below and *Save*, and click *View Workflow* to edit the workflow (start → `llm` node → end). After editing the node, click *Update*.
 
 | Setting | Value |
 |---|---|
@@ -40,7 +40,7 @@ Variables enter the prompt and the user message as `{{name}}`, and only those de
 
 ## 2. Agent Definition
 
-In AI Hub, *Agents → New*:
+In *Agent Builder*, on the duplicated agent (*Actions* → *View*):
 
 | Field | Value |
 |---|---|
@@ -68,7 +68,7 @@ Used by the Content Advisor client extension on `/learn`. It receives one under-
 
 ## Workflow
 
-Duplicate **Make Shorter** again and change the copy:
+Duplicate the **Make Shorter** agent again, then edit its workflow through *View Workflow*:
 
 | Setting | Value |
 |---|---|
