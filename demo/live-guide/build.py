@@ -358,16 +358,6 @@ p.step('check', '&ldquo;Asking AI Hub&hellip;&rdquo;, then two or three sentence
 p.step('say', 'We format the text before sending it: plain labeled lines. Easier for the model, and the firewall in front of AI Hub rejects nested JSON.')
 parts.append(p)
 
-TROUBLE = [
-	('The page still runs the previous step', 'Bump <code>?v=</code> in the CX and hard reload.'),
-	('Widget missing in Widgets', 'Check the CX was published; search <code>LDP Demo Card</code>.'),
-	('Card empty, <code>customElements.define</code> error', 'HTML Element Name must be <code>ldp-demo-card</code>.'),
-	('Trend shows &ldquo;Previous period: 0&rdquo;', 'No traffic in the 7 days before. Nothing to fix live.'),
-	('Config lost after reload in part 5', 'Object published? Field Name exactly <code>metric</code>?'),
-	('<code>AI Hub is not available: &hellip; 404</code>', 'Agent missing or disabled. Check the ERC.'),
-	('<code>Failed to fetch</code> on the insight', 'Click again (transient firewall block).'),
-	('<code>network error</code> after a long wait', 'The agent never answered: the workflow prompt is empty.'),
-]
 
 
 def render_part(part):
@@ -395,9 +385,8 @@ def render_part(part):
 
 
 nav = ''.join(f'<li><a href="#part-{p.letter.lower()}"><span class="a-letter">{p.letter}</span><span class="a-title">{p.title}</span><span class="a-topic">{p.topic}</span></a></li>' for p in parts)
-nav += '<li><a href="#trouble"><span class="a-letter">?</span><span class="a-title">If something breaks</span><span class="a-topic">Quick fixes</span></a></li>'
+nav += '<li><a href="#reset-demo"><span class="a-letter">&#8634;</span><span class="a-title">Reset the demo</span><span class="a-topic">Start over</span></a></li>'
 
-trouble = ''.join(f'<tr><th scope="row">{a}</th><td>{b}</td></tr>' for a, b in TROUBLE)
 
 page = f'''<title>Live Demo Guide</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -531,20 +520,18 @@ h2 {{ font: 700 28px/1.15 var(--display); margin: 0; text-wrap: balance; }}
 body.flat .old {{ color: #b9c3dc; }}
 .code-note {{ color: var(--muted); font-size: 16px; margin: 8px 0 0; }}
 
-.trouble {{ padding-top: 48px; }}
-.trouble table {{ border-collapse: collapse; width: 100%; }}
-.trouble th, .trouble td {{ border-top: 1px solid var(--line-soft); padding: 10px 12px 10px 0; text-align: left; vertical-align: top; }}
-.trouble th {{ font-weight: 500; width: 45%; }}
-.trouble td {{ color: var(--muted); }}
+.reset-card {{ background: var(--surface); border: 1px solid color-mix(in srgb, var(--warn) 40%, transparent); border-radius: 12px; display: grid; gap: 12px; padding: 16px 18px; }}
+.reset-card ol {{ display: grid; gap: 6px; margin: 0; padding-left: 22px; }}
+.reset-card p {{ color: var(--muted); margin: 0; }}
 
 .foot {{ align-items: center; color: var(--muted); display: flex; flex-wrap: wrap; font-size: 15px; gap: 12px; justify-content: space-between; padding-top: 32px; }}
-.reset {{ background: none; border: 1px solid var(--line); border-radius: 8px; color: var(--muted); cursor: pointer; font: inherit; padding: 6px 12px; }}
+.reset {{ background: var(--surface-2); border: 1px solid var(--line); border-radius: 8px; color: var(--fg); cursor: pointer; font: inherit; justify-self: start; padding: 8px 14px; }}
+.reset:hover, .reset:focus-visible {{ border-color: var(--warn); }}
 
 :focus-visible {{ outline: 2px solid var(--accent); outline-offset: 2px; }}
 
 @media (max-width: 560px) {{
 	.values th {{ white-space: normal; }}
-	.trouble th {{ width: auto; }}
 }}
 
 @media (prefers-reduced-motion: reduce) {{
@@ -577,14 +564,24 @@ html {{ scroll-behavior: smooth; }}
 
 	{''.join(render_part(p) for p in parts)}
 
-	<section class="trouble" id="trouble">
-		<header class="part-head"><span class="letter">?</span><div><h2>If something breaks</h2><span class="topic">Quick fixes</span></div></header>
-		<div class="table-scroll"><table><tbody>{trouble}</tbody></table></div>
+	<section class="part" id="reset-demo">
+		<header class="part-head"><span class="letter">&#8634;</span><div><h2>Reset the demo</h2><span class="topic">Start over</span></div></header>
+		<div class="reset-card">
+			<ol>
+				<li><b>DEVCON Demo</b> &rarr; Site Builder &rarr; <b>Pages</b> &rarr; <b>Demo</b> &rarr; &#8942; &rarr; <b>Delete</b>. Keep <b>Home</b>.</li>
+				<li>Applications &rarr; <b>Client Extensions</b> &rarr; <b>LDP Demo Card</b> &rarr; &#8942; &rarr; <b>Delete</b>.</li>
+				<li><b>DEVCON Demo</b> &rarr; Documents and Media &rarr; <code>ldp-demo-card.js</code> &rarr; &#8942; &rarr; <b>Move to Recycle Bin</b>.</li>
+				<li><b>DEVCON Demo</b> &rarr; <b>Recycle Bin</b> &rarr; <b>Empty the Recycle Bin</b>. Otherwise the next upload gets a different URL.</li>
+				<li>Control Panel &rarr; <b>Objects</b> &rarr; folder <b>DEVCON Demo</b> &rarr; <b>Demo Card Config</b> &rarr; &#8942; &rarr; <b>Delete</b>. Its entries go with it.</li>
+				<li>In the editor, empty <code>ldp-demo-card.js</code>.</li>
+			</ol>
+			<p>Keep the AI Hub agent: it is created before the talk, not on stage.</p>
+			<button class="reset" id="reset" type="button">Clear all checkmarks</button>
+		</div>
 	</section>
 
 	<footer class="foot">
 		<span>Code from <code>interaminense/devcon-2026-stuff</code>, folder <code>demo/</code>.</span>
-		<button class="reset" id="reset" type="button">Clear all checkmarks</button>
 	</footer>
 </div>
 
