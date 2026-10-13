@@ -8,7 +8,7 @@ DEMO = pathlib.Path.home() / 'dev/projects/devcon-2026/devcon-2026-stuff/demo'
 OUT = pathlib.Path(__file__).parent / 'devcon-live-guide.html'
 
 SITE = 'https://webserver-lctacdemodevcon-prd.lfr.cloud'
-LOGIN = SITE + '/c/portal/login?redirect=/web/devcon-demo'
+LOGIN = SITE + '/web/devcon-demo/home?p_p_id=com_liferay_login_web_portlet_LoginPortlet&p_p_state=maximized&_com_liferay_login_web_portlet_LoginPortlet_redirect=%2Fweb%2Fdevcon-demo'
 DOC_URL = '/documents/d/devcon-demo/ldp-demo-card-js'
 
 PROMPT = '''You are an analytics assistant. You receive one website metric from Liferay Data Platform: its name, the period, the value, the previous period's value, and the change.
