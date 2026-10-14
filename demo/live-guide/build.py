@@ -296,10 +296,7 @@ p.step('say', 'Before any code: the data lives in LDP, and DXP is already connec
 p.step('ui', '''<ol>
 	<li>Tab 2: Control Panel &rarr; Instance Settings &rarr; Platform &rarr; <b>Analytics Cloud</b>. Point at <b>Connected</b>.</li>
 	<li><b>Properties</b> tab: show <b>SWELL LAB DevCon 2026</b> and the synced Swell Lab site.</li>
-	<li>Tab 1: LDP &rarr; the property. Point at the number in the URL: that is the channel ID.</li>
-	<li>Sites dashboard on <b>Last 7 days</b>: the numbers the card will show.</li>
-</ol>''' + values([v('Channel ID', '845351493326064678')]))
-p.step('say', 'One property is one channel. The channel ID is all the card needs to know whose data to ask for.')
+</ol>''')
 parts.append(p)
 
 p = Part('2', 'The first client extension', 'Topic 04')
@@ -316,6 +313,9 @@ parts.append(p)
 
 p = Part('3', 'Real LDP data', 'Topic 04')
 p.step('say', 'The card calls DXP on the same origin, with the user&rsquo;s session and the CSRF token. DXP forwards the GraphQL query to LDP. No LDP token in the browser.')
+p.step('ui', '<p><strong>Get the channel ID from LDP</strong></p><ol><li>Tab 1: open <code>ldp-internal.liferay.com</code> &rarr; workspace <b>Liferay Data Platform</b> &rarr; property <b>SWELL LAB DevCon 2026</b> &rarr; <b>Sites</b>.</li><li>The channel ID is the number in the URL, between the workspace and <code>/sites</code>. Copy it.</li><li>Leave the Sites dashboard on <b>Last 7 days</b>: the card must show the same numbers.</li></ol>'
+	+ values([v('LDP Sites URL', 'https://ldp-internal.liferay.com/workspace/liferay-data-platform/845351493326064678/sites'), v('Channel ID', '845351493326064678')]))
+p.step('say', 'One property is one channel. The channel ID is all the card needs to know whose data to ask for.')
 p.step('code', code_block('ldp-demo-card.js', code[1], code[2], 'Point at <code>CHANNEL_ID</code>, <code>RANGE_KEY = 7</code>, the <code>site</code> query and the <code>x-csrf-token</code> header.'))
 p.step(*ship(2))
 p.step('check', '&ldquo;Unique visitors: N&rdquo;, the same N as LDP on Last 7 days.')
