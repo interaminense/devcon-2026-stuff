@@ -253,8 +253,8 @@ def v(field, value, purpose=None):
 	return (field, value, True) if purpose is None else (field, value, True, purpose)
 
 
-def plain(field, value):
-	return (field, value, False)
+def plain(field, value, purpose=None):
+	return (field, value, False) if purpose is None else (field, value, False, purpose)
 
 
 class Part:
@@ -353,6 +353,15 @@ p.step('warn', 'A red <code>GET &hellip; 404</code> in DevTools on first load is
 parts.append(p)
 
 p = Part('6', 'AI Hub insight', 'Topic 05')
+p.step('ui', '<p><strong>Connect DXP to AI Hub</strong></p><ol><li>Tab 6: AI Hub &rarr; the account configuration &rarr; copy the <b>Client ID</b> and the <b>Client Secret</b>.</li><li>In the same configuration, check the <b>Environment URL</b>: the DXP address below, with no slash at the end.</li><li>Tab 2: Control Panel &rarr; Instance Settings &rarr; Platform &rarr; <b>AI Hub</b> &rarr; paste the values &rarr; <b>Save</b>.</li></ol>'
+	+ values([
+		plain('Client ID', 'Copied from AI Hub', 'Identifies this DXP to AI Hub.'),
+		plain('Client Secret', 'Copied from AI Hub', 'Proves it. It stays on the DXP server and never reaches the browser.'),
+		v('Service URL', 'https://na1.hub.liferay.com', 'Where the AI Hub of this region lives. DXP asks it for tokens.'),
+		v('Environment URL (in AI Hub)', 'https://webserver-lctacdemodevcon-prd.lfr.cloud', 'The DXP origin AI Hub trusts: it allows the browser calls (CORS) and calls DXP back on the user&rsquo;s behalf. Must match exactly, no trailing slash.'),
+	]))
+p.step('warn', 'The projector shows everything: paste the <b>Client Secret</b> with the screen mirrored off, or show the field already filled. If the secret was shown, generate a new one after the talk.')
+p.step('say', 'DXP keeps the secret. The browser only gets a short-lived token from DXP, and AI Hub acts on behalf of the signed-in user.')
 p.step('say', 'An AI Hub agent is an agent definition plus a workflow with an LLM node. The card sends what it shows; AI Hub never reads LDP itself.')
 p.step('ui', '<p><strong>Create the agent</strong></p><ol><li>Tab 6: AI Hub &rarr; <b>Agent Builder</b>.</li><li><b>Make Shorter</b> &rarr; &#8942; &rarr; <b>Duplicate</b>.</li><li>On the copy: &#8942; &rarr; <b>View</b> &rarr; fill in the fields below &rarr; <b>Save</b>.</li></ol>'
 	+ values([v('Title', 'DevCon 2026 Demo LDP Metric Insight', 'The name people see in Agent Builder.'), v('Description', 'Turns one LDP metric from the DEVCON demo card into a short insight.', 'Tells people, and the AI Hub assistant that picks agents, what this agent is for.'), v('External reference code', 'DEVCON_2026_DEMO_LDP_METRIC_INSIGHT', 'The agent&rsquo;s fixed address. The card starts the agent with it, and the answer comes back on an event with this name.'), v('Input variables', 'metrics', 'The names of the values the caller sends. The card sends its summary as <code>metrics</code>.'), v('Output variable', 'insight', 'Which workflow output is the agent&rsquo;s answer. Must match the node&rsquo;s output variable.')]))
