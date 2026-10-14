@@ -25,6 +25,9 @@
 	--code-fn: #8fe3c4;
 	--code-type: #c3a6ff;
 	--line-soft: rgba(38, 50, 82, 0.5);
+	--c-dxp: #5b9dff;
+	--c-ldp: #3fd0b0;
+	--c-hub: #c08cff;
 	--code-old: #4a5576;
 	--display: 'Bricolage Grotesque', 'Segoe UI', system-ui, sans-serif;
 	--body: 'IBM Plex Sans', 'Segoe UI', system-ui, sans-serif;
@@ -73,26 +76,33 @@ body.no-diagram .diagram { display: none; }
 .diagram { display: grid; gap: 16px; margin-top: 8px; }
 .diagram-scroll { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; overflow-x: auto; padding: 16px; }
 .diagram svg { display: block; height: auto; min-width: 820px; width: 100%; }
-.dg-group { fill: none; stroke: var(--line); stroke-dasharray: 6 5; }
-.dg-group-name { fill: var(--fg); font: 800 18px var(--display); }
+.app-dxp { --c: var(--c-dxp); }
+.app-ldp { --c: var(--c-ldp); }
+.app-hub { --c: var(--c-hub); }
+.dg-group { fill: color-mix(in srgb, var(--c) 5%, transparent); stroke: var(--c); stroke-dasharray: 6 5; stroke-opacity: 0.7; }
+.dg-group-name { fill: var(--c); font: 800 18px var(--display); }
 .dg-box { fill: var(--surface-2); stroke: var(--line); }
+.dg-box[class*="app-"] { fill: color-mix(in srgb, var(--c) 12%, var(--surface)); stroke: var(--c); }
+.dg-box.dg-soft { fill: color-mix(in srgb, var(--c) 6%, var(--surface)); stroke-dasharray: 4 4; }
 .dg-browser { fill: var(--bg); stroke: var(--fg); stroke-opacity: 0.4; }
-.dg-hub { stroke: var(--accent); }
 .dg-name { fill: var(--fg); font: 700 16px var(--display); }
 .dg-path { fill: var(--muted); font: 12px var(--mono); }
-.dg-route { fill: var(--accent); font: 12px var(--mono); }
+.dg-route { fill: var(--c); font: 12px var(--mono); }
 .dg-line { fill: none; stroke: var(--muted); stroke-width: 1.6; }
-.dg-line.dg-cors { stroke: var(--accent); }
+.dg-line[class*="app-"] { stroke: var(--c); }
 .dg-head { fill: var(--muted); }
-.dg-head-cors { fill: var(--accent); }
+.dg-head[class*="app-"] { fill: var(--c); }
 .dg-badge { fill: var(--fg); }
-.dg-badge-cors { fill: var(--accent); }
+.dg-badge[class*="app-"] { fill: var(--c); }
 .dg-badge-n { fill: var(--bg); font: 700 13px var(--mono); }
+.dg-legend { align-items: center; color: var(--muted); display: flex; flex-wrap: wrap; font-size: 14px; gap: 8px 18px; margin: 0; }
+.dg-legend span[class*="app-"] { align-items: center; color: var(--fg); display: inline-flex; gap: 8px; }
+.dg-legend span[class*="app-"]::before { background: var(--c); border-radius: 3px; content: ""; height: 12px; width: 12px; }
 .flow { display: grid; gap: 10px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr)); list-style: none; margin: 0; padding: 0; }
 .flow-step { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; display: grid; gap: 12px; grid-template-columns: auto minmax(0, 1fr); padding: 14px 16px; }
-.flow-cors { border-color: color-mix(in srgb, var(--accent) 50%, transparent); grid-column: 1 / -1; }
-.flow-n { align-items: center; background: var(--fg); border-radius: 50%; color: var(--bg); display: flex; font: 700 14px var(--mono); height: 28px; justify-content: center; width: 28px; }
-.flow-cors .flow-n { background: var(--accent); }
+.flow-step { border-color: color-mix(in srgb, var(--c) 45%, transparent); }
+.flow-wide { grid-column: 1 / -1; }
+.flow-n { align-items: center; background: var(--c); border-radius: 50%; color: var(--bg); display: flex; font: 700 14px var(--mono); height: 28px; justify-content: center; width: 28px; }
 .flow-body { display: grid; gap: 6px; min-width: 0; }
 .flow-body p { margin: 0; }
 .flow-title b { font: 700 17px var(--display); }
@@ -206,51 +216,54 @@ html { scroll-behavior: smooth; }
 	<h2 class="agenda-title">How the card works</h2>
 	<div class="diagram-scroll"><svg role="img" aria-label="The demo card in the browser loads from Documents and Media, reads LDP through the DXP analytics proxy, stores its configuration in the Objects API, gets an AI Hub token from DXP, and then talks to AI Hub directly, which runs the LLM." viewBox="0 0 1100 620" xmlns="http://www.w3.org/2000/svg"><defs>
 	<marker id="dg-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="dg-head" d="M0 0 L10 5 L0 10 z"/></marker>
-	<marker id="dg-a-cors" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="dg-head-cors" d="M0 0 L10 5 L0 10 z"/></marker>
-</defs><rect class="dg-group" x="350" y="16" width="370" height="506" rx="14"/><text class="dg-group-name" x="375" y="46">DXP</text><text class="dg-path" x="422" y="46">same origin as the page</text><rect class="dg-box dg-browser" x="30" y="40" width="220" height="462" rx="12"/><text class="dg-name" x="48" y="70">Browser</text><text class="dg-path" x="48" y="92">&lt;ldp-demo-card&gt; × 2</text><text class="dg-path" x="48" y="112">one per widget instance</text><rect class="dg-box" x="375" y="60" width="320" height="62" rx="10"/><text class="dg-name" x="391" y="86">Client Extensions</text><text class="dg-path" x="391" y="106">Custom Element · ldp-demo-card</text><rect class="dg-box" x="375" y="142" width="320" height="62" rx="10"/><text class="dg-name" x="391" y="168">Documents and Media</text><text class="dg-path" x="391" y="188">/documents/d/devcon-demo/…</text><rect class="dg-box" x="375" y="224" width="320" height="62" rx="10"/><text class="dg-name" x="391" y="250">Analytics proxy</text><text class="dg-path" x="391" y="270">/o/analytics-rest/v1.0/graphql</text><rect class="dg-box" x="375" y="306" width="320" height="62" rx="10"/><text class="dg-name" x="391" y="332">Objects API</text><text class="dg-path" x="391" y="352">/o/c/democardconfigs</text><rect class="dg-box" x="375" y="400" width="320" height="62" rx="10"/><text class="dg-name" x="391" y="426">AI Hub connection</text><text class="dg-path" x="391" y="446">/o/ai-hub-cell/v1.0/…tokens</text><rect class="dg-box" x="840" y="224" width="230" height="62" rx="10"/><text class="dg-name" x="856" y="250">LDP</text><text class="dg-path" x="856" y="270">GraphQL · property channel</text><rect class="dg-box" x="840" y="300" width="230" height="62" rx="10"/><text class="dg-name" x="856" y="326">LLM</text><text class="dg-path" x="856" y="346">runs the prompt</text><rect class="dg-box dg-hub" x="840" y="400" width="230" height="62" rx="10"/><text class="dg-name" x="856" y="426">AI Hub</text><text class="dg-path" x="856" y="446">na1.hub.liferay.com · agent</text><line class="dg-line" x1="371" y1="91.0" x2="254" y2="91.0" marker-end="url(#dg-a)"/><circle class="dg-badge" cx="312.5" cy="91.0" r="13"/><text class="dg-badge-n" x="312.5" y="95.5" text-anchor="middle">1</text><line class="dg-line" x1="371" y1="173.0" x2="254" y2="173.0" marker-end="url(#dg-a)"/><circle class="dg-badge" cx="312.5" cy="173.0" r="13"/><text class="dg-badge-n" x="312.5" y="177.5" text-anchor="middle">2</text><line class="dg-line" x1="254" y1="255.0" x2="371" y2="255.0" marker-start="url(#dg-a)" marker-end="url(#dg-a)"/><circle class="dg-badge" cx="312.5" cy="255.0" r="13"/><text class="dg-badge-n" x="312.5" y="259.5" text-anchor="middle">3</text><line class="dg-line" x1="699" y1="255.0" x2="836" y2="255.0" marker-start="url(#dg-a)" marker-end="url(#dg-a)"/><circle class="dg-badge" cx="767.5" cy="255.0" r="13"/><text class="dg-badge-n" x="767.5" y="259.5" text-anchor="middle">3</text><line class="dg-line" x1="254" y1="337.0" x2="371" y2="337.0" marker-start="url(#dg-a)" marker-end="url(#dg-a)"/><circle class="dg-badge" cx="312.5" cy="337.0" r="13"/><text class="dg-badge-n" x="312.5" y="341.5" text-anchor="middle">4</text><line class="dg-line" x1="254" y1="431.0" x2="371" y2="431.0" marker-start="url(#dg-a)" marker-end="url(#dg-a)"/><circle class="dg-badge" cx="312.5" cy="431.0" r="13"/><text class="dg-badge-n" x="312.5" y="435.5" text-anchor="middle">5</text><line class="dg-line" x1="699" y1="431.0" x2="836" y2="431.0" marker-start="url(#dg-a)" marker-end="url(#dg-a)"/><circle class="dg-badge" cx="767.5" cy="431.0" r="13"/><text class="dg-badge-n" x="767.5" y="435.5" text-anchor="middle">5</text><path class="dg-line dg-cors" d="M140.0 506 V568 H955.0 V466" marker-start="url(#dg-a-cors)" marker-end="url(#dg-a-cors)"/><circle class="dg-badge dg-badge-cors" cx="547.5" cy="568" r="13"/><text class="dg-badge-n" x="547.5" y="572.5" text-anchor="middle">6</text><text class="dg-route" x="547.5" y="600" text-anchor="middle">browser ⇄ AI Hub, cross-origin</text><line class="dg-line dg-cors" x1="955.0" y1="396" x2="955.0" y2="366" marker-start="url(#dg-a-cors)" marker-end="url(#dg-a-cors)"/><circle class="dg-badge dg-badge-cors" cx="983.0" cy="381.0" r="13"/><text class="dg-badge-n" x="983.0" y="385.5" text-anchor="middle">6</text></svg></div>
-	<ol class="flow"><li class="flow-step">
+	<marker id="dg-a-dxp" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="dg-head app-dxp" d="M0 0 L10 5 L0 10 z"/></marker>
+	<marker id="dg-a-ldp" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="dg-head app-ldp" d="M0 0 L10 5 L0 10 z"/></marker>
+	<marker id="dg-a-hub" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="dg-head app-hub" d="M0 0 L10 5 L0 10 z"/></marker>
+</defs><rect class="dg-group app-dxp" x="350" y="16" width="370" height="506" rx="14"/><text class="dg-group-name app-dxp" x="375" y="46">DXP</text><text class="dg-path" x="422" y="46">same origin as the page</text><rect class="dg-box dg-browser" x="30" y="40" width="220" height="462" rx="12"/><text class="dg-name" x="48" y="70">Browser</text><text class="dg-path" x="48" y="92">&lt;ldp-demo-card&gt; × 2</text><text class="dg-path" x="48" y="112">one per widget instance</text><rect class="dg-box app-dxp" x="375" y="60" width="320" height="62" rx="10"/><text class="dg-name" x="391" y="86">Client Extensions</text><text class="dg-path" x="391" y="106">Custom Element · ldp-demo-card</text><rect class="dg-box app-dxp" x="375" y="142" width="320" height="62" rx="10"/><text class="dg-name" x="391" y="168">Documents and Media</text><text class="dg-path" x="391" y="188">/documents/d/devcon-demo/…</text><rect class="dg-box app-dxp" x="375" y="224" width="320" height="62" rx="10"/><text class="dg-name" x="391" y="250">Analytics proxy</text><text class="dg-path" x="391" y="270">/o/analytics-rest/v1.0/graphql</text><rect class="dg-box app-dxp" x="375" y="306" width="320" height="62" rx="10"/><text class="dg-name" x="391" y="332">Objects API</text><text class="dg-path" x="391" y="352">/o/c/democardconfigs</text><rect class="dg-box app-dxp" x="375" y="400" width="320" height="62" rx="10"/><text class="dg-name" x="391" y="426">AI Hub connection</text><text class="dg-path" x="391" y="446">/o/ai-hub-cell/v1.0/…tokens</text><rect class="dg-box app-ldp" x="840" y="224" width="230" height="62" rx="10"/><text class="dg-name" x="856" y="250">LDP</text><text class="dg-path" x="856" y="270">GraphQL · property channel</text><rect class="dg-box app-hub dg-soft" x="840" y="300" width="230" height="62" rx="10"/><text class="dg-name" x="856" y="326">LLM</text><text class="dg-path" x="856" y="346">runs the prompt</text><rect class="dg-box app-hub" x="840" y="400" width="230" height="62" rx="10"/><text class="dg-name" x="856" y="426">AI Hub</text><text class="dg-path" x="856" y="446">na1.hub.liferay.com · agent</text><line class="dg-line app-dxp" x1="371" y1="91.0" x2="254" y2="91.0" marker-end="url(#dg-a-dxp)"/><circle class="dg-badge app-dxp" cx="312.5" cy="91.0" r="13"/><text class="dg-badge-n" x="312.5" y="95.5" text-anchor="middle">1</text><line class="dg-line app-dxp" x1="371" y1="173.0" x2="254" y2="173.0" marker-end="url(#dg-a-dxp)"/><circle class="dg-badge app-dxp" cx="312.5" cy="173.0" r="13"/><text class="dg-badge-n" x="312.5" y="177.5" text-anchor="middle">2</text><line class="dg-line app-dxp" x1="254" y1="255.0" x2="371" y2="255.0" marker-start="url(#dg-a-dxp)" marker-end="url(#dg-a-dxp)"/><circle class="dg-badge app-ldp" cx="312.5" cy="255.0" r="13"/><text class="dg-badge-n" x="312.5" y="259.5" text-anchor="middle">3</text><line class="dg-line app-ldp" x1="699" y1="255.0" x2="836" y2="255.0" marker-start="url(#dg-a-ldp)" marker-end="url(#dg-a-ldp)"/><circle class="dg-badge app-ldp" cx="767.5" cy="255.0" r="13"/><text class="dg-badge-n" x="767.5" y="259.5" text-anchor="middle">3</text><line class="dg-line app-dxp" x1="254" y1="337.0" x2="371" y2="337.0" marker-start="url(#dg-a-dxp)" marker-end="url(#dg-a-dxp)"/><circle class="dg-badge app-dxp" cx="312.5" cy="337.0" r="13"/><text class="dg-badge-n" x="312.5" y="341.5" text-anchor="middle">4</text><line class="dg-line app-dxp" x1="254" y1="431.0" x2="371" y2="431.0" marker-start="url(#dg-a-dxp)" marker-end="url(#dg-a-dxp)"/><circle class="dg-badge app-hub" cx="312.5" cy="431.0" r="13"/><text class="dg-badge-n" x="312.5" y="435.5" text-anchor="middle">5</text><line class="dg-line app-hub" x1="699" y1="431.0" x2="836" y2="431.0" marker-start="url(#dg-a-hub)" marker-end="url(#dg-a-hub)"/><circle class="dg-badge app-hub" cx="767.5" cy="431.0" r="13"/><text class="dg-badge-n" x="767.5" y="435.5" text-anchor="middle">5</text><path class="dg-line app-hub" d="M140.0 506 V568 H955.0 V466" marker-start="url(#dg-a-hub)" marker-end="url(#dg-a-hub)"/><circle class="dg-badge app-hub" cx="547.5" cy="568" r="13"/><text class="dg-badge-n" x="547.5" y="572.5" text-anchor="middle">6</text><text class="dg-route app-hub" x="547.5" y="600" text-anchor="middle">browser ⇄ AI Hub, cross-origin</text><line class="dg-line app-hub" x1="955.0" y1="396" x2="955.0" y2="366" marker-start="url(#dg-a-hub)" marker-end="url(#dg-a-hub)"/><circle class="dg-badge app-hub" cx="983.0" cy="381.0" r="13"/><text class="dg-badge-n" x="983.0" y="385.5" text-anchor="middle">6</text></svg></div>
+	<p class="dg-legend"><span class="app-dxp">DXP</span><span class="app-ldp">LDP</span><span class="app-hub">AI Hub</span><span class="dg-legend-note">Each call takes the color of the application that answers it.</span></p>
+	<ol class="flow"><li class="flow-step app-dxp">
 	<span class="flow-n">0</span>
 	<div class="flow-body">
 		<p class="flow-title"><b>Setup</b> <span>part 2</span></p>
 		<p class="flow-calls"><code>Documents and Media → File Upload</code><code>Client Extensions → Custom Element</code></p>
 		<p class="flow-text">You upload ldp-demo-card.js and register it with its URL, ?v=N and Instanceable. Each upload needs a new ?v=N.</p>
 	</div>
-</li><li class="flow-step">
+</li><li class="flow-step app-dxp">
 	<span class="flow-n">1</span>
 	<div class="flow-body">
 		<p class="flow-title"><b>Page</b> <span>part 2</span></p>
 		<p class="flow-calls"><code>GET /web/devcon-demo/demo</code></p>
 		<p class="flow-text">DXP renders the page with &lt;ldp-demo-card&gt; and a &lt;script&gt; pointing at the registered JavaScript URL.</p>
 	</div>
-</li><li class="flow-step">
+</li><li class="flow-step app-dxp">
 	<span class="flow-n">2</span>
 	<div class="flow-body">
 		<p class="flow-title"><b>Script</b> <span>part 2</span></p>
 		<p class="flow-calls"><code>GET /documents/d/devcon-demo/ldp-demo-card-js?v=N</code></p>
 		<p class="flow-text">Documents and Media serves the file as JavaScript; customElements.define starts every instance.</p>
 	</div>
-</li><li class="flow-step">
+</li><li class="flow-step app-ldp">
 	<span class="flow-n">3</span>
 	<div class="flow-body">
 		<p class="flow-title"><b>Metric</b> <span>parts 3–4</span></p>
 		<p class="flow-calls"><code>POST /o/analytics-rest/v1.0/graphql</code></p>
 		<p class="flow-text">Same origin: the session and x-csrf-token are the auth. DXP forwards site(channelId, rangeKey: 7) to LDP with the workspace token and returns value, previousValue and trend.</p>
 	</div>
-</li><li class="flow-step">
+</li><li class="flow-step app-dxp">
 	<span class="flow-n">4</span>
 	<div class="flow-body">
 		<p class="flow-title"><b>Config</b> <span>part 5</span></p>
 		<p class="flow-calls"><code>GET …/democardconfigs/by-external-reference-code/{id}</code><code>PUT same URL { metric }</code></p>
 		<p class="flow-text">One entry per widget instance, keyed by its portlet id. 404 means never configured; PUT creates, then replaces.</p>
 	</div>
-</li><li class="flow-step">
+</li><li class="flow-step app-hub">
 	<span class="flow-n">5</span>
 	<div class="flow-body">
 		<p class="flow-title"><b>Token</b> <span>part 6</span></p>
 		<p class="flow-calls"><code>POST /o/ai-hub-cell/v1.0/authorization-tokens</code></p>
 		<p class="flow-text">DXP uses the Client ID and Secret on the server and hands the card accessToken, userToken and serviceURL.</p>
 	</div>
-</li><li class="flow-step flow-cors">
+</li><li class="flow-step app-hub flow-wide">
 	<span class="flow-n">6</span>
 	<div class="flow-body">
 		<p class="flow-title"><b>Insight</b> <span>part 6</span></p>

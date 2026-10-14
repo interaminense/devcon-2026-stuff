@@ -439,6 +439,9 @@ page = f'''<title>Live Demo Guide</title>
 	--code-fn: #8fe3c4;
 	--code-type: #c3a6ff;
 	--line-soft: rgba(38, 50, 82, 0.5);
+	--c-dxp: #5b9dff;
+	--c-ldp: #3fd0b0;
+	--c-hub: #c08cff;
 	--code-old: #4a5576;
 	--display: 'Bricolage Grotesque', 'Segoe UI', system-ui, sans-serif;
 	--body: 'IBM Plex Sans', 'Segoe UI', system-ui, sans-serif;
@@ -487,26 +490,33 @@ body.no-diagram .diagram {{ display: none; }}
 .diagram {{ display: grid; gap: 16px; margin-top: 8px; }}
 .diagram-scroll {{ background: var(--surface); border: 1px solid var(--line); border-radius: 14px; overflow-x: auto; padding: 16px; }}
 .diagram svg {{ display: block; height: auto; min-width: 820px; width: 100%; }}
-.dg-group {{ fill: none; stroke: var(--line); stroke-dasharray: 6 5; }}
-.dg-group-name {{ fill: var(--fg); font: 800 18px var(--display); }}
+.app-dxp {{ --c: var(--c-dxp); }}
+.app-ldp {{ --c: var(--c-ldp); }}
+.app-hub {{ --c: var(--c-hub); }}
+.dg-group {{ fill: color-mix(in srgb, var(--c) 5%, transparent); stroke: var(--c); stroke-dasharray: 6 5; stroke-opacity: 0.7; }}
+.dg-group-name {{ fill: var(--c); font: 800 18px var(--display); }}
 .dg-box {{ fill: var(--surface-2); stroke: var(--line); }}
+.dg-box[class*="app-"] {{ fill: color-mix(in srgb, var(--c) 12%, var(--surface)); stroke: var(--c); }}
+.dg-box.dg-soft {{ fill: color-mix(in srgb, var(--c) 6%, var(--surface)); stroke-dasharray: 4 4; }}
 .dg-browser {{ fill: var(--bg); stroke: var(--fg); stroke-opacity: 0.4; }}
-.dg-hub {{ stroke: var(--accent); }}
 .dg-name {{ fill: var(--fg); font: 700 16px var(--display); }}
 .dg-path {{ fill: var(--muted); font: 12px var(--mono); }}
-.dg-route {{ fill: var(--accent); font: 12px var(--mono); }}
+.dg-route {{ fill: var(--c); font: 12px var(--mono); }}
 .dg-line {{ fill: none; stroke: var(--muted); stroke-width: 1.6; }}
-.dg-line.dg-cors {{ stroke: var(--accent); }}
+.dg-line[class*="app-"] {{ stroke: var(--c); }}
 .dg-head {{ fill: var(--muted); }}
-.dg-head-cors {{ fill: var(--accent); }}
+.dg-head[class*="app-"] {{ fill: var(--c); }}
 .dg-badge {{ fill: var(--fg); }}
-.dg-badge-cors {{ fill: var(--accent); }}
+.dg-badge[class*="app-"] {{ fill: var(--c); }}
 .dg-badge-n {{ fill: var(--bg); font: 700 13px var(--mono); }}
+.dg-legend {{ align-items: center; color: var(--muted); display: flex; flex-wrap: wrap; font-size: 14px; gap: 8px 18px; margin: 0; }}
+.dg-legend span[class*="app-"] {{ align-items: center; color: var(--fg); display: inline-flex; gap: 8px; }}
+.dg-legend span[class*="app-"]::before {{ background: var(--c); border-radius: 3px; content: ""; height: 12px; width: 12px; }}
 .flow {{ display: grid; gap: 10px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr)); list-style: none; margin: 0; padding: 0; }}
 .flow-step {{ background: var(--surface); border: 1px solid var(--line); border-radius: 12px; display: grid; gap: 12px; grid-template-columns: auto minmax(0, 1fr); padding: 14px 16px; }}
-.flow-cors {{ border-color: color-mix(in srgb, var(--accent) 50%, transparent); grid-column: 1 / -1; }}
-.flow-n {{ align-items: center; background: var(--fg); border-radius: 50%; color: var(--bg); display: flex; font: 700 14px var(--mono); height: 28px; justify-content: center; width: 28px; }}
-.flow-cors .flow-n {{ background: var(--accent); }}
+.flow-step {{ border-color: color-mix(in srgb, var(--c) 45%, transparent); }}
+.flow-wide {{ grid-column: 1 / -1; }}
+.flow-n {{ align-items: center; background: var(--c); border-radius: 50%; color: var(--bg); display: flex; font: 700 14px var(--mono); height: 28px; justify-content: center; width: 28px; }}
 .flow-body {{ display: grid; gap: 6px; min-width: 0; }}
 .flow-body p {{ margin: 0; }}
 .flow-title b {{ font: 700 17px var(--display); }}
