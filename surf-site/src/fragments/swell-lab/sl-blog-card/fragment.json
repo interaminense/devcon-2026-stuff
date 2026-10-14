@@ -2,6 +2,7 @@
 	"cssPath": "styles.css",
 	"htmlPath": "index.html",
 	"icon": "blogs",
+	"jsPath": "main.js",
 	"name": "Swell Lab Blog Card",
 	"type": "section"
 }

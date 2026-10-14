@@ -1,5 +1,6 @@
-// Next posts: ranks the Swell Lab CMS blog posts by what LDP measured, asks an
-// AI Hub agent for the next three posts, and saves any idea as a CMS draft
+// Next posts: ranks the Swell Lab CMS blog posts by how often readers choose
+// them from the post list (a custom event in LDP), asks an AI Hub agent for the
+// next three posts, and saves any idea as a CMS draft
 
 // The Swell Lab CMS space: its depot entry (for the analytics API) and its
 // group (for the CMS blog API)
@@ -10,6 +11,14 @@ const SPACE_GROUP_ID = 40943;
 const RANGE_KEY = 7;
 
 const AGENT_ERC = 'DEVCON_2026_LDP_NEXT_POSTS';
+
+// The LDP property (channel) of the Swell Lab site
+const CHANNEL_ID = '845351493326064678';
+
+// The custom event that "Read the post" sends from the post list
+const EVENT_NAME = 'surfBlogPostClicked';
+
+const LIST_PATH = '/blog';
 
 const STYLE = `
 	<style>
@@ -184,49 +193,142 @@ function escape(text) {
 	return element.innerHTML;
 }
 
-// The posts of the space, with what LDP measured for each one. The analytics
-// API lists only posts that already have data, so the CMS list is the base
+async function query(text, variables) {
+	const {data, errors} = await api('/o/analytics-rest/v1.0/graphql', {
+		body: JSON.stringify({query: text, variables}),
+		method: 'POST',
+	});
+
+	if (errors?.length) {
+		throw new Error(errors[0].message);
+	}
+
+	return data;
+}
+
+// Clicks on "Read the post" come from the custom event, broken down by
+// postId. LDP creates the event definition on the first click, so no
+// definition just means no clicks yet.
+async function getClicks() {
+	const {eventDefinitions} = await query(
+		`query ($keyword: String) {
+			eventDefinitions(eventType: CUSTOM, keyword: $keyword, page: 0, size: 10, sort: {column: "name", type: ASC}) {
+				eventDefinitions {
+					eventAttributeDefinitions {
+						id
+						name
+					}
+					id
+					name
+				}
+			}
+		}`,
+		{keyword: EVENT_NAME}
+	);
+
+	const definition = eventDefinitions?.eventDefinitions?.find(
+		({name}) => name === EVENT_NAME
+	);
+
+	const attribute = definition?.eventAttributeDefinitions?.find(
+		({name}) => name === 'postId'
+	);
+
+	if (!attribute) {
+		return new Map();
+	}
+
+	const {eventAnalysisResult} = await query(
+		`query ($attributeId: String!, $channelId: String!, $eventDefinitionId: String!, $rangeKey: Int) {
+			eventAnalysisResult(analysisType: TOTAL, channelId: $channelId, compareToPrevious: false, eventAnalysisBreakdowns: [{attributeId: $attributeId, attributeType: EVENT, dataType: STRING, displayName: "postId", sortType: DESC}], eventDefinitionId: $eventDefinitionId, page: 0, rangeKey: $rangeKey, size: 50) {
+				breakdownItems {
+					name
+					value
+				}
+			}
+		}`,
+		{
+			attributeId: attribute.id,
+			channelId: CHANNEL_ID,
+			eventDefinitionId: definition.id,
+			rangeKey: RANGE_KEY,
+		}
+	);
+
+	return new Map(
+		(eventAnalysisResult?.breakdownItems || []).map(({name, value}) => [
+			name,
+			value || 0,
+		])
+	);
+}
+
+// How many times the post list itself was seen: the base of the click rate
+async function getListViews() {
+	const {page} = await query(
+		`query ($channelId: String, $rangeKey: Int, $url: String) {
+			page(canonicalUrl: $url, channelId: $channelId, rangeKey: $rangeKey) {
+				viewsMetric {
+					value
+				}
+			}
+		}`,
+		{
+			channelId: CHANNEL_ID,
+			rangeKey: RANGE_KEY,
+			url: `${window.location.origin}${LIST_PATH}`,
+		}
+	);
+
+	return page?.viewsMetric?.value || 0;
+}
+
+// The published posts of the space with their clicks from the list, their
+// click rate, and their views from any source (links, search, the list)
 async function getPosts() {
-	const [blogs, performance] = await Promise.all([
+	const [blogs, performance, clicks, listViews] = await Promise.all([
 		api(`/o/cms/blogs/scopes/${SPACE_GROUP_ID}?pageSize=50`),
 		api(
 			`/o/analytics-cms-rest/v1.0/performance-top-asset?depotEntryIds=${SPACE_DEPOT_ENTRY_ID}&rangeKey=${RANGE_KEY}&pageSize=50`
 		),
+		getClicks(),
+		getListViews(),
 	]);
 
-	const metrics = new Map(
-		performance.items.map((item) => [item.externalReferenceCode, item])
+	const views = new Map(
+		performance.items.map((item) => [item.externalReferenceCode, item.views])
 	);
 
-	return blogs.items
+	const posts = blogs.items
 		.filter((blog) => blog.status?.code === 0)
 		.map((blog) => {
-			const metric = metrics.get(blog.externalReferenceCode) || {};
-			const impressions = metric.impressions || 0;
-			const views = metric.views || 0;
+			const postClicks = clicks.get(blog.externalReferenceCode) || 0;
 
 			return {
-				impressions,
-				openRate: impressions ? views / impressions : null,
+				clickRate: listViews ? postClicks / listViews : null,
+				clicks: postClicks,
 				subtitle: blog.subtitle || '',
 				title: blog.title,
-				views,
+				views: views.get(blog.externalReferenceCode) || 0,
 			};
 		})
-		.sort((a, b) => b.views - a.views || b.impressions - a.impressions);
+		.sort((a, b) => b.clicks - a.clicks || b.views - a.views);
+
+	return {listViews, posts};
 }
 
 // Plain text lines: the firewall in front of AI Hub rejects nested JSON
-function describe(posts) {
+function describe({listViews, posts}) {
 	return [
 		`period: last ${RANGE_KEY} days`,
+		`post list views: ${listViews}`,
 		...posts.map((post, index) =>
 			[
 				`post ${index + 1}: ${post.title}`,
 				`subtitle: ${post.subtitle}`,
-				`impressions: ${post.impressions}`,
-				`views: ${post.views}`,
-				`open rate: ${post.openRate === null ? 'n/a' : Math.round(post.openRate * 100) + '%'}`,
+				`clicks from the list: ${post.clicks}`,
+				`click rate: ${formatRate(post.clickRate)}`,
+				`views from any source: ${post.views}`,
 			].join('; ')
 		),
 	].join('\n');
@@ -350,7 +452,7 @@ function createDraft(idea) {
 }
 
 function formatRate(rate) {
-	return rate === null ? '—' : `${Math.round(rate * 100)}%`;
+	return rate === null ? 'n/a' : `${Math.round(rate * 100)}%`;
 }
 
 class LdpNextPosts extends HTMLElement {
@@ -376,7 +478,7 @@ class LdpNextPosts extends HTMLElement {
 
 			this.innerHTML = `${STYLE}<p class="np-status">Loading the posts...</p>`;
 
-			this.posts = await getPosts();
+			this.data = await getPosts();
 
 			this.render();
 		}
@@ -386,14 +488,14 @@ class LdpNextPosts extends HTMLElement {
 	}
 
 	render() {
-		const rows = this.posts
+		const rows = this.data.posts
 			.map(
 				(post) => `
 					<tr>
 						<td>${escape(post.title)}</td>
-						<td>${post.impressions.toLocaleString()}</td>
+						<td>${post.clicks.toLocaleString()}</td>
+						<td>${formatRate(post.clickRate)}</td>
 						<td>${post.views.toLocaleString()}</td>
-						<td>${formatRate(post.openRate)}</td>
 					</tr>
 				`
 			)
@@ -405,13 +507,13 @@ class LdpNextPosts extends HTMLElement {
 				<div>
 					<span class="np-badge">Editors only · visitors don't see this</span>
 					<h2>What should we write next?</h2>
-					<span class="np-period">Surf Journal posts · last ${RANGE_KEY} days · Liferay Data Platform</span>
+					<span class="np-period">Surf Journal posts · last ${RANGE_KEY} days · ${this.data.listViews.toLocaleString()} views of the post list · Liferay Data Platform</span>
 				</div>
 				<button class="np-ask" type="button">✦ Suggest next posts</button>
 			</div>
 			<table>
 				<thead>
-					<tr><th>Post</th><th>Impressions</th><th>Views</th><th>Open rate</th></tr>
+					<tr><th>Post</th><th>Clicks from the list</th><th>Click rate</th><th>Views</th></tr>
 				</thead>
 				<tbody>${rows}</tbody>
 			</table>
@@ -438,7 +540,7 @@ class LdpNextPosts extends HTMLElement {
 			let answer;
 
 			try {
-				answer = await askAgent(describe(this.posts));
+				answer = await askAgent(describe(this.data));
 			}
 			catch {
 
@@ -447,7 +549,7 @@ class LdpNextPosts extends HTMLElement {
 
 				await new Promise((resolve) => setTimeout(resolve, 4000));
 
-				answer = await askAgent(describe(this.posts));
+				answer = await askAgent(describe(this.data));
 			}
 
 			this.ideas = parseIdeas(answer);
