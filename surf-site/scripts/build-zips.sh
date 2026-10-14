@@ -12,7 +12,7 @@ mkdir -p "${DIST_DIR}"
 cd "${SURF_SITE_DIR}/src"
 
 zip --quiet --recurse-paths "${DIST_DIR}/swell-lab-fragments.zip" fragments
-zip --quiet --recurse-paths "${DIST_DIR}/swell-lab-pages.zip" master-pages page-templates
+zip --quiet --recurse-paths "${DIST_DIR}/swell-lab-pages.zip" display-page-templates master-pages page-templates
 zip --quiet --recurse-paths "${DIST_DIR}/swell-lab-style-book.zip" style-books
 
 (cd utility-pages && zip --quiet --recurse-paths "${DIST_DIR}/swell-lab-utility-pages.zip" layout-utility-page-template)

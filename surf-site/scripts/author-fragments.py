@@ -29,6 +29,7 @@ fragment(
 			<a href="/trips">Trips</a>
 			<a href="/spots">Spots</a>
 			<a href="/learn">Learn</a>
+			<a href="/blog">Blog</a>
 			<a class="sl-header__signed-in" hidden href="/dashboard">Dashboard</a>
 		</nav>
 
@@ -1358,6 +1359,8 @@ fragment(
 		<h3 class="sl-card__title" data-lfr-editable-id="title" data-lfr-editable-type="text">Blog title</h3>
 
 		<p class="sl-card__text" data-lfr-editable-id="subtitle" data-lfr-editable-type="text">A short line about the post.</p>
+
+		<a class="sl-card__link" data-lfr-editable-id="link" data-lfr-editable-type="link" href="#">Read the post &rarr;</a>
 	</div>
 </article>
 """,
@@ -1382,6 +1385,61 @@ fragment(
 	icon="blogs",
 )
 
+
+fragment(
+	"sl-blog-post",
+	"Swell Lab Blog Post",
+	"""
+<article class="sl-blog-post">
+	<div class="sl-container sl-blog-post__container">
+		<a class="sl-blog-post__back" href="/blog">&larr; Surf Journal</a>
+
+		<div class="sl-blog-post__content" data-lfr-editable-id="content" data-lfr-editable-type="rich-text">
+			<p>The post content.</p>
+		</div>
+	</div>
+</article>
+""",
+	"""
+.sl-blog-post {
+	background: var(--sl-sand, #f7f3ea);
+	padding: 56px 0 72px;
+}
+
+.sl-blog-post__container {
+	max-width: 760px;
+}
+
+.sl-blog-post__back {
+	color: var(--sl-primary, #0b4f6c);
+	display: inline-block;
+	font-weight: 600;
+	margin-bottom: 24px;
+	text-decoration: none;
+}
+
+.sl-blog-post__content {
+	background: #fff;
+	border-radius: 20px;
+	box-shadow: 0 12px 32px rgba(11, 79, 108, 0.08);
+	color: var(--sl-ink, #1d2b36);
+	font-size: 1.125rem;
+	line-height: 1.75;
+	padding: 40px 44px;
+}
+
+.sl-blog-post__content > :last-child {
+	margin-bottom: 0;
+}
+
+@media (max-width: 600px) {
+	.sl-blog-post__content {
+		padding: 28px 22px;
+	}
+}
+""",
+	icon="blogs",
+)
 
 def write(path, content):
 	os.makedirs(os.path.dirname(path), exist_ok=True)

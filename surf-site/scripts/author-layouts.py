@@ -269,14 +269,34 @@ TEMPLATES["swell-lab-learn"] = (
 CMS_BLOG_CLASS_NAME = "com.liferay.object.model.ObjectDefinition#Y8H4"
 
 
-def mapped(field_id, field_key):
+def mapped(field_id, field_key, source="CollectionItem"):
 	return {
 		"id": field_id,
 		"value": {
 			"fragmentLink": {},
-			"text": {"mapping": {"fieldKey": field_key, "itemReference": {"contextSource": "CollectionItem"}}},
+			"text": {"mapping": {"fieldKey": field_key, "itemReference": {"contextSource": source}}},
 		},
 	}
+
+
+def mapped_link(field_id, text):
+	return {
+		"id": field_id,
+		"value": {
+			"fragmentLink": {
+				"value": {
+					"href": {"mapping": {"fieldKey": "displayPageURL", "itemReference": {"contextSource": "CollectionItem"}}}
+				}
+			},
+			"text": {"value_i18n": {"en_US": text}},
+		},
+	}
+
+
+NEXT_POSTS_PORTLET = (
+	"com_liferay_client_extension_web_internal_portlet_ClientExtensionEntryPortlet_"
+	"26689402450212_bfadcef5_f845_f95c_105a_8021e6005735"
+)
 
 
 TEMPLATES["swell-lab-blog"] = (
@@ -317,7 +337,11 @@ TEMPLATES["swell-lab-blog"] = (
 									"definition": {
 										"fragment": {"key": "sl-blog-card"},
 										"fragmentConfig": {},
-										"fragmentFields": [mapped("title", "ObjectField_title"), mapped("subtitle", "ObjectField_subtitle")],
+										"fragmentFields": [
+											mapped("title", "ObjectField_title"),
+											mapped("subtitle", "ObjectField_subtitle"),
+											mapped_link("link", "Read the post →"),
+										],
 									},
 									"type": "Fragment",
 								}
@@ -330,8 +354,74 @@ TEMPLATES["swell-lab-blog"] = (
 			],
 			"type": "Section",
 		},
+		{
+			"definition": {"cssClasses": ["sl-blog-next"], "layout": {"widthType": "Fixed"}},
+			"pageElements": [metric_card("nextposts", NEXT_POSTS_PORTLET)],
+			"type": "Section",
+		},
 		fragment("sl-cta"),
 	],
+)
+
+# The page of each post: a display page template for the CMS blog structure
+
+blog_post = os.path.join(ROOT, "display-page-templates/swell-lab-blog-post")
+
+write_json(
+	os.path.join(blog_post, "display-page-template.json"),
+	{"contentType": {"className": CMS_BLOG_CLASS_NAME}, "defaultTemplate": True, "name": "Swell Lab Blog Post"},
+)
+write_json(
+	os.path.join(blog_post, "page-definition.json"),
+	{
+		"pageElement": {
+			"pageElements": [
+				{
+					"definition": {
+						"fragment": {"key": "sl-page-hero"},
+						"fragmentConfig": {},
+						"fragmentFields": [
+							mapped("title", "ObjectField_title", "DisplayPageItem"),
+							mapped("text", "ObjectField_subtitle", "DisplayPageItem"),
+							{
+								"id": "image",
+								"value": {
+									"fragmentImage": {
+										"description": {"value_i18n": {"en_US": ""}},
+										"url": {"value_i18n": {"en_US": "/documents/d/guest/surf-shack-jpg?download=true"}},
+									}
+								},
+							},
+						],
+					},
+					"type": "Fragment",
+				},
+				{
+					"definition": {
+						"fragment": {"key": "sl-blog-post"},
+						"fragmentConfig": {},
+						"fragmentFields": [
+							{
+								"id": "content",
+								"value": {
+									"text": {
+										"mapping": {
+											"fieldKey": "ObjectField_content",
+											"itemReference": {"contextSource": "DisplayPageItem"},
+										}
+									}
+								},
+							}
+						],
+					},
+					"type": "Fragment",
+				},
+				fragment("sl-cta"),
+			],
+			"type": "Root",
+		},
+		"settings": {"masterPage": {"key": "swell-lab"}},
+	},
 )
 
 collection = os.path.join(ROOT, "page-templates/swell-lab")

@@ -139,6 +139,28 @@
 															}
 														}
 													}
+												},
+												{
+													"id": "link",
+													"value": {
+														"fragmentLink": {
+															"value": {
+																"href": {
+																	"mapping": {
+																		"fieldKey": "displayPageURL",
+																		"itemReference": {
+																			"contextSource": "CollectionItem"
+																		}
+																	}
+																}
+															}
+														},
+														"text": {
+															"value_i18n": {
+																"en_US": "Read the post \u2192"
+															}
+														}
+													}
 												}
 											]
 										},
@@ -149,6 +171,31 @@
 							}
 						],
 						"type": "Collection"
+					}
+				],
+				"type": "Section"
+			},
+			{
+				"definition": {
+					"cssClasses": [
+						"sl-blog-next"
+					],
+					"layout": {
+						"widthType": "Fixed"
+					}
+				},
+				"pageElements": [
+					{
+						"definition": {
+							"widgetInstance": {
+								"widgetConfig": {
+									"portletSetupPortletDecoratorId": "barebone"
+								},
+								"widgetInstanceId": "nextposts",
+								"widgetName": "com_liferay_client_extension_web_internal_portlet_ClientExtensionEntryPortlet_26689402450212_bfadcef5_f845_f95c_105a_8021e6005735"
+							}
+						},
+						"type": "Widget"
 					}
 				],
 				"type": "Section"

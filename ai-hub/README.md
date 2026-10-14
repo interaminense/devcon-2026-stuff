@@ -115,3 +115,54 @@ Content data:
 | Input variables | `contents` |
 | Output variable | `suggestions` |
 | Workflow | `DevCon 2026 LDP Content Advisor` |
+
+# AI Hub Agent: DevCon 2026 · LDP Next Posts
+
+Used by the *LDP Next Posts* client extension on the Swell Lab `/blog` page. It receives every published post of the *Swell Lab CMS* space with its Liferay Data Platform numbers for the last 7 days and suggests the next three posts. The card turns each idea into a CMS draft on request.
+
+## Agent
+
+In *Agent Builder*, duplicate **Make Shorter** and, on the copy (*Actions* → *View*):
+
+| Field | Value |
+|---|---|
+| Title | `DevCon 2026 LDP Next Posts` |
+| Description | `Suggests the next Swell Lab blog posts from their Liferay Data Platform impressions and views (DEVCON 2026).` |
+| External reference code | `DEVCON_2026_LDP_NEXT_POSTS` |
+| Input variables | `posts` |
+| Output variable | `ideas` |
+
+## Workflow
+
+*View Workflow* → the LLM node:
+
+| Setting | Value |
+|---|---|
+| Node Name | `ldpNextPosts` |
+| Input variables | `[{"name":"posts","type":"string"}]` |
+| Output variables | `[{"name":"ideas","type":"string"}]` |
+| Tools | `[]` (never empty) |
+| RAG | `{}` (never empty) |
+
+**Prompt**:
+
+```
+You are a content strategist for Swell Lab, a surf school. You receive its blog posts with Liferay Data Platform numbers for a period: impressions (times the post was listed), views (times it was opened), and open rate (views divided by impressions).
+
+Suggest exactly 3 new blog posts. Build on the topics readers open most and never repeat an existing title. Answer each post in exactly four lines:
+Title: <at most 8 words>
+Subtitle: <one sentence>
+Why: <one sentence that cites the numbers>
+Outline: <three points separated by semicolons>
+
+Separate the posts with one empty line. Plain text, no markdown, no numbering. If every post has zero impressions, still suggest 3 posts from the existing titles and say in Why that there is no data yet.
+```
+
+**User message**:
+
+```
+Blog posts:
+{{posts}}
+```
+
+After *Update*, open *Source* and check that `<prompt>` still holds the text and that `<tools>` and `<rag>` are `[]` and `{}`.
