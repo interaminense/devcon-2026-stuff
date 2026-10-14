@@ -484,30 +484,36 @@ h1 {{ font: 800 clamp(30px, 6vw, 46px)/1.05 var(--display); letter-spacing: -0.0
 .toggle {{ align-items: center; color: var(--muted); cursor: pointer; display: flex; flex: none; font-size: 15px; gap: 6px; }}
 body.no-say .k-say {{ display: none; }}
 body.no-diagram .diagram {{ display: none; }}
-.diagram {{ background: var(--surface); border: 1px solid var(--line); border-radius: 14px; display: grid; gap: 12px; margin: 8px 0 0; padding: 16px; }}
-.diagram-scroll {{ overflow-x: auto; }}
-.diagram svg {{ display: block; height: auto; min-width: 900px; width: 100%; }}
+.diagram {{ display: grid; gap: 16px; margin-top: 8px; }}
+.diagram-scroll {{ background: var(--surface); border: 1px solid var(--line); border-radius: 14px; overflow-x: auto; padding: 16px; }}
+.diagram svg {{ display: block; height: auto; min-width: 820px; width: 100%; }}
+.dg-group {{ fill: none; stroke: var(--line); stroke-dasharray: 6 5; }}
+.dg-group-name {{ fill: var(--fg); font: 800 18px var(--display); }}
 .dg-box {{ fill: var(--surface-2); stroke: var(--line); }}
-.dg-box-hub {{ stroke: var(--accent); }}
+.dg-browser {{ fill: var(--bg); stroke: var(--fg); stroke-opacity: 0.4; }}
+.dg-hub {{ stroke: var(--accent); }}
 .dg-name {{ fill: var(--fg); font: 700 16px var(--display); }}
-.dg-sub {{ fill: var(--muted); font: 500 11px var(--body); }}
-.dg-lane {{ stroke: var(--line); stroke-dasharray: 2 5; }}
-.dg-phase-line {{ stroke: var(--line-soft); }}
-.dg-phase {{ fill: var(--say); font: 600 12px var(--mono); letter-spacing: 0.06em; text-transform: uppercase; }}
-.dg-req, .dg-res {{ stroke: var(--fg); stroke-width: 1.5; }}
-.dg-res {{ stroke: var(--muted); stroke-dasharray: 6 4; }}
-.dg-cors {{ stroke: var(--accent); }}
-.dg-arrow {{ fill: var(--fg); }}
-.dg-arrow-cors {{ fill: var(--accent); }}
-.dg-label {{ fill: var(--fg); font: 12px var(--mono); }}
-.dg-msg {{ fill: var(--surface-2); stroke: var(--line); }}
-.dg-msg.res {{ fill: var(--bg); stroke-dasharray: 4 3; }}
-.dg-msg.cors {{ stroke: var(--accent); }}
-.diagram figcaption {{ color: var(--muted); display: flex; flex-wrap: wrap; font-size: 14px; gap: 6px 20px; }}
-.diagram .cap-note {{ flex-basis: 100%; }}
-.sw {{ border-top: 2px solid var(--fg); display: inline-block; margin-right: 8px; vertical-align: middle; width: 26px; }}
-.sw-res {{ border-top: 2px dashed var(--muted); }}
-.sw-cors {{ border-top-color: var(--accent); }}
+.dg-path {{ fill: var(--muted); font: 12px var(--mono); }}
+.dg-route {{ fill: var(--accent); font: 12px var(--mono); }}
+.dg-line {{ fill: none; stroke: var(--muted); stroke-width: 1.6; }}
+.dg-line.dg-cors {{ stroke: var(--accent); }}
+.dg-head {{ fill: var(--muted); }}
+.dg-head-cors {{ fill: var(--accent); }}
+.dg-badge {{ fill: var(--fg); }}
+.dg-badge-cors {{ fill: var(--accent); }}
+.dg-badge-n {{ fill: var(--bg); font: 700 13px var(--mono); }}
+.flow {{ display: grid; gap: 10px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr)); list-style: none; margin: 0; padding: 0; }}
+.flow-step {{ background: var(--surface); border: 1px solid var(--line); border-radius: 12px; display: grid; gap: 12px; grid-template-columns: auto minmax(0, 1fr); padding: 14px 16px; }}
+.flow-cors {{ border-color: color-mix(in srgb, var(--accent) 50%, transparent); grid-column: 1 / -1; }}
+.flow-n {{ align-items: center; background: var(--fg); border-radius: 50%; color: var(--bg); display: flex; font: 700 14px var(--mono); height: 28px; justify-content: center; width: 28px; }}
+.flow-cors .flow-n {{ background: var(--accent); }}
+.flow-body {{ display: grid; gap: 6px; min-width: 0; }}
+.flow-body p {{ margin: 0; }}
+.flow-title b {{ font: 700 17px var(--display); }}
+.flow-title span {{ color: var(--muted); font: 500 12px var(--mono); letter-spacing: 0.08em; margin-left: 6px; text-transform: uppercase; }}
+.flow-calls {{ display: flex; flex-wrap: wrap; gap: 6px; }}
+.flow-calls code {{ font-size: 12.5px; }}
+.flow-text {{ color: var(--muted); font-size: 15px; line-height: 1.5; }}
 
 .part {{ padding-top: 40px; scroll-margin-top: 16px; }}
 .part-head {{ align-items: center; display: flex; gap: 14px; margin-bottom: 18px; }}
