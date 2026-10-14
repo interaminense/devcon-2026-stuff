@@ -486,7 +486,13 @@ h1 {{ font: 800 clamp(30px, 6vw, 46px)/1.05 var(--display); letter-spacing: -0.0
 .toggles {{ display: flex; flex-wrap: wrap; gap: 8px 20px; }}
 .toggle {{ align-items: center; color: var(--muted); cursor: pointer; display: flex; flex: none; font-size: 15px; gap: 6px; }}
 body.no-say .k-say {{ display: none; }}
-body.no-diagram .diagram {{ display: none; }}
+.show-diagram {{ background: var(--surface-2); border: 1px solid var(--c-dxp); border-radius: 8px; color: var(--fg); cursor: pointer; font: 500 15px/1 var(--body); padding: 9px 14px; }}
+.show-diagram:hover, .show-diagram:focus-visible {{ background: color-mix(in srgb, var(--c-dxp) 18%, var(--surface-2)); }}
+.diagram-modal {{ background: var(--bg); border: 1px solid var(--line); border-radius: 16px; color: var(--fg); height: 94vh; max-height: none; max-width: none; overflow: auto; padding: 20px 24px 28px; width: 96vw; }}
+.diagram-modal::backdrop {{ background: rgba(3, 6, 14, 0.75); backdrop-filter: blur(3px); }}
+.close-diagram {{ background: var(--surface-2); border: 1px solid var(--line); border-radius: 8px; color: var(--fg); cursor: pointer; float: right; font: 500 14px/1 var(--body); padding: 8px 14px; position: sticky; top: 0; z-index: 1; }}
+.close-diagram:hover, .close-diagram:focus-visible {{ border-color: var(--accent); }}
+.diagram-modal .diagram {{ margin-top: 0; }}
 .diagram {{ display: grid; gap: 16px; margin-top: 8px; }}
 .diagram-scroll {{ background: var(--surface); border: 1px solid var(--line); border-radius: 14px; overflow-x: auto; padding: 16px; }}
 .diagram svg {{ display: block; height: auto; min-width: 820px; width: 100%; }}
@@ -619,13 +625,16 @@ html {{ scroll-behavior: smooth; }}
 			{copy_button(LOGIN)}
 		</div>
 		<div class="toggles">
-			<label class="toggle"><input id="no-diagram" type="checkbox"> Hide the diagram</label>
+			<button class="show-diagram" id="open-diagram" type="button">Show how the card works</button>
 			<label class="toggle"><input id="no-say" type="checkbox"> Hide the &ldquo;Say&rdquo; boxes</label>
 			<label class="toggle"><input id="flat" type="checkbox"> Show code without the change highlight</label>
 		</div>
 	</header>
 
-	{render_diagram()}
+	<dialog class="diagram-modal" id="diagram-modal" aria-label="How the card works">
+		<button class="close-diagram" id="close-diagram" type="button">Close</button>
+		{render_diagram()}
+	</dialog>
 
 	<nav class="agenda" id="agenda" aria-label="Agenda">
 		<h2 class="agenda-title">Agenda</h2>
@@ -712,6 +721,16 @@ html {{ scroll-behavior: smooth; }}
 		}});
 	}}
 
+	const modal = document.getElementById('diagram-modal');
+
+	document.getElementById('open-diagram').addEventListener('click', () => modal.showModal());
+	document.getElementById('close-diagram').addEventListener('click', () => modal.close());
+	modal.addEventListener('click', (event) => {{
+		if (event.target === modal) {{
+			modal.close();
+		}}
+	}});
+
 	document.getElementById('reset').addEventListener('click', () => {{
 		for (const box of boxes) {{
 			box.checked = false;
@@ -720,7 +739,7 @@ html {{ scroll-behavior: smooth; }}
 		}}
 	}});
 
-	for (const id of ['flat', 'no-say', 'no-diagram']) {{
+	for (const id of ['flat', 'no-say']) {{
 		const toggle = document.getElementById(id);
 
 		toggle.checked = store.get(id) === '1';
