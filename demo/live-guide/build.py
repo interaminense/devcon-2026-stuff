@@ -505,8 +505,8 @@ h2 {{ font: 700 28px/1.15 var(--display); margin: 0; text-wrap: balance; }}
 .values th {{ color: var(--muted); font-weight: 500; white-space: nowrap; width: 1%; }}
 .values td:last-child {{ text-align: right; width: 1%; }}
 .values thead th {{ color: var(--muted); font: 600 11px/1 var(--mono); letter-spacing: 0.12em; padding-bottom: 10px; text-transform: uppercase; }}
-.values.described td:nth-child(2) {{ width: 38%; }}
-.values .purpose {{ color: var(--muted); font-size: 15px; line-height: 1.45; }}
+.values.described td:nth-child(2) {{ width: 30%; }}
+.values .purpose {{ color: var(--muted); font-size: 15px; line-height: 1.45; min-width: 260px; padding-left: 12px; width: 48%; }}
 .values td code {{ white-space: pre-wrap; }}
 .pill {{ background: var(--accent-soft); border-radius: 999px; color: var(--accent); font-size: 13px; padding: 2px 10px; }}
 
