@@ -69,6 +69,28 @@ h1 { font: 800 clamp(30px, 6vw, 46px)/1.05 var(--display); letter-spacing: -0.02
 .toggles { display: flex; flex-wrap: wrap; gap: 8px 20px; }
 .toggle { align-items: center; color: var(--muted); cursor: pointer; display: flex; flex: none; font-size: 15px; gap: 6px; }
 body.no-say .k-say { display: none; }
+body.no-diagram .diagram { display: none; }
+.diagram { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; display: grid; gap: 12px; margin: 8px 0 0; padding: 16px; }
+.diagram-scroll { overflow-x: auto; }
+.diagram svg { display: block; height: auto; min-width: 900px; width: 100%; }
+.dg-box { fill: var(--surface-2); stroke: var(--line); }
+.dg-box-hub { stroke: var(--accent); }
+.dg-name { fill: var(--fg); font: 700 16px var(--display); }
+.dg-sub { fill: var(--muted); font: 500 11px var(--body); }
+.dg-lane { stroke: var(--line); stroke-dasharray: 2 5; }
+.dg-phase-line { stroke: var(--line-soft); }
+.dg-phase { fill: var(--say); font: 600 12px var(--mono); letter-spacing: 0.06em; text-transform: uppercase; }
+.dg-req, .dg-res { stroke: var(--fg); stroke-width: 1.5; }
+.dg-res { stroke: var(--muted); stroke-dasharray: 6 4; }
+.dg-cors { stroke: var(--accent); }
+.dg-arrow { fill: var(--fg); }
+.dg-arrow-cors { fill: var(--accent); }
+.dg-label { fill: var(--fg); font: 12px var(--mono); paint-order: stroke; stroke: var(--surface); stroke-linejoin: round; stroke-width: 5px; }
+.diagram figcaption { color: var(--muted); display: flex; flex-wrap: wrap; font-size: 14px; gap: 6px 20px; }
+.diagram .cap-note { flex-basis: 100%; }
+.sw { border-top: 2px solid var(--fg); display: inline-block; margin-right: 8px; vertical-align: middle; width: 26px; }
+.sw-res { border-top: 2px dashed var(--muted); }
+.sw-cors { border-top-color: var(--accent); }
 
 .part { padding-top: 40px; scroll-margin-top: 16px; }
 .part-head { align-items: center; display: flex; gap: 14px; margin-bottom: 18px; }
@@ -164,10 +186,25 @@ html { scroll-behavior: smooth; }
 			<button class="copy" type="button" data-copy="c36">Copy</button>
 		</div>
 		<div class="toggles">
+			<label class="toggle"><input id="no-diagram" type="checkbox"> Hide the diagram</label>
 			<label class="toggle"><input id="no-say" type="checkbox"> Hide the &ldquo;Say&rdquo; boxes</label>
 			<label class="toggle"><input id="flat" type="checkbox"> Show code without the change highlight</label>
 		</div>
 	</header>
+
+	
+<figure class="diagram" id="diagram">
+	<div class="diagram-scroll"><svg role="img" aria-label="How the demo card works: the browser loads the card from Documents and Media, reads the metric through the DXP proxy to LDP, keeps its configuration in a Liferay Object, gets an AI Hub token from DXP, then talks to AI Hub directly over an event stream to get the insight." viewBox="0 0 1170 1104" xmlns="http://www.w3.org/2000/svg"><defs>
+	<marker id="dg-head" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path class="dg-arrow" d="M0 0 L10 5 L0 10 z"/></marker>
+	<marker id="dg-head-cors" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path class="dg-arrow-cors" d="M0 0 L10 5 L0 10 z"/></marker>
+</defs><line class="dg-lane" x1="110" x2="110" y1="68" y2="1094"/><rect class="dg-box" x="32" y="14" width="156" height="52" rx="10"/><text class="dg-name" x="110" y="36" text-anchor="middle">Browser</text><text class="dg-sub" x="110" y="54" text-anchor="middle">the card in the page</text><line class="dg-lane" x1="400" x2="400" y1="68" y2="1094"/><rect class="dg-box" x="322" y="14" width="156" height="52" rx="10"/><text class="dg-name" x="400" y="36" text-anchor="middle">DXP</text><text class="dg-sub" x="400" y="54" text-anchor="middle">D&amp;M · CX · Objects · proxies</text><line class="dg-lane" x1="650" x2="650" y1="68" y2="1094"/><rect class="dg-box" x="572" y="14" width="156" height="52" rx="10"/><text class="dg-name" x="650" y="36" text-anchor="middle">LDP</text><text class="dg-sub" x="650" y="54" text-anchor="middle">Liferay Data Platform</text><line class="dg-lane" x1="860" x2="860" y1="68" y2="1094"/><rect class="dg-box dg-box-hub" x="782" y="14" width="156" height="52" rx="10"/><text class="dg-name" x="860" y="36" text-anchor="middle">AI Hub</text><text class="dg-sub" x="860" y="54" text-anchor="middle">agents and workflows</text><line class="dg-lane" x1="1070" x2="1070" y1="68" y2="1094"/><rect class="dg-box" x="992" y="14" width="156" height="52" rx="10"/><text class="dg-name" x="1070" y="36" text-anchor="middle">LLM</text><text class="dg-sub" x="1070" y="54" text-anchor="middle">the model</text><line class="dg-phase-line" x1="16" x2="1154" y1="102" y2="102"/><text class="dg-phase" x="16" y="120">Setup · you, as admin, host and register the card · part 2</text><line class="dg-req" x1="116" x2="390" y1="166" y2="166" marker-end="url(#dg-head)"/><text class="dg-label" x="124" y="159">Documents and Media: File Upload ldp-demo-card.js → /documents/d/devcon-demo/ldp-demo-card-js</text><line class="dg-req" x1="116" x2="390" y1="200" y2="200" marker-end="url(#dg-head)"/><text class="dg-label" x="124" y="193">Client Extensions: Custom Element · tag ldp-demo-card · JavaScript URL …?v=N · Instanceable</text><line class="dg-phase-line" x1="16" x2="1154" y1="210" y2="210"/><text class="dg-phase" x="16" y="228">Page load</text><line class="dg-req" x1="116" x2="390" y1="274" y2="274" marker-end="url(#dg-head)"/><text class="dg-label" x="124" y="267">GET /web/devcon-demo/demo</text><line class="dg-res" x1="394" x2="120" y1="308" y2="308" marker-end="url(#dg-head)"/><text class="dg-label" x="134" y="301">HTML with &lt;ldp-demo-card&gt; + &lt;script src=&quot;…ldp-demo-card-js?v=N&quot;&gt;</text><line class="dg-req" x1="116" x2="390" y1="342" y2="342" marker-end="url(#dg-head)"/><text class="dg-label" x="124" y="335">GET /documents/d/devcon-demo/ldp-demo-card-js?v=N</text><line class="dg-res" x1="394" x2="120" y1="376" y2="376" marker-end="url(#dg-head)"/><text class="dg-label" x="134" y="369">application/javascript → customElements.define runs the card</text><line class="dg-phase-line" x1="16" x2="1154" y1="386" y2="386"/><text class="dg-phase" x="16" y="404">The metric · parts 3 and 4</text><line class="dg-req" x1="116" x2="390" y1="450" y2="450" marker-end="url(#dg-head)"/><text class="dg-label" x="124" y="443">POST /o/analytics-rest/v1.0/graphql · session + x-csrf-token · site(channelId, rangeKey: 7)</text><line class="dg-req" x1="406" x2="640" y1="484" y2="484" marker-end="url(#dg-head)"/><text class="dg-label" x="414" y="477">same GraphQL, with the workspace token</text><line class="dg-res" x1="644" x2="410" y1="518" y2="518" marker-end="url(#dg-head)"/><text class="dg-label" x="424" y="511">value · previousValue · trend</text><line class="dg-res" x1="394" x2="120" y1="552" y2="552" marker-end="url(#dg-head)"/><text class="dg-label" x="134" y="545">JSON → the card renders the number and the trend</text><line class="dg-phase-line" x1="16" x2="1154" y1="562" y2="562"/><text class="dg-phase" x="16" y="580">The configuration · part 5</text><line class="dg-req" x1="116" x2="390" y1="626" y2="626" marker-end="url(#dg-head)"/><text class="dg-label" x="124" y="619">GET /o/c/democardconfigs/by-external-reference-code/{instance id}</text><line class="dg-res" x1="394" x2="120" y1="660" y2="660" marker-end="url(#dg-head)"/><text class="dg-label" x="134" y="653">200 { metric } · or 404 → default metric</text><line class="dg-req" x1="116" x2="390" y1="694" y2="694" marker-end="url(#dg-head)"/><text class="dg-label" x="124" y="687">PUT same URL { metric } when the select changes · creates, then replaces</text><line class="dg-phase-line" x1="16" x2="1154" y1="704" y2="704"/><text class="dg-phase" x="16" y="722">The AI insight · part 6 · ✦ AI insight button</text><line class="dg-req" x1="116" x2="390" y1="768" y2="768" marker-end="url(#dg-head)"/><text class="dg-label" x="124" y="761">POST /o/ai-hub-cell/v1.0/authorization-tokens</text><line class="dg-req" x1="406" x2="850" y1="802" y2="802" marker-end="url(#dg-head)"/><text class="dg-label" x="414" y="795">Client ID + Client Secret (server side)</text><line class="dg-res" x1="854" x2="410" y1="836" y2="836" marker-end="url(#dg-head)"/><text class="dg-label" x="424" y="829">tokens</text><line class="dg-res" x1="394" x2="120" y1="870" y2="870" marker-end="url(#dg-head)"/><text class="dg-label" x="134" y="863">accessToken · userToken · serviceURL</text><line class="dg-req dg-cors" x1="116" x2="850" y1="904" y2="904" marker-end="url(#dg-head-cors)"/><text class="dg-label" x="124" y="897">GET {serviceURL}/o/ai-hub/v1.0/agent-instances/subscribe · Bearer · event stream</text><line class="dg-res dg-cors" x1="854" x2="120" y1="938" y2="938" marker-end="url(#dg-head-cors)"/><text class="dg-label" x="134" y="931">event: Subscribe · data: stream key</text><line class="dg-req dg-cors" x1="116" x2="850" y1="972" y2="972" marker-end="url(#dg-head-cors)"/><text class="dg-label" x="124" y="965">POST /o/ai-hub/v1.0/agent-instances · { ERC, context: { metrics }, sseEventSinkKey } · On-Behalf-Of</text><line class="dg-req" x1="866" x2="1060" y1="1006" y2="1006" marker-end="url(#dg-head)"/><text class="dg-label" x="874" y="999">llm node: prompt + {{metrics}}</text><line class="dg-res" x1="1064" x2="870" y1="1040" y2="1040" marker-end="url(#dg-head)"/><text class="dg-label" x="884" y="1033">insight text</text><line class="dg-res dg-cors" x1="854" x2="120" y1="1074" y2="1074" marker-end="url(#dg-head-cors)"/><text class="dg-label" x="134" y="1067">event: DEVCON_2026_DEMO_LDP_METRIC_INSIGHT · { nodeName, data } → shown in the card</text></svg></div>
+	<figcaption>
+		<span><i class="sw sw-req"></i>request</span>
+		<span><i class="sw sw-res"></i>response</span>
+		<span><i class="sw sw-cors"></i>browser straight to AI Hub, cross-origin (allowed by the Environment URL)</span>
+		<span class="cap-note">Everything else is same-origin with DXP, so the session and the CSRF token do the auth. Secrets never leave the DXP server.</span>
+	</figcaption>
+</figure>
 
 	<nav class="agenda" id="agenda" aria-label="Agenda">
 		<h2 class="agenda-title">Agenda</h2>
@@ -670,7 +707,7 @@ Write at most three short sentences for a marketing manager: what the number say
 		}
 	});
 
-	for (const id of ['flat', 'no-say']) {
+	for (const id of ['flat', 'no-say', 'no-diagram']) {
 		const toggle = document.getElementById(id);
 
 		toggle.checked = store.get(id) === '1';

@@ -3,6 +3,11 @@ import html
 import json
 import pathlib
 import re
+import sys
+
+sys.path.insert(0, str(pathlib.Path(__file__).parent))
+
+from diagram import render as render_diagram
 
 DEMO = pathlib.Path.home() / 'dev/projects/devcon-2026/devcon-2026-stuff/demo'
 OUT = pathlib.Path(__file__).parent / 'devcon-live-guide.html'
@@ -478,6 +483,28 @@ h1 {{ font: 800 clamp(30px, 6vw, 46px)/1.05 var(--display); letter-spacing: -0.0
 .toggles {{ display: flex; flex-wrap: wrap; gap: 8px 20px; }}
 .toggle {{ align-items: center; color: var(--muted); cursor: pointer; display: flex; flex: none; font-size: 15px; gap: 6px; }}
 body.no-say .k-say {{ display: none; }}
+body.no-diagram .diagram {{ display: none; }}
+.diagram {{ background: var(--surface); border: 1px solid var(--line); border-radius: 14px; display: grid; gap: 12px; margin: 8px 0 0; padding: 16px; }}
+.diagram-scroll {{ overflow-x: auto; }}
+.diagram svg {{ display: block; height: auto; min-width: 900px; width: 100%; }}
+.dg-box {{ fill: var(--surface-2); stroke: var(--line); }}
+.dg-box-hub {{ stroke: var(--accent); }}
+.dg-name {{ fill: var(--fg); font: 700 16px var(--display); }}
+.dg-sub {{ fill: var(--muted); font: 500 11px var(--body); }}
+.dg-lane {{ stroke: var(--line); stroke-dasharray: 2 5; }}
+.dg-phase-line {{ stroke: var(--line-soft); }}
+.dg-phase {{ fill: var(--say); font: 600 12px var(--mono); letter-spacing: 0.06em; text-transform: uppercase; }}
+.dg-req, .dg-res {{ stroke: var(--fg); stroke-width: 1.5; }}
+.dg-res {{ stroke: var(--muted); stroke-dasharray: 6 4; }}
+.dg-cors {{ stroke: var(--accent); }}
+.dg-arrow {{ fill: var(--fg); }}
+.dg-arrow-cors {{ fill: var(--accent); }}
+.dg-label {{ fill: var(--fg); font: 12px var(--mono); paint-order: stroke; stroke: var(--surface); stroke-linejoin: round; stroke-width: 5px; }}
+.diagram figcaption {{ color: var(--muted); display: flex; flex-wrap: wrap; font-size: 14px; gap: 6px 20px; }}
+.diagram .cap-note {{ flex-basis: 100%; }}
+.sw {{ border-top: 2px solid var(--fg); display: inline-block; margin-right: 8px; vertical-align: middle; width: 26px; }}
+.sw-res {{ border-top: 2px dashed var(--muted); }}
+.sw-cors {{ border-top-color: var(--accent); }}
 
 .part {{ padding-top: 40px; scroll-margin-top: 16px; }}
 .part-head {{ align-items: center; display: flex; gap: 14px; margin-bottom: 18px; }}
@@ -573,10 +600,13 @@ html {{ scroll-behavior: smooth; }}
 			{copy_button(LOGIN)}
 		</div>
 		<div class="toggles">
+			<label class="toggle"><input id="no-diagram" type="checkbox"> Hide the diagram</label>
 			<label class="toggle"><input id="no-say" type="checkbox"> Hide the &ldquo;Say&rdquo; boxes</label>
 			<label class="toggle"><input id="flat" type="checkbox"> Show code without the change highlight</label>
 		</div>
 	</header>
+
+	{render_diagram()}
 
 	<nav class="agenda" id="agenda" aria-label="Agenda">
 		<h2 class="agenda-title">Agenda</h2>
@@ -671,7 +701,7 @@ html {{ scroll-behavior: smooth; }}
 		}}
 	}});
 
-	for (const id of ['flat', 'no-say']) {{
+	for (const id of ['flat', 'no-say', 'no-diagram']) {{
 		const toggle = document.getElementById(id);
 
 		toggle.checked = store.get(id) === '1';
