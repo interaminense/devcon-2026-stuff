@@ -20,8 +20,6 @@ const STYLE = `
 			color: #1d2b36;
 			display: block;
 			font-family: Inter, system-ui, sans-serif;
-			margin: 0 auto;
-			max-width: 1140px;
 			padding: 28px 32px;
 		}
 
