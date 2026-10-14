@@ -14,15 +14,32 @@ const AGENT_ERC = 'DEVCON_2026_LDP_NEXT_POSTS';
 const STYLE = `
 	<style>
 		.ldp-next-posts {
-			background: #fff;
+			background: repeating-linear-gradient(-45deg, #fff8ec 0 14px, #fff3e0 14px 28px);
+			border: 2px dashed #e0a458;
 			border-radius: 20px;
-			box-shadow: 0 12px 32px rgba(11, 79, 108, 0.08);
 			color: #1d2b36;
 			display: block;
 			font-family: Inter, system-ui, sans-serif;
 			margin: 0 auto;
 			max-width: 1140px;
 			padding: 28px 32px;
+		}
+
+		.ldp-next-posts .np-badge {
+			background: #1d2b36;
+			border-radius: 999px;
+			color: #ffd9a8;
+			display: inline-block;
+			font: 600 0.75rem Inter, sans-serif;
+			letter-spacing: 0.06em;
+			margin-bottom: 10px;
+			padding: 4px 12px;
+			text-transform: uppercase;
+		}
+
+		.ldp-next-posts table {
+			background: #fff;
+			border-radius: 12px;
 		}
 
 		.ldp-next-posts h2 {
@@ -105,7 +122,7 @@ const STYLE = `
 		}
 
 		.ldp-next-posts .np-idea {
-			background: #f7f3ea;
+			background: #fff;
 			border-radius: 16px;
 			display: flex;
 			flex-direction: column;
@@ -344,11 +361,23 @@ class LdpNextPosts extends HTMLElement {
 			return;
 		}
 
-		this.classList.add('ldp-next-posts');
-
-		this.innerHTML = `${STYLE}<p class="np-status">Loading the posts...</p>`;
-
 		try {
+
+			// Only people who can add posts to the space see the card: the CMS
+			// API returns the create action for them
+
+			const blogs = await api(
+				`/o/cms/blogs/scopes/${SPACE_GROUP_ID}?pageSize=1`
+			);
+
+			if (!blogs.actions?.create) {
+				return;
+			}
+
+			this.classList.add('ldp-next-posts');
+
+			this.innerHTML = `${STYLE}<p class="np-status">Loading the posts...</p>`;
+
 			this.posts = await getPosts();
 
 			this.render();
@@ -376,6 +405,7 @@ class LdpNextPosts extends HTMLElement {
 			${STYLE}
 			<div class="np-head">
 				<div>
+					<span class="np-badge">Editors only · visitors don't see this</span>
 					<h2>What should we write next?</h2>
 					<span class="np-period">Surf Journal posts · last ${RANGE_KEY} days · Liferay Data Platform</span>
 				</div>
