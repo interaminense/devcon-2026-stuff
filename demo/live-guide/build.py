@@ -230,19 +230,27 @@ def code_block(name, prev, cur, note=''):
 
 
 def values(rows, title=None):
-	body = ''.join(
-		f'<tr><th scope="row">{field}</th><td><code>{e(value)}</code></td><td>{copy_button(value)}</td></tr>'
-		if copyable else
-		f'<tr><th scope="row">{field}</th><td colspan="2">{value}</td></tr>'
-		for field, value, copyable in rows
-	)
+	described = any(len(row) > 3 for row in rows)
+	body = []
+
+	for row in rows:
+		field, value, copyable = row[:3]
+		purpose = f'<td class="purpose">{row[3]}</td>' if described else ''
+
+		if copyable:
+			body.append(f'<tr><th scope="row">{field}</th><td><code>{e(value)}</code></td>{purpose}<td>{copy_button(value)}</td></tr>')
+		else:
+			body.append(f'<tr><th scope="row">{field}</th><td>{value}</td>{purpose}<td></td></tr>')
+
 	head = f'<caption>{title}</caption>' if title else ''
+	cols = '<thead><tr><th scope="col">Field</th><th scope="col">Value</th><th scope="col">What it does</th><th></th></tr></thead>' if described else ''
+	cls = 'values described' if described else 'values'
 
-	return f'<div class="table-scroll"><table class="values">{head}<tbody>{body}</tbody></table></div>'
+	return f'<div class="table-scroll"><table class="{cls}">{head}{cols}<tbody>{''.join(body)}</tbody></table></div>'
 
 
-def v(field, value):
-	return (field, value, True)
+def v(field, value, purpose=None):
+	return (field, value, True) if purpose is None else (field, value, True, purpose)
 
 
 def plain(field, value):
@@ -347,10 +355,10 @@ parts.append(p)
 p = Part('6', 'AI Hub insight', 'Topic 05')
 p.step('say', 'An AI Hub agent is an agent definition plus a workflow with an LLM node. The card sends what it shows; AI Hub never reads LDP itself.')
 p.step('ui', '<p><strong>Create the agent</strong></p><ol><li>Tab 6: AI Hub &rarr; <b>Agent Builder</b>.</li><li><b>Make Shorter</b> &rarr; &#8942; &rarr; <b>Duplicate</b>.</li><li>On the copy: &#8942; &rarr; <b>View</b> &rarr; fill in the fields below &rarr; <b>Save</b>.</li></ol>'
-	+ values([v('Title', 'DevCon 2026 Demo LDP Metric Insight'), v('Description', 'Turns one LDP metric from the DEVCON demo card into a short insight.'), v('External reference code', 'DEVCON_2026_DEMO_LDP_METRIC_INSIGHT'), v('Input variables', 'metrics'), v('Output variable', 'insight')]))
+	+ values([v('Title', 'DevCon 2026 Demo LDP Metric Insight', 'The name people see in Agent Builder.'), v('Description', 'Turns one LDP metric from the DEVCON demo card into a short insight.', 'Tells people, and the AI Hub assistant that picks agents, what this agent is for.'), v('External reference code', 'DEVCON_2026_DEMO_LDP_METRIC_INSIGHT', 'The agent&rsquo;s fixed address. The card starts the agent with it, and the answer comes back on an event with this name.'), v('Input variables', 'metrics', 'The names of the values the caller sends. The card sends its summary as <code>metrics</code>.'), v('Output variable', 'insight', 'Which workflow output is the agent&rsquo;s answer. Must match the node&rsquo;s output variable.')]))
 p.step('say', 'The external reference code is the agent&rsquo;s address. It is the only thing the card needs to know about it.')
 p.step('ui', '<p><strong>Write its workflow</strong></p><ol><li><b>View Workflow</b> &rarr; click the LLM node in the middle.</li><li>In the panel on the right, fill in the fields below &rarr; <b>Update</b>.</li></ol>'
-	+ values([v('Node Name', 'ldpMetricInsight'), v('Input variables', '[{"name":"metrics","type":"string"}]'), v('Output variables', '[{"name":"insight","type":"string"}]'), v('Prompt', PROMPT), v('User message', 'Metric summary:\n{{metrics}}'), v('Tools', '[]'), v('RAG', '{}')]))
+	+ values([v('Node Name', 'ldpMetricInsight', 'The node&rsquo;s id inside the workflow. It also comes back in the answer as <code>nodeName</code>.'), v('Input variables', '[{"name":"metrics","type":"string"}]', 'The values this node reads. Only these are replaced as <code>{{name}}</code> in the prompt and the user message.'), v('Output variables', '[{"name":"insight","type":"string"}]', 'Where the node stores the model&rsquo;s reply.'), v('Prompt', PROMPT, 'The system message: the model&rsquo;s role, the rules, and the shape of the answer.'), v('User message', 'Metric summary:\n{{metrics}}', 'The message the model answers. <code>{{metrics}}</code> becomes the text the card sent.'), v('Tools', '[]', 'Tools the model may call, such as MCP servers. None here; must be <code>[]</code>, never empty.'), v('RAG', '{}', 'Documents the model may search before answering. None here; must be <code>{}</code>, never empty.')]))
 p.step('warn', 'Never leave <b>Tools</b> or <b>RAG</b> empty: the save fails with &ldquo;Unable to parse definition&rdquo;. After <b>Update</b>, open <b>Source</b> once and check that <code>&lt;prompt&gt;</code> still has the text; an empty prompt saves fine, but the agent never answers.')
 p.step('say', '<code>{{metrics}}</code> is replaced by the text the card sends. Only the node&rsquo;s input variables are replaced.')
 p.step('code', code_block('ldp-demo-card.js', code[4], code[5]))
@@ -496,6 +504,9 @@ h2 {{ font: 700 28px/1.15 var(--display); margin: 0; text-wrap: balance; }}
 .values tr:first-child th, .values tr:first-child td {{ border-top: 0; }}
 .values th {{ color: var(--muted); font-weight: 500; white-space: nowrap; width: 1%; }}
 .values td:last-child {{ text-align: right; width: 1%; }}
+.values thead th {{ color: var(--muted); font: 600 11px/1 var(--mono); letter-spacing: 0.12em; padding-bottom: 10px; text-transform: uppercase; }}
+.values.described td:nth-child(2) {{ width: 38%; }}
+.values .purpose {{ color: var(--muted); font-size: 15px; line-height: 1.45; }}
 .values td code {{ white-space: pre-wrap; }}
 .pill {{ background: var(--accent-soft); border-radius: 999px; color: var(--accent); font-size: 13px; padding: 2px 10px; }}
 
