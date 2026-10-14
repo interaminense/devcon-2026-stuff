@@ -48,7 +48,7 @@ ROWS = [
 ]
 
 TOP = 92
-ROW = 34
+ROW = 48
 PHASE = 40
 
 
@@ -73,11 +73,14 @@ def render():
 		gap = 6
 		start = x1 + (gap if right else -gap)
 		end = x2 - (10 if right else -10)
-		cls = {'req': 'dg-req', 'res': 'dg-res', 'cors': 'dg-req dg-cors', 'cors-res': 'dg-res dg-cors'}[style]
+		kind = {'req': 'req', 'res': 'res', 'cors': 'req cors', 'cors-res': 'res cors'}[style]
 		marker = 'dg-head-cors' if 'cors' in style else 'dg-head'
-		marks.append(f'<line class="{cls}" x1="{start}" x2="{end}" y1="{y}" y2="{y}" marker-end="url(#{marker})"/>')
-		tx = min(start, end) + (8 if right else 14)
-		marks.append(f'<text class="dg-label" x="{tx}" y="{y - 7}">{e(label)}</text>')
+		bx = min(start, end) + 4
+		bw = round(len(label) * 7.25 + 20)
+		by = y - 30
+		marks.append(f'<rect class="dg-msg {kind}" x="{bx}" y="{by}" width="{bw}" height="22" rx="6"/>')
+		marks.append(f'<text class="dg-label" x="{bx + 10}" y="{by + 15}">{e(label)}</text>')
+		marks.append(f'<line class="dg-{kind.split()[0]}{" dg-cors" if "cors" in style else ""}" x1="{start}" x2="{end}" y1="{y}" y2="{y}" marker-end="url(#{marker})"/>')
 
 	height = y + 30
 

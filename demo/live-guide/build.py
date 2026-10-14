@@ -499,7 +499,10 @@ body.no-diagram .diagram {{ display: none; }}
 .dg-cors {{ stroke: var(--accent); }}
 .dg-arrow {{ fill: var(--fg); }}
 .dg-arrow-cors {{ fill: var(--accent); }}
-.dg-label {{ fill: var(--fg); font: 12px var(--mono); paint-order: stroke; stroke: var(--surface); stroke-linejoin: round; stroke-width: 5px; }}
+.dg-label {{ fill: var(--fg); font: 12px var(--mono); }}
+.dg-msg {{ fill: var(--surface-2); stroke: var(--line); }}
+.dg-msg.res {{ fill: var(--bg); stroke-dasharray: 4 3; }}
+.dg-msg.cors {{ stroke: var(--accent); }}
 .diagram figcaption {{ color: var(--muted); display: flex; flex-wrap: wrap; font-size: 14px; gap: 6px 20px; }}
 .diagram .cap-note {{ flex-basis: 100%; }}
 .sw {{ border-top: 2px solid var(--fg); display: inline-block; margin-right: 8px; vertical-align: middle; width: 26px; }}
