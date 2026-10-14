@@ -346,11 +346,13 @@ parts.append(p)
 
 p = Part('6', 'AI Hub insight', 'Topic 05')
 p.step('say', 'An AI Hub agent is an agent definition plus a workflow with an LLM node. The card sends what it shows; AI Hub never reads LDP itself.')
-p.step('ui', '<p><strong>Show the agent</strong> (already created)</p><ol><li>Tab 6: AI Hub &rarr; <b>Agent Builder</b> &rarr; <b>DevCon 2026 &middot; Demo LDP Metric Insight</b> &rarr; &#8942; &rarr; <b>View</b>.</li></ol>'
-	+ values([v('External reference code', 'DEVCON_2026_DEMO_LDP_METRIC_INSIGHT'), v('Input variables', 'metrics'), v('Output variable', 'insight')]))
+p.step('ui', '<p><strong>Create the agent</strong></p><ol><li>Tab 6: AI Hub &rarr; <b>Agent Builder</b>.</li><li><b>Make Shorter</b> &rarr; &#8942; &rarr; <b>Duplicate</b>.</li><li>On the copy: &#8942; &rarr; <b>View</b> &rarr; fill in the fields below &rarr; <b>Save</b>.</li></ol>'
+	+ values([v('Title', 'DevCon 2026 Demo LDP Metric Insight'), v('Description', 'Turns one LDP metric from the DEVCON demo card into a short insight.'), v('External reference code', 'DEVCON_2026_DEMO_LDP_METRIC_INSIGHT'), v('Input variables', 'metrics'), v('Output variable', 'insight')]))
 p.step('say', 'The external reference code is the agent&rsquo;s address. It is the only thing the card needs to know about it.')
-p.step('ui', '<p><strong>Show the workflow</strong></p><ol><li><b>View Workflow</b> &rarr; click the node <code>ldpMetricInsight</code>.</li></ol>'
-	+ values([v('User message', 'Metric summary:\n{{metrics}}'), v('Tools', '[]'), v('RAG', '{}'), v('Prompt', PROMPT)]))
+p.step('ui', '<p><strong>Write its workflow</strong></p><ol><li><b>View Workflow</b> &rarr; click the LLM node in the middle.</li><li>In the panel on the right, fill in the fields below &rarr; <b>Update</b>.</li></ol>'
+	+ values([v('Node Name', 'ldpMetricInsight'), v('Input variables', '[{"name":"metrics","type":"string"}]'), v('Output variables', '[{"name":"insight","type":"string"}]'), v('Prompt', PROMPT), v('User message', 'Metric summary:\n{{metrics}}'), v('Tools', '[]'), v('RAG', '{}')]))
+p.step('warn', 'Never leave <b>Tools</b> or <b>RAG</b> empty: the save fails with &ldquo;Unable to parse definition&rdquo;. After <b>Update</b>, open <b>Source</b> once and check that <code>&lt;prompt&gt;</code> still has the text; an empty prompt saves fine, but the agent never answers.')
+p.step('say', '<code>{{metrics}}</code> is replaced by the text the card sends. Only the node&rsquo;s input variables are replaced.')
 p.step('code', code_block('ldp-demo-card.js', code[4], code[5]))
 p.step(*ship(5))
 p.step('ui', '<ol><li>Right card &rarr; <b>&#10022; AI insight</b>.</li></ol>')
@@ -573,9 +575,9 @@ html {{ scroll-behavior: smooth; }}
 				<li><b>DEVCON Demo</b> &rarr; Documents and Media &rarr; <code>ldp-demo-card.js</code> &rarr; &#8942; &rarr; <b>Move to Recycle Bin</b>.</li>
 				<li><b>DEVCON Demo</b> &rarr; <b>Recycle Bin</b> &rarr; <b>Empty the Recycle Bin</b>. Otherwise the next upload gets a different URL.</li>
 				<li>Control Panel &rarr; <b>Objects</b> &rarr; folder <b>DEVCON Demo</b> &rarr; <b>Demo Card Config</b> &rarr; &#8942; &rarr; <b>Delete</b>. Its entries go with it.</li>
+				<li>AI Hub &rarr; <b>Agent Builder</b> &rarr; <b>DevCon 2026 Demo LDP Metric Insight</b> &rarr; &#8942; &rarr; <b>Delete</b>, so its external reference code is free again.</li>
 				<li>In the editor, empty <code>ldp-demo-card.js</code>.</li>
 			</ol>
-			<p>Keep the AI Hub agent: it is created before the talk, not on stage.</p>
 			<button class="reset" id="reset" type="button">Clear all checkmarks</button>
 		</div>
 	</section>
