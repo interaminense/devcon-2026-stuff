@@ -262,6 +262,78 @@ TEMPLATES["swell-lab-learn"] = (
 	],
 )
 
+# The blog: posts written in the Swell Lab CMS space (CMS 2.0), listed with a
+# collection display. Mapped fields make DXP emit the object entry analytics
+# attributes, so LDP counts an impression for every post shown.
+
+CMS_BLOG_CLASS_NAME = "com.liferay.object.model.ObjectDefinition#Y8H4"
+
+
+def mapped(field_id, field_key):
+	return {
+		"id": field_id,
+		"value": {
+			"fragmentLink": {},
+			"text": {"mapping": {"fieldKey": field_key, "itemReference": {"contextSource": "CollectionItem"}}},
+		},
+	}
+
+
+TEMPLATES["swell-lab-blog"] = (
+	"Swell Lab Blog",
+	[
+		banner_fragment("Surf Journal", "Stories, tips, and guides from our coaches.", "surf-shack"),
+		{
+			"definition": {"cssClasses": ["sl-blog-list"], "layout": {"widthType": "Fixed"}},
+			"pageElements": [
+				{
+					"definition": {
+						"collectionConfig": {
+							"collectionReference": {"className": CMS_BLOG_CLASS_NAME},
+							"collectionType": "CollectionProvider",
+						},
+						"collectionViewports": [
+							{"collectionViewportDefinition": {"numberOfColumns": 1}, "id": "landscapeMobile"},
+							{"collectionViewportDefinition": {"numberOfColumns": 1}, "id": "portraitMobile"},
+							{"collectionViewportDefinition": {"numberOfColumns": 2}, "id": "tablet"},
+						],
+						"displayAllItems": False,
+						"displayAllPages": True,
+						"listItemStyle": "",
+						"listStyle": "",
+						"numberOfColumns": 3,
+						"numberOfItems": 12,
+						"numberOfItemsPerPage": 12,
+						"numberOfPages": 1,
+						"paginationType": "None",
+						"showAllItems": False,
+						"templateKey": "",
+					},
+					"pageElements": [
+						{
+							"definition": {"collectionItemConfig": {}},
+							"pageElements": [
+								{
+									"definition": {
+										"fragment": {"key": "sl-blog-card"},
+										"fragmentConfig": {},
+										"fragmentFields": [mapped("title", "ObjectField_title"), mapped("subtitle", "ObjectField_subtitle")],
+									},
+									"type": "Fragment",
+								}
+							],
+							"type": "CollectionItem",
+						}
+					],
+					"type": "Collection",
+				}
+			],
+			"type": "Section",
+		},
+		fragment("sl-cta"),
+	],
+)
+
 collection = os.path.join(ROOT, "page-templates/swell-lab")
 
 write_json(os.path.join(collection, "page-template-collection.json"), {"name": "Swell Lab"})

@@ -1347,6 +1347,42 @@ fragment(
 )
 
 
+fragment(
+	"sl-blog-card",
+	"Swell Lab Blog Card",
+	"""
+<article class="sl-card sl-blog-card">
+	<div class="sl-card__body">
+		<span class="sl-tag">Surf Journal</span>
+
+		<h3 class="sl-card__title" data-lfr-editable-id="title" data-lfr-editable-type="text">Blog title</h3>
+
+		<p class="sl-card__text" data-lfr-editable-id="subtitle" data-lfr-editable-type="text">A short line about the post.</p>
+	</div>
+</article>
+""",
+	"""
+.sl-blog-card {
+	height: 100%;
+}
+
+.sl-blog-card .sl-card__body {
+	gap: 10px;
+	padding: 28px 26px;
+}
+
+.sl-blog-card .sl-tag {
+	align-self: flex-start;
+}
+
+.sl-blog-list {
+	padding: 56px 0 72px;
+}
+""",
+	icon="blogs",
+)
+
+
 def write(path, content):
 	os.makedirs(os.path.dirname(path), exist_ok=True)
 

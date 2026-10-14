@@ -1,0 +1,16 @@
+.sl-blog-card {
+	height: 100%;
+}
+
+.sl-blog-card .sl-card__body {
+	gap: 10px;
+	padding: 28px 26px;
+}
+
+.sl-blog-card .sl-tag {
+	align-self: flex-start;
+}
+
+.sl-blog-list {
+	padding: 56px 0 72px;
+}
