@@ -14,3 +14,20 @@
 .sl-blog-list {
 	padding: 56px 0 72px;
 }
+
+/* The collection lists posts oldest first and cannot be sorted, so the list
+   is reversed visually: the newest post comes first, reading row by row */
+
+.sl-blog-list .lfr-layout-structure-item-collection > .container-fluid {
+	display: flex;
+	flex-direction: row-reverse;
+	flex-wrap: wrap-reverse;
+	justify-content: flex-end;
+	margin-inline: -12px;
+	width: calc(100% + 24px);
+	row-gap: 24px;
+}
+
+.sl-blog-list .lfr-layout-structure-item-collection .row {
+	display: contents;
+}

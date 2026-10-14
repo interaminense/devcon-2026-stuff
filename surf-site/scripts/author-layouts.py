@@ -253,6 +253,11 @@ TEMPLATES["swell-lab-dashboard"] = (
 	],
 )
 
+TEMPLATES["swell-lab-learn-article"] = (
+	"Swell Lab Learn Article",
+	[fragment("sl-academy-article"), fragment("sl-cta")],
+)
+
 TEMPLATES["swell-lab-learn"] = (
 	"Swell Lab Learn",
 	[

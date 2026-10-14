@@ -1,0 +1,32 @@
+{
+	"pageElement": {
+		"pageElements": [
+			{
+				"definition": {
+					"fragment": {
+						"key": "sl-academy-article"
+					},
+					"fragmentConfig": {},
+					"fragmentFields": []
+				},
+				"type": "Fragment"
+			},
+			{
+				"definition": {
+					"fragment": {
+						"key": "sl-cta"
+					},
+					"fragmentConfig": {},
+					"fragmentFields": []
+				},
+				"type": "Fragment"
+			}
+		],
+		"type": "Root"
+	},
+	"settings": {
+		"masterPage": {
+			"key": "swell-lab"
+		}
+	}
+}

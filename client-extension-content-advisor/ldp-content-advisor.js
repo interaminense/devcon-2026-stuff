@@ -11,11 +11,11 @@
 
 	const GRAPHQL_URL = '/o/analytics-rest/v1.0/graphql';
 
-	// 0 is the last 24 hours
+	// 7 is the last 7 days (LDP leaves today out)
 
-	const RANGE_KEY = 0;
+	const RANGE_KEY = 7;
 
-	const RANGE_LABEL = 'last 24 hours';
+	const RANGE_LABEL = 'last 7 days';
 
 	const AGENT_TIMEOUT = 60000;
 

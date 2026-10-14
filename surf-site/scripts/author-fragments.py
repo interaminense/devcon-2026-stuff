@@ -1084,7 +1084,7 @@ def academy_card(index, content_id, image, tag, title, text, href):
 
 				<p class="sl-card__text" data-content-text data-lfr-editable-id="text-{index}" data-lfr-editable-type="text">{text}</p>
 
-				<button class="sl-card__link sl-academy__more" data-lfr-editable-id="more-{index}" data-lfr-editable-type="text" type="button">Read more &rarr;</button>
+				<a class="sl-card__link sl-academy__more" href="/learn-article?id={content_id}"><span data-lfr-editable-id="more-{index}" data-lfr-editable-type="text">Read more &rarr;</span></a>
 			</div>
 		</article>"""
 
@@ -1113,17 +1113,13 @@ fragment(
 
 .sl-academy__more {
 	align-self: flex-start;
-	background: none;
-	border: 0;
-	cursor: pointer;
-	font: inherit;
 	font-weight: 600;
-	text-align: left;
 }
 """,
 	"""
-// "Read more" goes nowhere: it only sends the surfContentClicked custom event
-// to LDP, with the block's id, its current title, and its position on the page
+// "Read more" sends the surfContentClicked custom event to LDP, with the
+// block's id, its current title, and its position on the page, then opens the
+// article. The event is queued and sent from the article page.
 
 fragmentElement.querySelectorAll('[data-content-id]').forEach((item, index) => {
 	item.addEventListener('click', (event) => {
@@ -1381,6 +1377,23 @@ fragment(
 .sl-blog-list {
 	padding: 56px 0 72px;
 }
+
+/* The collection lists posts oldest first and cannot be sorted, so the list
+   is reversed visually: the newest post comes first, reading row by row */
+
+.sl-blog-list .lfr-layout-structure-item-collection > .container-fluid {
+	display: flex;
+	flex-direction: row-reverse;
+	flex-wrap: wrap-reverse;
+	justify-content: flex-end;
+	margin-inline: -12px;
+	width: calc(100% + 24px);
+	row-gap: 24px;
+}
+
+.sl-blog-list .lfr-layout-structure-item-collection .row {
+	display: contents;
+}
 """,
 	"""
 // "Read the post" sends the surfBlogPostClicked custom event to LDP before the
@@ -1455,6 +1468,208 @@ fragment(
 }
 """,
 	icon="blogs",
+)
+
+# The article behind each "Read more": one page, /learn-article?id=<content id>,
+# filled from the same contents as the Surf Academy blocks
+
+ACADEMY_BODIES = {
+	"board-guide": [
+		"Your first board should float you, not fight you. Look for a soft-top between 8 and 9 feet with plenty of volume: around twice your body weight in liters is a good start.",
+		"Length gives you glide and stability, width keeps you balanced while you pop up, and a rounded nose forgives late take-offs. Leave the short, pointy boards for later.",
+	],
+	"tide-101": [
+		"Tides move the water over sand bars and reefs, and that changes how waves break. At Praia do Rosa, mid tide on a rising swell gives the most consistent peaks.",
+		"Low tide can expose rocks at the point and make waves dump hard. High tide often slows the beach break down. Check a tide chart and plan for the two hours around mid tide.",
+	],
+	"pop-up-drill": [
+		"Lie flat on the floor, hands under your chest. In one move, push up and bring your front foot between your hands, landing low with knees bent and eyes forward.",
+		"Repeat it ten times, rest, and do three rounds. Five minutes a day for a week and the move becomes automatic, so in the water you think about the wave, not your feet.",
+	],
+	"wetsuit-guide": [
+		"Water in southern Brazil goes from 24 °C in summer to 16 °C in winter. Above 22 °C a shorty or a top is enough; between 17 and 22 °C wear a 3/2 mm full suit.",
+		"Below 17 °C switch to a 4/3 mm with booties. Cold costs energy: a warmer suit keeps you paddling longer and catching more waves.",
+	],
+	"surf-info": [
+		"Surfing is riding waves on a board.",
+		"There are many things to know about it.",
+	],
+	"lineup-etiquette": [
+		"The surfer closest to the peak has priority. Never drop in on someone already riding, and paddle around the break, not through it.",
+		"Hold your board, call your wave, and wait your turn. If you get in someone's way, a quick apology keeps the lineup friendly.",
+	],
+	"wave-choice": [
+		"Good waves peak and peel to one side. Watch the set for a few minutes from the beach and notice where the peak forms and which way it breaks.",
+		"Avoid the waves that stand up all at once along their length: they close out. Pick the shoulder of a peeling wave and paddle early.",
+	],
+	"paddle-power": [
+		"Lie centered on the board with your chest slightly raised and your feet together. If the nose dips or sticks up, move until it sits just above the water.",
+		"Reach forward, pull deep under the board, and let your hands exit at your hips. Long, steady strokes beat fast splashing every time.",
+	],
+	"forecast-basics": [
+		"Start with swell size and period: a 1 m swell at 10 seconds or more brings more power than a 2 m swell at 6 seconds.",
+		"Then check the wind. Offshore or no wind keeps the waves clean; strong onshore wind makes them messy. Good size, long period, and light offshore is the morning to wake up early.",
+	],
+	"trip-packing": [
+		"Pack a padded board bag, two leashes, base and top wax for the water temperature, fins with a key, and reef booties for rocky breaks.",
+		"Add reef-safe sunscreen, a rash guard, a ding repair kit, and the item everyone forgets: a spare fin screw.",
+	],
+	"post-surf-stretch": [
+		"After a session, spend ten minutes on the sand: open your chest and shoulders against your board, then stretch your hip flexors in a low lunge.",
+		"Finish with a child's pose for your lower back. Your body recovers faster and you paddle out stronger the next day.",
+	],
+	"sun-care": [
+		"Use a reef-safe sunscreen with zinc oxide, apply it twenty minutes before paddling out, and reapply every two hours or after a long session.",
+		"Wear a rash guard and a cap for the longest sessions. Your skin and the reefs you surf both stay healthy.",
+	],
+}
+
+ACADEMY_ARTICLES = {
+	content_id: {
+		"body": ACADEMY_BODIES[content_id],
+		"href": href,
+		"image": "/documents/d/guest/" + image.replace(".jpg", "-jpg") + "?download=true",
+		"lead": text,
+		"tag": tag,
+		"title": title,
+	}
+	for content_id, image, tag, title, text, href in ACADEMY_CONTENTS
+}
+
+fragment(
+	"sl-academy-article",
+	"Swell Lab Academy Article",
+	"""
+<article class="sl-article">
+	<div class="sl-container sl-article__container">
+		<a class="sl-article__back" href="/learn">&larr; Surf Academy</a>
+
+		<div class="sl-article__body" data-article-body>
+			<p>Loading the article...</p>
+		</div>
+	</div>
+
+	<script data-articles type="application/json">"""
+	+ json.dumps(ACADEMY_ARTICLES, ensure_ascii=False)
+	+ """</script>
+</article>
+""",
+	"""
+.sl-article {
+	background: var(--sl-sand, #f7f3ea);
+	padding: 56px 0 72px;
+}
+
+.sl-article__container {
+	max-width: 820px;
+}
+
+.sl-article__back {
+	color: var(--sl-primary, #0b4f6c);
+	display: inline-block;
+	font-weight: 600;
+	margin-bottom: 24px;
+	text-decoration: none;
+}
+
+.sl-article__body {
+	background: #fff;
+	border-radius: 20px;
+	box-shadow: 0 12px 32px rgba(11, 79, 108, 0.08);
+	overflow: hidden;
+}
+
+.sl-article__image {
+	aspect-ratio: 16 / 7;
+	display: block;
+	object-fit: cover;
+	width: 100%;
+}
+
+.sl-article__content {
+	color: var(--sl-ink, #1d2b36);
+	display: grid;
+	gap: 16px;
+	padding: 36px 44px 44px;
+}
+
+.sl-article__content h1 {
+	color: var(--sl-primary, #0b4f6c);
+	font: 700 2.25rem/1.2 Poppins, Inter, sans-serif;
+	margin: 0;
+}
+
+.sl-article__lead {
+	color: var(--sl-muted, #5b6b77);
+	font-size: 1.25rem;
+	line-height: 1.5;
+	margin: 0;
+}
+
+.sl-article__content p {
+	font-size: 1.0625rem;
+	line-height: 1.75;
+	margin: 0;
+}
+
+.sl-article__content .sl-tag {
+	justify-self: start;
+}
+
+.sl-article__cta {
+	color: var(--sl-primary, #0b4f6c);
+	font-weight: 600;
+	justify-self: start;
+	text-decoration: none;
+}
+
+@media (max-width: 600px) {
+	.sl-article__content {
+		padding: 28px 22px 32px;
+	}
+
+	.sl-article__content h1 {
+		font-size: 1.75rem;
+	}
+}
+""",
+	"""
+// Renders the article named by ?id= from the contents embedded in the
+// fragment: the same title, image, and text as its Surf Academy block
+
+const articles = JSON.parse(fragmentElement.querySelector('[data-articles]').textContent);
+const body = fragmentElement.querySelector('[data-article-body]');
+const article = articles[new URLSearchParams(window.location.search).get('id')];
+
+const escape = (text) => {
+	const element = document.createElement('span');
+
+	element.textContent = text;
+
+	return element.innerHTML;
+};
+
+if (!article) {
+	body.innerHTML = '<div class="sl-article__content"><h1>Article not found</h1><p>This guide is not available. <a href="/learn">See all the Surf Academy guides</a>.</p></div>';
+}
+else {
+	body.innerHTML = `
+		<img alt="" class="sl-article__image" src="${article.image}" />
+		<div class="sl-article__content">
+			<span class="sl-tag">${escape(article.tag)}</span>
+			<h1>${escape(article.title)}</h1>
+			<p class="sl-article__lead">${escape(article.lead)}</p>
+			${article.body.map((paragraph) => `<p>${escape(paragraph)}</p>`).join('')}
+			<a class="sl-article__cta" href="${article.href}">Keep learning in the water &rarr;</a>
+		</div>
+	`;
+
+	if (layoutMode === 'view') {
+		document.title = `${article.title} - Swell Lab`;
+	}
+}
+""",
+	icon="document",
 )
 
 def write(path, content):
