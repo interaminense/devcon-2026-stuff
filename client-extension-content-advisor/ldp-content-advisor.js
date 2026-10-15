@@ -547,6 +547,14 @@
 		}
 
 		renderToggle(detail) {
+
+			// A disposed advisor can still finish its LDP requests: it must
+			// not draw anything after that
+
+			if (this.disposed) {
+				return;
+			}
+
 			if (!this.toggle) {
 				this.toggle = document.createElement('button');
 				this.toggle.className = 'ldp-advisor-toggle';
@@ -581,6 +589,10 @@
 		}
 
 		renderOutlines() {
+			if (this.disposed) {
+				return;
+			}
+
 			this.clear();
 
 			if (!this.enabled) {
@@ -703,6 +715,8 @@
 		}
 
 		dispose() {
+			this.disposed = true;
+
 			this.clear();
 
 			this.toggle?.remove();
@@ -710,15 +724,22 @@
 		}
 	}
 
-	let advisor;
+	// A SPA navigation runs this script again. One registry on window keeps a
+	// single advisor and a single endNavigate listener for the whole session,
+	// so earlier runs never leave their toggle or labels behind.
+
+	const registry = (window.__ldpContentAdvisor ??= {
+		advisor: null,
+		listening: false,
+	});
 
 	function start() {
+		registry.advisor?.dispose();
+		registry.advisor = null;
+
 		if (!window.Liferay?.ThemeDisplay?.isSignedIn()) {
 			return;
 		}
-
-		advisor?.dispose();
-		advisor = null;
 
 		if (!document.querySelector('[data-content-id]')) {
 			return;
@@ -733,10 +754,12 @@
 			document.head.appendChild(style);
 		}
 
-		advisor = new ContentAdvisor();
+		registry.advisor = new ContentAdvisor();
 
-		advisor.run();
+		registry.advisor.run();
 	}
+
+	registry.start = start;
 
 	if (document.readyState === 'loading') {
 		document.addEventListener('DOMContentLoaded', start);
@@ -745,5 +768,9 @@
 		start();
 	}
 
-	window.Liferay?.on?.('endNavigate', start);
+	if (!registry.listening) {
+		registry.listening = true;
+
+		window.Liferay?.on?.('endNavigate', () => registry.start());
+	}
 })();
