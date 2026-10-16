@@ -20,16 +20,26 @@
 	const AGENT_TIMEOUT = 60000;
 
 	const STYLE = `
+		.ldp-advisor-best,
 		.ldp-advisor-weak {
 			outline: 3px solid var(--ldp-advisor-color);
 			outline-offset: 6px;
 			position: relative;
 		}
 
+		.ldp-advisor-best {
+			--ldp-advisor-color: #1f9d6b;
+		}
+
+		.ldp-advisor-weak {
+			--ldp-advisor-color: #e2574f;
+		}
+
 		.ldp-advisor-badge {
-			align-items: center;
+			align-items: flex-start;
 			display: flex;
-			gap: 6px;
+			flex-direction: column;
+			gap: 8px;
 			left: 12px;
 			position: absolute;
 			top: 12px;
@@ -43,11 +53,11 @@
 			box-sizing: border-box;
 			color: #fff;
 			font: 600 12px/1 Inter, system-ui, sans-serif;
-			height: 30px;
 			padding: 9px 12px;
 		}
 
-		.ldp-advisor-badge--weak .ldp-advisor-label {
+		.ldp-advisor-best .ldp-advisor-label,
+		.ldp-advisor-weak .ldp-advisor-label {
 			background: var(--ldp-advisor-color);
 		}
 
@@ -55,17 +65,15 @@
 			align-items: center;
 			background: #fff;
 			border: 2px solid var(--ldp-advisor-color);
-			border-radius: 50%;
-			box-shadow: 0 4px 12px rgba(29, 43, 54, 0.25);
-			box-sizing: border-box;
+			border-radius: 999px;
+			box-shadow: 0 6px 16px rgba(29, 43, 54, 0.25);
 			color: var(--ldp-advisor-color);
 			cursor: pointer;
-			display: flex;
-			height: 30px;
-			justify-content: center;
-			padding: 0;
-			transition: transform 0.15s ease;
-			width: 30px;
+			display: inline-flex;
+			font: 700 13px/1 Inter, system-ui, sans-serif;
+			gap: 8px;
+			padding: 9px 14px 9px 12px;
+			transition: background 0.15s ease, color 0.15s ease, transform 0.15s ease;
 		}
 
 		.ldp-advisor-ai:hover,
@@ -73,7 +81,7 @@
 			background: var(--ldp-advisor-color);
 			color: #fff;
 			outline: none;
-			transform: scale(1.08);
+			transform: translateY(-1px);
 		}
 
 		.ldp-advisor-ai svg {
@@ -81,50 +89,130 @@
 			width: 16px;
 		}
 
-		.ldp-advisor-popover {
-			background: #fff;
-			border-radius: 14px;
-			box-shadow: 0 16px 40px rgba(11, 79, 108, 0.25);
-			box-sizing: border-box;
-			color: #1d2b36;
-			font: 14px/1.5 Inter, system-ui, sans-serif;
-			padding: 16px 18px;
-			position: absolute;
+		.ldp-advisor-backdrop {
+			align-items: center;
+			background: rgba(13, 31, 43, 0.55);
+			display: flex;
+			inset: 0;
+			justify-content: center;
+			padding: 24px;
+			position: fixed;
 			z-index: 1001;
 		}
 
-		.ldp-advisor-popover h4 {
-			color: #0b4f6c;
-			font: 700 12px/1.2 Inter, system-ui, sans-serif;
-			letter-spacing: 0.06em;
-			margin: 0 0 8px;
+		.ldp-advisor-modal {
+			background: #fff;
+			border-radius: 20px;
+			box-shadow: 0 24px 64px rgba(11, 79, 108, 0.35);
+			box-sizing: border-box;
+			color: #1d2b36;
+			font: 16px/1.6 Inter, system-ui, sans-serif;
+			max-height: calc(100vh - 48px);
+			max-width: 620px;
+			overflow: auto;
+			padding: 32px 36px;
+			position: relative;
+			width: 100%;
+		}
+
+		.ldp-advisor-modal__eyebrow {
+			align-items: center;
+			color: #e2574f;
+			display: flex;
+			font: 700 12px/1 Inter, system-ui, sans-serif;
+			gap: 8px;
+			letter-spacing: 0.08em;
 			text-transform: uppercase;
 		}
 
-		.ldp-advisor-popover dl {
+		.ldp-advisor-modal__eyebrow svg {
+			height: 16px;
+			width: 16px;
+		}
+
+		.ldp-advisor-modal h3 {
+			color: #0b4f6c;
+			font: 700 24px/1.25 Poppins, Inter, sans-serif;
+			margin: 10px 0 6px;
+			padding-right: 32px;
+		}
+
+		.ldp-advisor-modal__meta {
+			color: #5b6b77;
+			font-size: 14px;
+			margin: 0 0 24px;
+		}
+
+		.ldp-advisor-modal__section {
+			border-top: 1px solid rgba(11, 79, 108, 0.12);
+			padding: 18px 0;
+		}
+
+		.ldp-advisor-modal__section:last-child {
+			padding-bottom: 0;
+		}
+
+		.ldp-advisor-modal__label {
+			color: #5b6b77;
+			font: 700 12px/1 Inter, system-ui, sans-serif;
+			letter-spacing: 0.06em;
+			margin: 0 0 10px;
+			text-transform: uppercase;
+		}
+
+		.ldp-advisor-modal__section p {
 			margin: 0;
 		}
 
-		.ldp-advisor-popover dt {
+		.ldp-advisor-modal__new {
+			background: #f7f3ea;
+			border-radius: 12px;
+			padding: 16px 18px;
+		}
+
+		.ldp-advisor-modal__new strong {
+			color: #0b4f6c;
+			display: block;
+			font: 700 18px/1.35 Poppins, Inter, sans-serif;
+			margin-bottom: 8px;
+		}
+
+		.ldp-advisor-modal__problem {
+			background: #fdecea;
+			border-radius: 999px;
+			color: #b8352d;
+			display: inline-block;
+			font: 700 12px/1 Inter, system-ui, sans-serif;
+			letter-spacing: 0.04em;
+			margin-bottom: 10px;
+			padding: 6px 12px;
+			text-transform: uppercase;
+		}
+
+		.ldp-advisor-modal__loading {
 			color: #5b6b77;
-			font-size: 12px;
-			font-weight: 600;
-			margin-top: 8px;
+			margin: 8px 0 0;
 		}
 
-		.ldp-advisor-popover dd {
-			margin: 2px 0 0;
-		}
-
-		.ldp-advisor-popover .ldp-advisor-close {
-			background: none;
+		.ldp-advisor-close {
+			background: #f1f4f6;
 			border: 0;
-			color: #5b6b77;
+			border-radius: 50%;
+			color: #1d2b36;
 			cursor: pointer;
-			font-size: 18px;
+			font-size: 22px;
+			height: 36px;
+			line-height: 1;
 			position: absolute;
-			right: 10px;
-			top: 6px;
+			right: 18px;
+			top: 18px;
+			width: 36px;
+		}
+
+		.ldp-advisor-close:hover,
+		.ldp-advisor-close:focus-visible {
+			background: #e2e8ec;
+			outline: none;
 		}
 
 		.ldp-advisor-toggle {
@@ -150,8 +238,6 @@
 			opacity: 0.8;
 		}
 	`;
-
-	const COLORS = ['#e2574f', '#e0932b'];
 
 	// Sparkles, the usual AI mark
 
@@ -529,9 +615,10 @@
 
 				this.best = ranked[ranked.length - 1];
 
-				this.weak = ranked
-					.filter((block) => block.share < average)
-					.slice(0, COLORS.length);
+				// The block with the fewest clicks gets the red outline and the
+				// AI button; the one with the most gets the green outline
+
+				this.weak = ranked[0] === this.best ? [] : [ranked[0]];
 
 				this.renderToggle(
 					`${this.weak.length} to improve · ${views} views · ${RANGE_LABEL}`
@@ -577,14 +664,15 @@
 
 		clear() {
 			for (const element of document.querySelectorAll(
-				'.ldp-advisor-badge, .ldp-advisor-popover'
+				'.ldp-advisor-badge, .ldp-advisor-backdrop'
 			)) {
 				element.remove();
 			}
 
-			for (const element of document.querySelectorAll('.ldp-advisor-weak')) {
-				element.classList.remove('ldp-advisor-weak');
-				element.style.removeProperty('--ldp-advisor-color');
+			for (const element of document.querySelectorAll(
+				'.ldp-advisor-best, .ldp-advisor-weak'
+			)) {
+				element.classList.remove('ldp-advisor-best', 'ldp-advisor-weak');
 			}
 		}
 
@@ -599,32 +687,26 @@
 				return;
 			}
 
-			// Every block gets a label with its share of the clicks; the
-			// weakest ones are outlined and get a round AI button next to the
-			// label that opens the agent's suggestion
+			// Every block gets a label with its share of the clicks. The one
+			// with the most clicks is outlined in green; the one with the
+			// fewest in red, with the button that asks AI Hub for a fix.
 
 			for (const block of this.blocks || []) {
-				const index = (this.weak || []).indexOf(block);
-
 				const badge = document.createElement('div');
 
 				badge.className = 'ldp-advisor-badge';
 				badge.innerHTML = `<span class="ldp-advisor-label">${percent(block.share)} of clicks</span>`;
 
-				if (index >= 0) {
+				if (block === this.best) {
+					block.element.classList.add('ldp-advisor-best');
+				}
+				else if ((this.weak || []).includes(block)) {
 					block.element.classList.add('ldp-advisor-weak');
-					block.element.style.setProperty(
-						'--ldp-advisor-color',
-						COLORS[index]
-					);
-
-					badge.classList.add('ldp-advisor-badge--weak');
 
 					const button = document.createElement('button');
 
 					button.className = 'ldp-advisor-ai';
-					button.innerHTML = AI_ICON;
-					button.title = 'AI suggestion';
+					button.innerHTML = `${AI_ICON}<span>Suggest improvements</span>`;
 					button.type = 'button';
 
 					button.setAttribute(
@@ -647,70 +729,94 @@
 		}
 
 		async openSuggestion(block) {
-			for (const element of document.querySelectorAll('.ldp-advisor-popover')) {
+			for (const element of document.querySelectorAll('.ldp-advisor-backdrop')) {
 				element.remove();
 			}
 
-			// The cards clip their content to round the photo, so the popover
-			// lives in the body, lined up with the card
+			const backdrop = document.createElement('div');
 
-			const popover = document.createElement('div');
-			const rect = block.element.getBoundingClientRect();
+			backdrop.className = 'ldp-advisor-backdrop';
+			backdrop.innerHTML = `
+				<div aria-label="AI suggestion" aria-modal="true" class="ldp-advisor-modal" role="dialog">
+					<button aria-label="Close" class="ldp-advisor-close" type="button">&times;</button>
+					<div class="ldp-advisor-modal__eyebrow">${AI_ICON}<span>AI suggestion · AI Hub</span></div>
+					<h3>${escape(block.title)}</h3>
+					<p class="ldp-advisor-modal__meta">${percent(block.share)} of clicks · position ${block.position} of ${block.total} · ${RANGE_LABEL}</p>
+					<div class="ldp-advisor-modal__body"></div>
+				</div>
+			`;
 
-			popover.style.left = `${rect.left + window.scrollX + 12}px`;
-			popover.style.top = `${rect.top + window.scrollY + 52}px`;
-			popover.style.width = `${Math.max(rect.width - 24, 280)}px`;
+			const close = () => {
+				backdrop.remove();
+				document.removeEventListener('keydown', onKeydown);
+			};
 
-			popover.className = 'ldp-advisor-popover';
+			const onKeydown = (event) => {
+				if (event.key === 'Escape') {
+					close();
+				}
+			};
 
-			popover.addEventListener('click', (event) => {
-				event.stopPropagation();
-
-				if (event.target.closest('.ldp-advisor-close')) {
-					popover.remove();
+			backdrop.addEventListener('click', (event) => {
+				if (
+					event.target === backdrop ||
+					event.target.closest('.ldp-advisor-close')
+				) {
+					close();
 				}
 			});
 
-			document.body.appendChild(popover);
+			document.addEventListener('keydown', onKeydown);
+			document.body.appendChild(backdrop);
 
+			backdrop.querySelector('.ldp-advisor-close').focus();
+
+			const body = backdrop.querySelector('.ldp-advisor-modal__body');
 			const contents = buildContext(block, this.best, this.analysis);
-
-			const render = (body) => {
-				popover.innerHTML = `
-					<button aria-label="Close" class="ldp-advisor-close" type="button">&times;</button>
-					<h4>✦ AI suggestion · ${escape(block.title)}</h4>
-					${body}
-				`;
-			};
-
 			const cached = this.suggestions.get(contents);
 
 			if (cached) {
-				render(cached);
+				body.innerHTML = cached;
 
 				return;
 			}
 
-			render('<p>Asking AI Hub...</p>');
+			body.innerHTML =
+				'<p class="ldp-advisor-modal__loading">Asking AI Hub for ideas...</p>';
 
 			try {
 				const fields = parseSuggestion(await askAgentWithRetry(contents));
 
-				const body = `
-					<dl>
-						${fields.problem ? `<dt>Problem</dt><dd>${escape(fields.problem)}</dd>` : ''}
-						${fields.suggestion ? `<dt>Suggestion</dt><dd>${escape(fields.suggestion)}</dd>` : ''}
-						${fields['new title'] ? `<dt>New title</dt><dd>${escape(fields['new title'])}</dd>` : ''}
-						${fields['new text'] ? `<dt>New text</dt><dd>${escape(fields['new text'])}</dd>` : ''}
-					</dl>
+				const [kind, ...reason] = (fields.problem || '').split(' - ');
+
+				const html = `
+					${fields.problem ? `
+						<section class="ldp-advisor-modal__section">
+							<p class="ldp-advisor-modal__label">Why it underperforms</p>
+							${reason.length ? `<span class="ldp-advisor-modal__problem">${escape(kind)}</span>` : ''}
+							<p>${escape(reason.length ? reason.join(' - ') : fields.problem)}</p>
+						</section>` : ''}
+					${fields.suggestion ? `
+						<section class="ldp-advisor-modal__section">
+							<p class="ldp-advisor-modal__label">What to do</p>
+							<p>${escape(fields.suggestion)}</p>
+						</section>` : ''}
+					${fields['new title'] || fields['new text'] ? `
+						<section class="ldp-advisor-modal__section">
+							<p class="ldp-advisor-modal__label">Suggested rewrite</p>
+							<div class="ldp-advisor-modal__new">
+								${fields['new title'] ? `<strong>${escape(fields['new title'])}</strong>` : ''}
+								${fields['new text'] ? `<p>${escape(fields['new text'])}</p>` : ''}
+							</div>
+						</section>` : ''}
 				`;
 
-				this.suggestions.set(contents, body);
+				this.suggestions.set(contents, html);
 
-				render(body);
+				body.innerHTML = html;
 			}
 			catch (error) {
-				render(`<p>${escape(error.message)}</p>`);
+				body.innerHTML = `<p class="ldp-advisor-modal__loading">${escape(error.message)}</p>`;
 			}
 		}
 
