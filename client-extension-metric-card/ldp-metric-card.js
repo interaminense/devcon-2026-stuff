@@ -688,11 +688,30 @@
 	let insightQueue = Promise.resolve();
 
 	function requestInsight(metrics) {
-		const next = insightQueue.then(() => callInsightAgent(metrics));
+		const next = insightQueue.then(() => callInsightAgentWithRetry(metrics));
 
 		insightQueue = next.catch(() => {});
 
 		return next;
+	}
+
+	// AI Hub sometimes fails a call for a moment: an HTML 403 from its
+	// firewall, or a 400 from its server. One retry after a short pause
+	// usually goes through.
+
+	async function callInsightAgentWithRetry(metrics) {
+		try {
+			return await callInsightAgent(metrics);
+		}
+		catch (error) {
+			if (/not configured|404/.test(error.message)) {
+				throw error;
+			}
+
+			await new Promise((resolve) => setTimeout(resolve, 4000));
+
+			return callInsightAgent(metrics);
+		}
 	}
 
 	async function callInsightAgent(metrics) {
