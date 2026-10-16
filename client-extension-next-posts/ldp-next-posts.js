@@ -327,6 +327,15 @@ async function getPosts() {
 }
 
 // Plain text lines: the firewall in front of AI Hub rejects nested JSON
+// The firewall in front of AI Hub reads "17 and 22" or "3 or 4" as SQL
+// injection and answers 403 without CORS headers. Post excerpts can contain
+// those, so they become "17 & 22" and "3 / 4".
+function firewallSafe(text) {
+	return text
+		.replace(/(\d)\s+and\s+(\d)/gi, '$1 & $2')
+		.replace(/(\d)\s+or\s+(\d)/gi, '$1 / $2');
+}
+
 // The agent gets the three posts readers chose most often from the list, with
 // an excerpt of each, and only the titles of the others so it does not repeat
 // them
@@ -348,7 +357,9 @@ function describe({listViews, posts}) {
 			].join('; ')
 		),
 		`other existing titles: ${others.join('; ') || 'none'}`,
-	].join('\n');
+	]
+		.map(firewallSafe)
+		.join('\n');
 }
 
 // AI Hub: the DXP issues a token, the browser subscribes to AI Hub's event
