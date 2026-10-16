@@ -61,7 +61,8 @@
 
 			.ldp-live__panel {
 				padding: 16px 18px 14px;
-				width: 340px;
+				max-width: calc(100vw - 32px);
+				width: 400px;
 			}
 
 			.ldp-live__header {
@@ -541,7 +542,7 @@
 								({key, value}) =>
 									`${formatHour(key)} · ${value} ${value === 1 ? 'view' : 'views'}`
 							),
-							width: 304,
+							width: 364,
 						}
 					)
 				: '<div class="ldp-live__axis">No views yet in the last 24 hours.</div>';
@@ -560,7 +561,7 @@
 
 					return `${secondsAgo ? `${Math.round(secondsAgo / 60 * 10) / 10} min ago` : 'now'} · +${value}`;
 				}),
-				width: 304,
+				width: 364,
 			});
 
 			const recentTotal = this.recent.reduce((sum, value) => sum + value, 0);
