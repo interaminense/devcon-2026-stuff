@@ -145,7 +145,9 @@
 
 		.ldp-advisor-modal__section {
 			border-top: 1px solid rgba(11, 79, 108, 0.12);
-			padding: 18px 0;
+			display: grid;
+			gap: 12px;
+			padding: 22px 0;
 		}
 
 		.ldp-advisor-modal__section:last-child {
@@ -156,7 +158,6 @@
 			color: #5b6b77;
 			font: 700 12px/1 Inter, system-ui, sans-serif;
 			letter-spacing: 0.06em;
-			margin: 0 0 10px;
 			text-transform: uppercase;
 		}
 
@@ -167,24 +168,24 @@
 		.ldp-advisor-modal__new {
 			background: #f7f3ea;
 			border-radius: 12px;
-			padding: 16px 18px;
+			display: grid;
+			gap: 8px;
+			padding: 18px 20px;
 		}
 
 		.ldp-advisor-modal__new strong {
 			color: #0b4f6c;
 			display: block;
 			font: 700 18px/1.35 Poppins, Inter, sans-serif;
-			margin-bottom: 8px;
 		}
 
 		.ldp-advisor-modal__problem {
 			background: #fdecea;
 			border-radius: 999px;
 			color: #b8352d;
-			display: inline-block;
 			font: 700 12px/1 Inter, system-ui, sans-serif;
+			justify-self: start;
 			letter-spacing: 0.04em;
-			margin-bottom: 10px;
 			padding: 6px 12px;
 			text-transform: uppercase;
 		}
