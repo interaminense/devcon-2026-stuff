@@ -153,8 +153,12 @@ const STYLE = `
 			font-size: 0.875rem;
 		}
 
-		.ldp-next-posts .np-idea ul {
-			padding-left: 18px;
+		.ldp-next-posts .np-preview {
+			display: -webkit-box;
+			font-size: 0.9375rem;
+			-webkit-box-orient: vertical;
+			-webkit-line-clamp: 4;
+			overflow: hidden;
 		}
 
 		.ldp-next-posts .np-draft {
@@ -255,9 +259,12 @@ async function getClicks() {
 		}
 	);
 
+	// LDP returns attribute values in lower case, so the keys are compared
+	// in lower case too
+
 	return new Map(
 		(eventAnalysisResult?.breakdownItems || []).map(({name, value}) => [
-			name,
+			name.toLowerCase(),
 			value || 0,
 		])
 	);
@@ -302,11 +309,13 @@ async function getPosts() {
 	const posts = blogs.items
 		.filter((blog) => blog.status?.code === 0)
 		.map((blog) => {
-			const postClicks = clicks.get(blog.externalReferenceCode) || 0;
+			const postClicks =
+				clicks.get(blog.externalReferenceCode.toLowerCase()) || 0;
 
 			return {
 				clickRate: listViews ? postClicks / listViews : null,
 				clicks: postClicks,
+				excerpt: (blog.contentRawText || '').trim().slice(0, 300),
 				subtitle: blog.subtitle || '',
 				title: blog.title,
 				views: views.get(blog.externalReferenceCode) || 0,
@@ -318,19 +327,27 @@ async function getPosts() {
 }
 
 // Plain text lines: the firewall in front of AI Hub rejects nested JSON
+// The agent gets the three posts readers chose most often from the list, with
+// an excerpt of each, and only the titles of the others so it does not repeat
+// them
 function describe({listViews, posts}) {
+	const top = posts.slice(0, 3);
+	const others = posts.slice(3).map((post) => post.title);
+
 	return [
 		`period: last ${RANGE_KEY} days`,
 		`post list views: ${listViews}`,
-		...posts.map((post, index) =>
+		...top.map((post, index) =>
 			[
-				`post ${index + 1}: ${post.title}`,
+				`top post ${index + 1}: ${post.title}`,
 				`subtitle: ${post.subtitle}`,
 				`clicks from the list: ${post.clicks}`,
 				`click rate: ${formatRate(post.clickRate)}`,
 				`views from any source: ${post.views}`,
+				`excerpt: ${post.excerpt.replace(/\s+/g, ' ')}`,
 			].join('; ')
 		),
+		`other existing titles: ${others.join('; ') || 'none'}`,
 	].join('\n');
 }
 
@@ -409,8 +426,8 @@ async function askAgent(text) {
 	}
 }
 
-// The agent answers with labeled lines, one block per idea:
-// Title: / Subtitle: / Why: / Outline: point; point; point
+// The agent answers one block per idea: Title:, Subtitle: and Why: lines,
+// then Content: followed by one paragraph per line
 function parseIdeas(text) {
 	return text
 		.split(/^(?=Title:)/m)
@@ -419,11 +436,18 @@ function parseIdeas(text) {
 				block.match(new RegExp(`^${label}:\\s*(.*)$`, 'm'))?.[1]?.trim() ||
 				'';
 
+			// An agent still on the older prompt answers Outline: instead of
+			// Content:; its points become the paragraphs
+
+			const content =
+				block.split(/^Content:/m)[1] ||
+				field('Outline').split(';').join('\n');
+
 			return {
-				outline: field('Outline')
-					.split(';')
-					.map((point) => point.trim())
-					.filter(Boolean),
+				paragraphs: content
+					.split('\n')
+					.map((line) => line.trim())
+					.filter((line) => line && !/^(Title|Subtitle|Why):/.test(line)),
 				subtitle: field('Subtitle'),
 				title: field('Title'),
 				why: field('Why'),
@@ -436,13 +460,11 @@ function parseIdeas(text) {
 // A CMS draft: status code 2 keeps it out of the site until someone reviews
 // and publishes it in the CMS
 function createDraft(idea) {
-	const outline = idea.outline
-		.map((point) => `<li>${escape(point)}</li>`)
-		.join('');
-
 	return api(`/o/cms/blogs/scopes/${SPACE_GROUP_ID}`, {
 		body: JSON.stringify({
-			content: `<p>${escape(idea.why)}</p><ul>${outline}</ul>`,
+			content: idea.paragraphs
+				.map((paragraph) => `<p>${escape(paragraph)}</p>`)
+				.join(''),
 			status: {code: 2},
 			subtitle: idea.subtitle,
 			title: idea.title,
@@ -576,7 +598,7 @@ class LdpNextPosts extends HTMLElement {
 						<h3>${escape(idea.title)}</h3>
 						<p>${escape(idea.subtitle)}</p>
 						<p class="np-why">${escape(idea.why)}</p>
-						<ul>${idea.outline.map((point) => `<li>${escape(point)}</li>`).join('')}</ul>
+						<p class="np-preview">${escape(idea.paragraphs[0] || '')}</p>
 						<button class="np-draft" data-index="${index}" type="button">Create draft in CMS</button>
 					</article>
 				`

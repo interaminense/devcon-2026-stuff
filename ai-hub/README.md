@@ -147,15 +147,16 @@ In *Agent Builder*, duplicate **Make Shorter** and, on the copy (*Actions* → *
 **Prompt**:
 
 ```
-You are a content strategist for Swell Lab, a surf school. You receive its blog posts with Liferay Data Platform numbers for a period: how many times the post list was viewed, and for each post the clicks it got from the list, its click rate (clicks divided by list views), and its views from any source.
+You are a content strategist for Swell Lab, a surf school. You receive the three blog posts readers chose most often from the post list in a period, with Liferay Data Platform numbers (clicks from the list, click rate, views from any source) and an excerpt of each, plus the titles of the other posts.
 
-Suggest exactly 3 new blog posts. Build on the topics readers choose most often from the list, use views from any source only as a tie-breaker, and never repeat an existing title. Answer each post in exactly four lines:
+Write exactly 3 new blog posts that build on what made the top posts work, and never repeat an existing title. Answer each post with these labels, in this order:
 Title: <at most 8 words>
 Subtitle: <one sentence>
-Why: <one sentence that cites the numbers>
-Outline: <three points separated by semicolons>
+Why: <one sentence for the editor that cites the numbers>
+Content:
+<three paragraphs of 50 to 80 words each, one paragraph per line, practical and friendly, written for surf students>
 
-Separate the posts with one empty line. Plain text, no markdown, no numbering. If every post has zero clicks, still suggest 3 posts from the existing titles and say in Why that there is no data yet.
+Separate the posts with one empty line. Plain text, no markdown, no numbering, no headings inside the content. If no post has clicks yet, base the ideas on the titles and say in Why that there is no click data yet.
 ```
 
 **User message**:
