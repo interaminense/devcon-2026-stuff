@@ -488,7 +488,7 @@ h1 {{ font: 700 clamp(34px, 6vw, 54px)/1.05 var(--display); letter-spacing: -0.0
 .to-agenda {{ background: var(--surface-2); border: 1px solid var(--line); border-radius: 999px; bottom: calc(16px + env(safe-area-inset-bottom, 0px)); color: var(--fg); font-size: 17px; padding: 8px 14px; position: fixed; right: 16px; text-decoration: none; z-index: 5; }}
 .to-agenda:hover {{ border-color: var(--accent); }}
 .toggles {{ display: flex; flex-wrap: wrap; gap: 8px 20px; }}
-.toggle {{ align-items: center; color: var(--muted); cursor: pointer; display: flex; flex: none; font-size: 18px; gap: 6px; }}
+.toggle {{ align-items: center; color: var(--muted); cursor: pointer; display: flex; flex: none; font-size: 18px; gap: 6px; margin-left: auto; }}
 body.no-say .k-say {{ display: none; }}
 .show-diagram {{ background: var(--surface-2); border: 1px solid var(--c-dxp); border-radius: 8px; color: var(--fg); cursor: pointer; font: 500 18px/1 var(--body); padding: 9px 14px; }}
 .show-diagram:hover, .show-diagram:focus-visible {{ background: color-mix(in srgb, var(--c-dxp) 18%, var(--surface-2)); }}
