@@ -3,11 +3,12 @@
 // event in LDP, and asks an AI Hub agent how to improve each of them.
 
 (() => {
-	const AGENT_ERC = 'DEVCON_2026_LDP_CONTENT_ADVISOR';
+	// The Swell Lab CMS space, where accepted blog suggestions become drafts
+
+	const SPACE_GROUP_ID = 40943;
 
 	const CHANNEL_ID = '845351493326064678';
 
-	const EVENT_NAME = 'surfContentClicked';
 
 	const GRAPHQL_URL = '/o/analytics-rest/v1.0/graphql';
 
@@ -216,6 +217,63 @@
 			outline: none;
 		}
 
+		.ldp-advisor-badge--inline {
+			align-items: center;
+			flex-direction: row;
+			flex-wrap: wrap;
+			margin-bottom: 4px;
+			position: static;
+		}
+
+		.sl-blog-card.ldp-advisor-best,
+		.sl-blog-card.ldp-advisor-weak {
+			outline-offset: 4px;
+		}
+
+		.ldp-advisor-modal__new em {
+			color: #5b6b77;
+			font-style: normal;
+		}
+
+		.ldp-advisor-modal__actions {
+			align-items: center;
+			border-top: 1px solid rgba(11, 79, 108, 0.12);
+			display: flex;
+			flex-wrap: wrap;
+			gap: 12px 16px;
+			padding-top: 22px;
+		}
+
+		.ldp-advisor-accept {
+			background: #0b4f6c;
+			border: 0;
+			border-radius: 999px;
+			color: #fff;
+			cursor: pointer;
+			font: 700 15px/1 Inter, system-ui, sans-serif;
+			padding: 13px 20px;
+			text-decoration: none;
+		}
+
+		.ldp-advisor-accept:hover,
+		.ldp-advisor-accept:focus-visible {
+			background: #083b51;
+			color: #fff;
+			outline: none;
+		}
+
+		.ldp-advisor-accept:disabled {
+			cursor: default;
+			opacity: 0.6;
+		}
+
+		.ldp-advisor-modal__hint {
+			color: #5b6b77;
+			flex: 1 1 220px;
+			font-size: 13px;
+			line-height: 1.45;
+		}
+
 		.ldp-advisor-toggle {
 			background: #0b4f6c;
 			border: 0;
@@ -298,15 +356,15 @@
 					}
 				}
 			}`,
-			{keyword: EVENT_NAME}
+			{keyword: target.event}
 		);
 
 		const definition = eventDefinitions?.eventDefinitions?.find(
-			({name}) => name === EVENT_NAME
+			({name}) => name === target.event
 		);
 
 		const attribute = definition?.eventAttributeDefinitions?.find(
-			({name}) => name === 'contentId'
+			({name}) => name === target.attribute
 		);
 
 		if (!attribute) {
@@ -330,9 +388,11 @@
 			}
 		);
 
+		// LDP returns attribute values in lower case
+
 		return new Map(
 			(eventAnalysisResult?.breakdownItems || []).map(({name, value}) => [
-				name,
+				name.toLowerCase(),
 				value || 0,
 			])
 		);
@@ -353,7 +413,31 @@
 		return page?.viewsMetric?.value || 0;
 	}
 
-	function readBlocks() {
+	// The blog list shows the newest post first by reversing the cards with
+	// CSS, so a post's position on screen counts from the end of the DOM
+
+	function readBlogPosts() {
+		const cards = [...document.querySelectorAll('.sl-blog-card')];
+
+		return cards.map((element, index) => {
+			const mapped = element.querySelector(
+				'[data-analytics-external-reference-code]'
+			);
+
+			return {
+				assetId: mapped?.dataset.analyticsAssetId,
+				element,
+				id: (mapped?.dataset.analyticsExternalReferenceCode || '').toLowerCase(),
+				position: cards.length - index,
+				text:
+					element.querySelector('.sl-card__text')?.textContent.trim() || '',
+				title:
+					element.querySelector('.sl-card__title')?.textContent.trim() || '',
+			};
+		});
+	}
+
+	function readLearnBlocks() {
 		return [...document.querySelectorAll('[data-content-id]')].map(
 			(element, index) => ({
 				element,
@@ -376,12 +460,21 @@
 	// The agent gets plain text: the firewall in front of AI Hub rejects a
 	// context that carries nested JSON
 
+	// The firewall also reads "17 and 22" or "3 or 4" as SQL injection
+
+	function firewallSafe(text) {
+		return text
+			.replace(/(\d)\s+and\s+(\d)/gi, '$1 & $2')
+			.replace(/(\d)\s+or\s+(\d)/gi, '$1 / $2');
+	}
+
 	function describe(block, label) {
 		return [
 			label,
 			`position: ${block.position} of ${block.total}`,
 			`title: ${block.title}`,
 			`text: ${block.text}`,
+			...(block.excerpt ? [`post excerpt: ${block.excerpt}`] : []),
 			`clicks: ${block.clicks}`,
 			`share of all clicks on the page: ${percent(block.share)}`,
 			`click rate (clicks per page view): ${percent(block.rate)}`,
@@ -399,7 +492,9 @@
 			describe(weak, 'CONTENT TO IMPROVE'),
 			'',
 			describe(best, 'BEST CONTENT, FOR COMPARISON'),
-		].join('\n');
+		]
+			.map(firewallSafe)
+			.join('\n');
 	}
 
 	async function askAgent(contents) {
@@ -459,8 +554,8 @@
 							`${token.serviceURL}/o/ai-hub/v1.0/agent-instances`,
 							{
 								body: JSON.stringify({
-									agentDefinitionExternalReferenceCode: AGENT_ERC,
-									context: {contents},
+									agentDefinitionExternalReferenceCode: target.agent,
+									context: {[target.contextKey]: contents},
 									sseEventSinkKey: data,
 								}),
 								headers: {
@@ -475,7 +570,7 @@
 
 						if (started.status === 404) {
 							throw new Error(
-								`The ${AGENT_ERC} agent does not exist in AI Hub yet.`
+								`The ${target.agent} agent does not exist in AI Hub yet.`
 							);
 						}
 
@@ -483,7 +578,7 @@
 							throw new Error(`AI Hub returned ${started.status}`);
 						}
 					}
-					else if (name === AGENT_ERC) {
+					else if (name === target.agent) {
 						return JSON.parse(data).data;
 					}
 					else if (name === 'Agent Invocation Failed') {
@@ -532,12 +627,42 @@
 
 	// The agent answers in labeled lines; anything else is shown as is
 
+	// The post body, read from the CMS: a short excerpt goes to the agent and
+	// the full body is kept for the draft
+
+	async function loadPost(block) {
+		if (!block?.assetId || block.contentHtml !== undefined) {
+			return;
+		}
+
+		const post = await request(`/o/cms/blogs/${block.assetId}`);
+
+		block.contentHtml = post.content || '';
+		block.excerpt = (post.contentRawText || '').replace(/\s+/g, ' ').trim().slice(0, 600);
+	}
+
+	// Accepting creates a new draft post instead of a draft version of the
+	// published one: on this DXP the post page already shows a draft version
+	// to visitors. The draft opens with the new intro, then the original body.
+
+	function createDraft(block, fields) {
+		return request(`/o/cms/blogs/scopes/${SPACE_GROUP_ID}`, {
+			body: JSON.stringify({
+				content: `${fields['new text'] ? `<p>${escape(fields['new text'])}</p>` : ''}${block.contentHtml || ''}`,
+				status: {code: 2},
+				subtitle: fields['new subtitle'] || block.text,
+				title: fields['new title'],
+			}),
+			method: 'POST',
+		});
+	}
+
 	function parseSuggestion(text) {
 		const fields = {};
 
 		for (const line of text.split('\n')) {
 			const match = line.match(
-				/^\s*(Problem|Suggestion|New title|New text)\s*:\s*(.+)$/i
+				/^\s*(Problem|Suggestion|New title|New subtitle|New text)\s*:\s*(.+)$/i
 			);
 
 			if (match) {
@@ -569,7 +694,7 @@
 		}
 
 		async run() {
-			this.blocks = readBlocks();
+			this.blocks = target.read();
 
 			if (!this.blocks.length) {
 				return;
@@ -584,7 +709,7 @@
 				]);
 
 				const totalClicks = this.blocks.reduce(
-					(sum, block) => sum + (clicks.get(block.id) || 0),
+					(sum, block) => sum + (clicks.get(block.id.toLowerCase()) || 0),
 					0
 				);
 
@@ -593,7 +718,7 @@
 				// to the agent
 
 				for (const block of this.blocks) {
-					block.clicks = clicks.get(block.id) || 0;
+					block.clicks = clicks.get(block.id.toLowerCase()) || 0;
 					block.rate = views ? block.clicks / views : 0;
 					block.share = totalClicks ? block.clicks / totalClicks : 0;
 					block.total = this.blocks.length;
@@ -725,7 +850,20 @@
 					badge.appendChild(button);
 				}
 
-				block.element.appendChild(badge);
+				// Blog cards have no photo to float over, so the badge goes on
+				// top of the card's text instead
+
+				const body =
+					target === TARGETS.blog &&
+					block.element.querySelector('.sl-card__body');
+
+				if (body) {
+					badge.classList.add('ldp-advisor-badge--inline');
+					body.prepend(badge);
+				}
+				else {
+					block.element.appendChild(badge);
+				}
 			}
 		}
 
@@ -773,11 +911,28 @@
 			backdrop.querySelector('.ldp-advisor-close').focus();
 
 			const body = backdrop.querySelector('.ldp-advisor-modal__body');
+
+			if (target === TARGETS.blog) {
+				body.innerHTML =
+					'<p class="ldp-advisor-modal__loading">Reading the post...</p>';
+
+				try {
+					await Promise.all([block, this.best].map(loadPost));
+				}
+				catch (error) {
+					body.innerHTML = `<p class="ldp-advisor-modal__loading">Unable to read the post: ${escape(error.message)}</p>`;
+
+					return;
+				}
+			}
+
 			const contents = buildContext(block, this.best, this.analysis);
 			const cached = this.suggestions.get(contents);
 
 			if (cached) {
-				body.innerHTML = cached;
+				body.innerHTML = cached.html;
+
+				this.bindAccept(body, block, cached.fields);
 
 				return;
 			}
@@ -807,18 +962,50 @@
 							<p class="ldp-advisor-modal__label">Suggested rewrite</p>
 							<div class="ldp-advisor-modal__new">
 								${fields['new title'] ? `<strong>${escape(fields['new title'])}</strong>` : ''}
+								${fields['new subtitle'] ? `<em>${escape(fields['new subtitle'])}</em>` : ''}
 								${fields['new text'] ? `<p>${escape(fields['new text'])}</p>` : ''}
 							</div>
 						</section>` : ''}
+					${target.acceptable && fields['new title'] ? `
+						<div class="ldp-advisor-modal__actions">
+							<button class="ldp-advisor-accept" type="button">Accept and open in CMS</button>
+							<span class="ldp-advisor-modal__hint">Saves a new draft post with this rewrite. The published post stays as it is.</span>
+						</div>` : ''}
 				`;
 
-				this.suggestions.set(contents, html);
+				this.suggestions.set(contents, {fields, html});
 
 				body.innerHTML = html;
+
+				this.bindAccept(body, block, fields);
 			}
 			catch (error) {
 				body.innerHTML = `<p class="ldp-advisor-modal__loading">${escape(error.message)}</p>`;
 			}
+		}
+
+		bindAccept(body, block, fields) {
+			const button = body.querySelector('.ldp-advisor-accept');
+
+			button?.addEventListener('click', async () => {
+				button.disabled = true;
+				button.textContent = 'Saving the draft...';
+
+				try {
+					const draft = await createDraft(block, fields);
+
+					button.outerHTML = `<a class="ldp-advisor-accept" href="/c/cms/edit_content_item?objectEntryId=${draft.id}" target="_blank">Open the draft in CMS &rarr;</a>`;
+
+					window.open(
+						`/c/cms/edit_content_item?objectEntryId=${draft.id}`,
+						'_blank'
+					);
+				}
+				catch (error) {
+					button.disabled = false;
+					button.textContent = `Try again (${error.message})`;
+				}
+			});
 		}
 
 		dispose() {
@@ -835,6 +1022,31 @@
 	// single advisor and a single endNavigate listener for the whole session,
 	// so earlier runs never leave their toggle or labels behind.
 
+	// The pages the advisor works on: the Surf Academy blocks of /learn and
+	// the Surf Journal posts of /blog, each with its own click event and agent
+
+	const TARGETS = {
+		blog: {
+			acceptable: true,
+			agent: 'DEVCON_2026_LDP_POST_ADVISOR',
+			attribute: 'postId',
+			contextKey: 'post',
+			event: 'surfBlogPostClicked',
+			read: readBlogPosts,
+			selector: '.sl-blog-card',
+		},
+		learn: {
+			agent: 'DEVCON_2026_LDP_CONTENT_ADVISOR',
+			attribute: 'contentId',
+			contextKey: 'contents',
+			event: 'surfContentClicked',
+			read: readLearnBlocks,
+			selector: '[data-content-id]',
+		},
+	};
+
+	let target = TARGETS.learn;
+
 	const registry = (window.__ldpContentAdvisor ??= {
 		advisor: null,
 		listening: false,
@@ -848,7 +1060,11 @@
 			return;
 		}
 
-		if (!document.querySelector('[data-content-id]')) {
+		target = Object.values(TARGETS).find(({selector}) =>
+			document.querySelector(selector)
+		);
+
+		if (!target) {
 			return;
 		}
 

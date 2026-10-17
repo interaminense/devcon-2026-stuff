@@ -167,3 +167,62 @@ Blog posts:
 ```
 
 After *Update*, open *Source* and check that `<prompt>` still holds the text and that `<tools>` and `<rag>` are `[]` and `{}`.
+
+# AI Hub Agent: DevCon 2026 · LDP Post Advisor
+
+Used by the *LDP Content Advisor* client extension on the Swell Lab `/blog` page. It receives the post readers open least from the post list (clicks on "Read the post", the `surfBlogPostClicked` custom event) and the post they open most, for comparison, and suggests a better title, subtitle, and opening paragraph. *Accept and open in CMS* saves the rewrite as a new draft post and opens it in the CMS.
+
+## Agent
+
+In *Agent Builder*, duplicate **Make Shorter** and, on the copy (*Actions* → *View*):
+
+| Field | Value |
+|---|---|
+| Title | `DevCon 2026 LDP Post Advisor` |
+| Description | `Suggests how to improve the least clicked Swell Lab blog post (DEVCON 2026), from its Liferay Data Platform click data. Use only for LDP blog post advice.` |
+| External reference code | `DEVCON_2026_LDP_POST_ADVISOR` |
+| Input variables | `post` |
+| Output variable | `suggestions` |
+
+## Workflow
+
+*View Workflow* → the LLM node:
+
+| Setting | Value |
+|---|---|
+| Node Name | `ldpPostAdvisor` |
+| Input variables | `[{"name":"post","type":"string"}]` |
+| Output variables | `[{"name":"suggestions","type":"string"}]` |
+| Tools | `[]` (never empty) |
+| RAG | `{}` (never empty) |
+
+**Prompt**:
+
+```
+You are a content editor for Swell Lab, a surf school blog. You receive Liferay Data Platform data for the blog post readers open least from the post list, and for the post they open most, for comparison: position in the list, title, subtitle, an excerpt of the post, clicks from the list, its share of all clicks, and click rate (clicks divided by list views).
+
+Find the main reason the post gets fewer clicks. Pick exactly one problem type:
+- position: it sits low in the list, while its title and subtitle are fine;
+- unappealing: the title promises no clear benefit;
+- weak subtitle: the subtitle is vague or repeats the title.
+
+Answer in exactly five lines, with these labels and nothing else:
+Problem: <position, unappealing, or weak subtitle> - <one short sentence citing the numbers>
+Suggestion: <one concrete action for the editor>
+New title: <a better title, at most 8 words>
+New subtitle: <a better subtitle, one sentence>
+New text: <a new opening paragraph for the post, 40 to 70 words, in the tone of the best post>
+
+Rules: plain text, no markdown. Never invent numbers that are not in the data. Keep the topic of the original post.
+```
+
+**User message**:
+
+```
+Post data:
+{{post}}
+```
+
+After *Update*, open *Source* and check that `<prompt>` still holds the text and that `<tools>` and `<rag>` are `[]` and `{}`.
+
+Accepting creates a new draft post rather than a draft version of the published one: on DXP 2026.Q3.6 the post page (display page template) shows a draft version of a published CMS 2.0 entry to visitors, while the `/blog` list keeps the approved one.
