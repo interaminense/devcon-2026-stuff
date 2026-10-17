@@ -1389,6 +1389,7 @@ fragment(
 	flex-wrap: wrap-reverse;
 	justify-content: flex-end;
 	margin-inline: -12px;
+	overflow: visible !important;
 	width: calc(100% + 24px);
 	row-gap: 40px;
 }
