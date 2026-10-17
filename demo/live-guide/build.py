@@ -13,7 +13,7 @@ DEMO = pathlib.Path.home() / 'dev/projects/devcon-2026/devcon-2026-stuff/demo'
 OUT = pathlib.Path(__file__).parent / 'devcon-live-guide.html'
 
 SITE = 'https://webserver-lctacdemodevcon-prd.lfr.cloud'
-LOGIN = SITE + '/c/portal/login?redirect=/web/devcon-demo'
+LOGIN = SITE + '/web/devcon-demo/home?p_p_id=com_liferay_login_web_portlet_LoginPortlet&p_p_state=maximized&_com_liferay_login_web_portlet_LoginPortlet_redirect=%2Fweb%2Fdevcon-demo'
 DOC_URL = '/documents/d/devcon-demo/ldp-demo-card-js'
 
 PROMPT = '''You are an analytics assistant. You receive one website metric from Liferay Data Platform: its name, the period, the value, the previous period's value, and the change.
@@ -308,7 +308,7 @@ p.step('ui', f'''<p><strong>Log in</strong></p>
 <ol>
 	<li>Open the link below and sign in.</li>
 </ol>
-<div class="table-scroll"><table class="values"><tbody><tr><th scope="row">Log in</th><td><a href="{e(LOGIN)}" target="_blank" rel="noopener"><code>{e(LOGIN)}</code></a></td><td>{copy_button(LOGIN)}</td></tr></tbody></table></div>''')
+<div class="table-scroll"><table class="values"><tbody><tr><th scope="row">Log in</th><td><a href="{e(LOGIN)}" target="_blank" rel="noopener">DEVCON Demo sign-in &nearr;</a></td><td>{copy_button(LOGIN)}</td></tr></tbody></table></div>''')
 p.step('ui', '''<ol>
 	<li>Tab 2: Control Panel &rarr; Instance Settings &rarr; Platform &rarr; <b>Analytics Cloud</b>. Point at <b>Connected</b>.</li>
 	<li><b>Properties</b> tab: show <b>SWELL LAB DevCon 2026</b> and the synced Swell Lab site.</li>
