@@ -1362,6 +1362,8 @@ fragment(
 """,
 	"""
 .sl-blog-card {
+	border: 1px solid rgba(11, 79, 108, 0.08);
+	box-shadow: none;
 	height: 100%;
 }
 
@@ -1388,7 +1390,7 @@ fragment(
 	justify-content: flex-end;
 	margin-inline: -12px;
 	width: calc(100% + 24px);
-	row-gap: 24px;
+	row-gap: 40px;
 }
 
 .sl-blog-list .lfr-layout-structure-item-collection .row {

@@ -217,6 +217,11 @@
 			outline: none;
 		}
 
+		.ldp-advisor-badge--inline .ldp-advisor-ai,
+		.ldp-advisor-badge--inline .ldp-advisor-label {
+			box-shadow: none;
+		}
+
 		.ldp-advisor-badge--inline {
 			align-items: center;
 			flex-direction: row;
