@@ -133,6 +133,101 @@ const STYLE = `
 			border-radius: 16px;
 			display: flex;
 			flex-direction: column;
+			gap: 14px;
+			padding: 18px;
+		}
+
+		.ldp-next-posts .np-idea p {
+			margin: 0;
+		}
+
+		.ldp-next-posts .np-why {
+			background: #eef4ff;
+			border-radius: 12px;
+			color: #1d2b36;
+			display: grid;
+			font-size: 0.875rem;
+			gap: 6px;
+			line-height: 1.5;
+			padding: 12px 14px;
+		}
+
+		.ldp-next-posts .np-why__label,
+		.ldp-next-posts .np-post__label {
+			font: 700 0.6875rem/1 Inter, sans-serif;
+			letter-spacing: 0.08em;
+			text-transform: uppercase;
+		}
+
+		.ldp-next-posts .np-why__label {
+			color: #3d5afe;
+		}
+
+		.ldp-next-posts .np-post {
+			border: 1px solid rgba(11, 79, 108, 0.14);
+			border-radius: 12px;
+			display: grid;
+			gap: 8px;
+			padding: 14px 16px;
+		}
+
+		.ldp-next-posts .np-post__label {
+			color: #5b6b77;
+		}
+
+		.ldp-next-posts .np-post h3 {
+			color: #0b4f6c;
+			font: 700 1.125rem/1.3 Poppins, Inter, sans-serif;
+			margin: 0;
+		}
+
+		.ldp-next-posts .np-post__subtitle {
+			color: #5b6b77;
+			font-size: 0.9375rem;
+		}
+
+		.ldp-next-posts .np-preview {
+			display: -webkit-box;
+			font-size: 0.9375rem;
+			line-height: 1.55;
+			-webkit-box-orient: vertical;
+			-webkit-line-clamp: 4;
+			overflow: hidden;
+		}
+
+		.ldp-next-posts .np-draft {
+			background: #0b4f6c;
+			border: 0;
+			border-radius: 999px;
+			color: #fff;
+			cursor: pointer;
+			font: 600 0.9375rem Inter, sans-serif;
+			padding: 10px 20px;
+		}
+
+		.ldp-next-posts .np-ask:disabled,
+		.ldp-next-posts .np-draft:disabled {
+			cursor: default;
+			opacity: 0.6;
+		}
+
+		.ldp-next-posts .np-status {
+			color: #5b6b77;
+			margin: 18px 0 0;
+		}
+
+		.ldp-next-posts .np-ideas {
+			display: grid;
+			gap: 16px;
+			grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+			margin-top: 20px;
+		}
+
+		.ldp-next-posts .np-idea {
+			background: #fff;
+			border-radius: 16px;
+			display: flex;
+			flex-direction: column;
 			gap: 8px;
 			padding: 20px;
 		}
@@ -606,10 +701,16 @@ class LdpNextPosts extends HTMLElement {
 			.map(
 				(idea, index) => `
 					<article class="np-idea">
-						<h3>${escape(idea.title)}</h3>
-						<p>${escape(idea.subtitle)}</p>
-						<p class="np-why">${escape(idea.why)}</p>
-						<p class="np-preview">${escape(idea.paragraphs[0] || '')}</p>
+						<div class="np-why">
+							<span class="np-why__label">✦ Why AI suggests this</span>
+							<p>${escape(idea.why)}</p>
+						</div>
+						<div class="np-post">
+							<span class="np-post__label">Draft post</span>
+							<h3>${escape(idea.title)}</h3>
+							<p class="np-post__subtitle">${escape(idea.subtitle)}</p>
+							<p class="np-preview">${escape(idea.paragraphs[0] || '')}</p>
+						</div>
 						<button class="np-draft" data-index="${index}" type="button">Create draft in CMS</button>
 					</article>
 				`
