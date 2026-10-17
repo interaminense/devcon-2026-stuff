@@ -219,7 +219,7 @@ def code_block(name, prev, cur, note=''):
 		f'<span class="ln">{i}</span><span class="lc">{line or " "}</span>'
 		for i, line in enumerate(render_lines(prev, cur), 1)
 	)
-	label = 'All new' if prev is None else 'Bright = new since the previous step'
+	label = 'All new' if prev is None else ''
 	note_html = f'<p class="code-note">{note}</p>' if note else ''
 
 	return f'''
@@ -282,7 +282,7 @@ KIND = {
 
 
 def ship(n):
-	return ('ui', f'''<p><strong>Ship version {n}</strong></p>
+	return ('ui', f'''<p class="step-title"><strong>Ship version {n}</strong></p>
 <ol>
 	<li>Save <code>ldp-demo-card.js</code>.</li>
 	<li>Documents and Media &rarr; <code>ldp-demo-card.js</code> &rarr; &#8942; &rarr; <b>Edit</b> &rarr; <b>Select File</b> &rarr; pick the file &rarr; <b>Publish</b>.</li>
@@ -304,7 +304,7 @@ parts = []
 
 p = Part('1', 'LDP connected to DXP', 'Topic 04')
 p.step('say', 'Before any code: the data lives in LDP, and DXP is already connected to it. The card asks DXP, and DXP asks LDP.')
-p.step('ui', f'''<p><strong>Log in</strong></p>
+p.step('ui', f'''<p class="step-title"><strong>Log in</strong></p>
 <ol>
 	<li>Open the link below and sign in.</li>
 </ol>
@@ -317,18 +317,18 @@ parts.append(p)
 
 p = Part('2', 'The first client extension', 'Topic 04')
 p.step('code', code_block('ldp-demo-card.js', None, code[1], 'A Custom Element is a plain web component: a class and a tag name.'))
-p.step('ui', '<p><strong>Host it in Documents and Media</strong></p><ol><li>Tab 3: check the site is <b>DEVCON Demo</b> &rarr; Content &amp; Data &rarr; <b>Documents and Media</b>.</li><li><b>New</b> &rarr; <b>File Upload</b> &rarr; pick the file &rarr; <b>Publish</b>.</li></ol>'
+p.step('ui', '<p class="step-title"><strong>Host it in Documents and Media</strong></p><ol><li>Tab 3: check the site is <b>DEVCON Demo</b> &rarr; Content &amp; Data &rarr; <b>Documents and Media</b>.</li><li><b>New</b> &rarr; <b>File Upload</b> &rarr; pick the file &rarr; <b>Publish</b>.</li></ol>'
 	+ values([v('Title', 'ldp-demo-card.js'), plain('URL it gets', f'<code>{DOC_URL}</code>')]))
-p.step('ui', '<p><strong>Register the Custom Element</strong></p><ol><li>Tab 4: Applications &rarr; <b>Client Extensions</b> &rarr; <b>New</b> &rarr; <b>Add Custom Element</b>.</li><li>Fill in the fields below &rarr; <b>Publish</b>.</li></ol>'
+p.step('ui', '<p class="step-title"><strong>Register the Custom Element</strong></p><ol><li>Tab 4: Applications &rarr; <b>Client Extensions</b> &rarr; <b>New</b> &rarr; <b>Add Custom Element</b>.</li><li>Fill in the fields below &rarr; <b>Publish</b>.</li></ol>'
 	+ values([v('Name', 'LDP Demo Card'), v('HTML Element Name', 'ldp-demo-card'), v('JavaScript URL', f'{DOC_URL}?v=1'), plain('Instanceable', '<span class="pill">checked</span>')]))
 p.step('say', 'Instanceable lets the same card go on a page twice, each with its own configuration. That is the whole dashboard idea.')
-p.step('ui', '<p><strong>Put it on a page</strong></p><ol><li>Tab 5: DEVCON Demo &rarr; Site Builder &rarr; <b>Pages</b> &rarr; <b>New</b>.</li><li><b>Basic Templates</b> &rarr; <b>Blank</b> &rarr; name below &rarr; <b>Add</b>.</li><li><b>Components</b> panel &rarr; <b>Fragments</b> &rarr; Layout Elements &rarr; drag <b>Grid</b>. Set <b>Number of Modules</b> to 2.</li><li><b>Widgets</b> tab &rarr; search the name below &rarr; drag it into the <b>left</b> module &rarr; <b>Publish</b>.</li></ol>'
+p.step('ui', '<p class="step-title"><strong>Put it on a page</strong></p><ol><li>Tab 5: DEVCON Demo &rarr; Site Builder &rarr; <b>Pages</b> &rarr; <b>New</b>.</li><li><b>Basic Templates</b> &rarr; <b>Blank</b> &rarr; name below &rarr; <b>Add</b>.</li><li><b>Components</b> panel &rarr; <b>Fragments</b> &rarr; Layout Elements &rarr; drag <b>Grid</b>. Set <b>Number of Modules</b> to 2.</li><li><b>Widgets</b> tab &rarr; search the name below &rarr; drag it into the <b>left</b> module &rarr; <b>Publish</b>.</li></ol>'
 	+ values([v('Page name', 'Demo'), v('Widget search', 'LDP Demo Card')]))
 parts.append(p)
 
 p = Part('3', 'Real LDP data', 'Topic 04')
 p.step('say', 'The card calls DXP on the same origin, with the user&rsquo;s session and the CSRF token. DXP forwards the GraphQL query to LDP. No LDP token in the browser.')
-p.step('ui', '<p><strong>Get the channel ID from LDP</strong></p><ol><li>Tab 1: open <code>ldp-internal.liferay.com</code> &rarr; workspace <b>Liferay Data Platform</b> &rarr; property <b>SWELL LAB DevCon 2026</b> &rarr; <b>Sites</b>.</li><li>The channel ID is the number in the URL, between the workspace and <code>/sites</code>. Copy it.</li><li>Leave the Sites dashboard on <b>Last 7 days</b>: the card must show the same numbers.</li></ol>'
+p.step('ui', '<p class="step-title"><strong>Get the channel ID from LDP</strong></p><ol><li>Tab 1: open <code>ldp-internal.liferay.com</code> &rarr; workspace <b>Liferay Data Platform</b> &rarr; property <b>SWELL LAB DevCon 2026</b> &rarr; <b>Sites</b>.</li><li>The channel ID is the number in the URL, between the workspace and <code>/sites</code>. Copy it.</li><li>Leave the Sites dashboard on <b>Last 7 days</b>: the card must show the same numbers.</li></ol>'
 	+ values([v('LDP Sites URL', 'https://ldp-internal.liferay.com/workspace/liferay-data-platform/845351493326064678/sites'), v('Channel ID', '845351493326064678')]))
 p.step('say', 'One property is one channel. The channel ID is all the card needs to know whose data to ask for.')
 p.step('code', code_block('ldp-demo-card.js', code[1], code[2], 'Point at <code>CHANNEL_ID</code>, <code>RANGE_KEY = 7</code>, the <code>site</code> query and the <code>x-csrf-token</code> header.'))
@@ -344,19 +344,19 @@ p.step('say', 'The setting was in memory, so it is gone. A dashboard has to reme
 parts.append(p)
 
 p = Part('5', 'Persistence with Objects', 'Topic 05')
-p.step('ui', '<p><strong>Create the Object</strong></p><ol><li>Control Panel &rarr; Object &rarr; <b>Objects</b> &rarr; folder <b>DEVCON Demo</b> &rarr; <b>Create New Object</b> &rarr; fill in &rarr; <b>Save</b>.</li></ol>'
+p.step('ui', '<p class="step-title"><strong>Create the Object</strong></p><ol><li>Control Panel &rarr; Object &rarr; <b>Objects</b> &rarr; folder <b>DEVCON Demo</b> &rarr; <b>Create New Object</b> &rarr; fill in &rarr; <b>Save</b>.</li></ol>'
 	+ values([v('Label', 'Demo Card Config'), v('Plural Label', 'Demo Card Configs'), v('Object Name', 'DemoCardConfig')])
 	+ '<ol start="2"><li><b>Fields</b> &rarr; <b>Add Field</b> &rarr; fill in &rarr; <b>Save</b>.</li></ol>'
 	+ values([v('Label', 'Metric'), v('Field Name', 'metric'), plain('Type', '<span class="pill">Text</span>')])
 	+ '<ol start="3"><li><b>Details</b> &rarr; Scope <b>Company</b> &rarr; <b>Publish</b>.</li></ol>')
 p.step('say', 'Publishing the Object gives us a REST API for free, at /o/c/democardconfigs. Each entry is keyed by the widget instance id, which DXP already generates.')
-p.step('code', code_block('ldp-demo-card.js', code[3], code[4], 'Point at <code>getKey</code>, <code>loadConfig</code> (GET, 404 means never configured) and <code>saveConfig</code> (PUT creates, then replaces).'))
+p.step('code', code_block('ldp-demo-card.js', code[3], code[4]))
 p.step(*ship(4))
 p.step('ui', '<ol><li>Right card &rarr; select <b>Sessions</b>.</li><li>Reload the page.</li></ol>')
 parts.append(p)
 
 p = Part('6', 'AI Hub insight', 'Topic 05')
-p.step('ui', '<p><strong>Connect DXP to AI Hub</strong></p><ol><li>Tab 6: AI Hub &rarr; the account configuration &rarr; copy the <b>Client ID</b> and the <b>Client Secret</b>.</li><li>In the same configuration, check the <b>Environment URL</b>: the DXP address below, with no slash at the end.</li><li>Tab 2: Control Panel &rarr; Instance Settings &rarr; Platform &rarr; <b>AI Hub</b> &rarr; paste the values &rarr; <b>Save</b>.</li></ol>'
+p.step('ui', '<p class="step-title"><strong>Connect DXP to AI Hub</strong></p><ol><li>Tab 6: AI Hub &rarr; the account configuration &rarr; copy the <b>Client ID</b> and the <b>Client Secret</b>.</li><li>In the same configuration, check the <b>Environment URL</b>: the DXP address below, with no slash at the end.</li><li>Tab 2: Control Panel &rarr; Instance Settings &rarr; Platform &rarr; <b>AI Hub</b> &rarr; paste the values &rarr; <b>Save</b>.</li></ol>'
 	+ values([
 		plain('Client ID', 'Copied from AI Hub', 'Identifies this DXP to AI Hub.'),
 		plain('Client Secret', 'Copied from AI Hub', 'Proves it. It stays on the DXP server and never reaches the browser.'),
@@ -365,10 +365,10 @@ p.step('ui', '<p><strong>Connect DXP to AI Hub</strong></p><ol><li>Tab 6: AI Hub
 	]))
 p.step('say', 'DXP keeps the secret. The browser only gets a short-lived token from DXP, and AI Hub acts on behalf of the signed-in user.')
 p.step('say', 'An AI Hub agent is an agent definition plus a workflow with an LLM node. The card sends what it shows; AI Hub never reads LDP itself.')
-p.step('ui', '<p><strong>Create the agent</strong></p><ol><li>Tab 6: AI Hub &rarr; <b>Agent Builder</b>.</li><li><b>Make Shorter</b> &rarr; &#8942; &rarr; <b>Duplicate</b>.</li><li>On the copy: &#8942; &rarr; <b>View</b> &rarr; fill in the fields below &rarr; <b>Save</b>.</li></ol>'
+p.step('ui', '<p class="step-title"><strong>Create the agent</strong></p><ol><li>Tab 6: AI Hub &rarr; <b>Agent Builder</b>.</li><li><b>Make Shorter</b> &rarr; &#8942; &rarr; <b>Duplicate</b>.</li><li>On the copy: &#8942; &rarr; <b>View</b> &rarr; fill in the fields below &rarr; <b>Save</b>.</li></ol>'
 	+ values([v('Title', 'DevCon 2026 Demo LDP Metric Insight', 'The name people see in Agent Builder.'), v('Description', 'Turns one LDP metric from the DEVCON demo card into a short insight.', 'Tells people, and the AI Hub assistant that picks agents, what this agent is for.'), v('External reference code', 'DEVCON_2026_DEMO_LDP_METRIC_INSIGHT', 'The agent&rsquo;s fixed address. The card starts the agent with it, and the answer comes back on an event with this name.'), v('Input variables', 'metrics', 'The names of the values the caller sends. The card sends its summary as <code>metrics</code>.'), v('Output variable', 'insight', 'Which workflow output is the agent&rsquo;s answer. Must match the node&rsquo;s output variable.')]))
 p.step('say', 'The external reference code is the agent&rsquo;s address. It is the only thing the card needs to know about it.')
-p.step('ui', '<p><strong>Write its workflow</strong></p><ol><li><b>View Workflow</b> &rarr; click the LLM node in the middle.</li><li>In the panel on the right, fill in the fields below &rarr; <b>Update</b>.</li></ol>'
+p.step('ui', '<p class="step-title"><strong>Write its workflow</strong></p><ol><li><b>View Workflow</b> &rarr; click the LLM node in the middle.</li><li>In the panel on the right, fill in the fields below &rarr; <b>Update</b>.</li></ol>'
 	+ values([v('Node Name', 'ldpMetricInsight', 'The node&rsquo;s id inside the workflow. It also comes back in the answer as <code>nodeName</code>.'), v('Input variables', '[{"name":"metrics","type":"string"}]', 'The values this node reads. Only these are replaced as <code>{{name}}</code> in the prompt and the user message.'), v('Output variables', '[{"name":"insight","type":"string"}]', 'Where the node stores the model&rsquo;s reply.'), v('Prompt', PROMPT, 'The system message: the model&rsquo;s role, the rules, and the shape of the answer.'), v('User message', 'Metric summary:\n{{metrics}}', 'The message the model answers. <code>{{metrics}}</code> becomes the text the card sent.'), v('Tools', '[]', 'Tools the model may call, such as MCP servers. None here; must be <code>[]</code>, never empty.'), v('RAG', '{}', 'Documents the model may search before answering. None here; must be <code>{}</code>, never empty.')]))
 p.step('say', '<code>{{metrics}}</code> is replaced by the text the card sends. Only the node&rsquo;s input variables are replaced.')
 p.step('code', code_block('ldp-demo-card.js', code[4], code[5]))
@@ -550,6 +550,7 @@ h2 {{ font: 700 33px/1.15 var(--display); margin: 0; text-wrap: balance; }}
 .step-body ol {{ display: grid; gap: 4px; margin: 0; padding-left: 20px; }}
 .kind {{ font: 600 14px/1 var(--mono); letter-spacing: 0.12em; text-transform: uppercase; }}
 .k-ui .kind {{ color: var(--accent); }}
+.step-title {{ font-size: 30px; line-height: 1.25; }}
 .k-code .kind {{ color: var(--fg); }}
 .k-say {{ grid-template-columns: minmax(0, 1fr); background: transparent; border-style: dashed; border-color: color-mix(in srgb, var(--say) 45%, transparent); }}
 .k-say .kind {{ color: var(--say); }}
@@ -561,13 +562,12 @@ h2 {{ font: 700 33px/1.15 var(--display); margin: 0; text-wrap: balance; }}
 
 .table-scroll {{ overflow-x: auto; }}
 .values {{ border-collapse: collapse; font-size: inherit; width: 100%; }}
-.values th, .values td {{ border-top: 1px solid var(--line-soft); padding: 8px 10px 8px 0; text-align: left; vertical-align: middle; }}
-.values tr:first-child th, .values tr:first-child td {{ border-top: 0; }}
+.values th, .values td {{ border: 1px solid var(--line); padding: 8px 12px; text-align: left; vertical-align: middle; }}
 .values th {{ color: var(--muted); font-weight: 500; white-space: nowrap; width: 1%; }}
 .values td:last-child {{ text-align: right; width: 1%; }}
 .values thead th {{ color: var(--muted); font: 600 13px/1 var(--mono); letter-spacing: 0.12em; padding-bottom: 10px; text-transform: uppercase; }}
 .values.described td:nth-child(2) {{ width: 46%; }}
-.values .purpose {{ color: var(--muted); font-size: 18px; line-height: 1.45; min-width: 220px; padding-left: 12px; width: 32%; }}
+.values .purpose {{ color: var(--muted); font-size: 18px; line-height: 1.45; min-width: 220px; width: 32%; }}
 .values td code {{ white-space: pre-wrap; }}
 .values a {{ color: var(--say); text-underline-offset: 4px; }}
 .values a code {{ color: inherit; }}
