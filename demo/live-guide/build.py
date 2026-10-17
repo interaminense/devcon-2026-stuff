@@ -566,8 +566,8 @@ h2 {{ font: 700 33px/1.15 var(--display); margin: 0; text-wrap: balance; }}
 .values th {{ color: var(--muted); font-weight: 500; white-space: nowrap; width: 1%; }}
 .values td:last-child {{ text-align: right; width: 1%; }}
 .values thead th {{ color: var(--muted); font: 600 13px/1 var(--mono); letter-spacing: 0.12em; padding-bottom: 10px; text-transform: uppercase; }}
-.values.described td:nth-child(2) {{ width: 30%; }}
-.values .purpose {{ color: var(--muted); font-size: 18px; line-height: 1.45; min-width: 260px; padding-left: 12px; width: 48%; }}
+.values.described td:nth-child(2) {{ width: 46%; }}
+.values .purpose {{ color: var(--muted); font-size: 18px; line-height: 1.45; min-width: 220px; padding-left: 12px; width: 32%; }}
 .values td code {{ white-space: pre-wrap; }}
 .values a {{ color: var(--say); text-underline-offset: 4px; }}
 .values a code {{ color: inherit; }}
