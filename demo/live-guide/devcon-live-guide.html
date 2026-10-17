@@ -1,22 +1,22 @@
 <title>Live Demo Guide</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&amp;family=IBM+Plex+Sans:wght@400;500;600&amp;family=JetBrains+Mono:wght@400;600&amp;display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;500;600;700;800&amp;family=JetBrains+Mono:wght@400;600&amp;display=swap">
 <style>
 /* Layout: one reading column, a sticky part switcher on top, each part a numbered run of typed steps. */
 :root {
 	color-scheme: dark;
-	--bg: #0b1020;
-	--surface: #121a30;
-	--surface-2: #18223d;
-	--line: #263252;
-	--fg: #e7ecf7;
-	--muted: #8c97b3;
-	--accent: #5b9dff;
-	--accent-soft: rgba(91, 157, 255, 0.14);
-	--say: #f2b56b;
+	--bg: #00072b;
+	--surface: #0a1145;
+	--surface-2: #141c5c;
+	--line: #27307a;
+	--fg: #ffffff;
+	--muted: #a3abd6;
+	--accent: #e500bd;
+	--accent-soft: rgba(229, 0, 189, 0.16);
+	--say: #00c2fb;
 	--check: #5fd3a2;
-	--warn: #ff8a7a;
-	--code-bg: #070b17;
+	--warn: #f60062;
+	--code-bg: #000420;
 	--code-new: #f4f7ff;
 	--code-comment: #8f9bbd;
 	--code-keyword: #7fb2ff;
@@ -24,13 +24,13 @@
 	--code-number: #f29e74;
 	--code-fn: #8fe3c4;
 	--code-type: #c3a6ff;
-	--line-soft: rgba(38, 50, 82, 0.5);
-	--c-dxp: #5b9dff;
-	--c-ldp: #3fd0b0;
-	--c-hub: #c08cff;
-	--code-old: #4a5576;
-	--display: 'Bricolage Grotesque', 'Segoe UI', system-ui, sans-serif;
-	--body: 'IBM Plex Sans', 'Segoe UI', system-ui, sans-serif;
+	--line-soft: rgba(39, 48, 122, 0.5);
+	--c-dxp: #3d7bff;
+	--c-ldp: #00c2fb;
+	--c-hub: #e500bd;
+	--code-old: #4c5590;
+	--display: 'Source Sans 3', 'Source Sans Pro', 'Segoe UI', system-ui, sans-serif;
+	--body: 'Source Sans 3', 'Source Sans Pro', 'Segoe UI', system-ui, sans-serif;
 	--mono: 'JetBrains Mono', ui-monospace, 'SFMono-Regular', Menlo, monospace;
 }
 
@@ -49,10 +49,24 @@ a { color: var(--accent); }
 
 code { font-family: var(--mono); font-size: 0.88em; background: var(--surface-2); border-radius: 4px; padding: 1px 5px; overflow-wrap: anywhere; }
 
-.hero { display: grid; gap: 12px; padding-block: 8px 24px; }
-.eyebrow { color: var(--accent); font: 600 12px/1 var(--mono); letter-spacing: 0.14em; text-transform: uppercase; }
-h1 { font: 800 clamp(30px, 6vw, 46px)/1.05 var(--display); letter-spacing: -0.02em; margin: 0; text-wrap: balance; }
-.hero p { color: var(--muted); margin: 0; max-width: 62ch; }
+.hero {
+	background:
+		radial-gradient(circle at 0% 0%, rgba(11, 95, 255, 0.85) 0, transparent 45%),
+		radial-gradient(circle at 100% 100%, rgba(229, 0, 189, 0.85) 0, transparent 50%),
+		radial-gradient(circle at 70% 20%, rgba(123, 44, 255, 0.55) 0, transparent 45%),
+		linear-gradient(135deg, #030028 0%, #1514a4 55%, #3a0a8a 100%);
+	border-radius: 20px;
+	display: grid;
+	gap: 14px;
+	margin-bottom: 8px;
+	padding: 36px 36px 30px;
+}
+.hero .login { background: rgba(0, 7, 43, 0.55); border-color: rgba(255, 255, 255, 0.18); }
+.hero .toggle { color: rgba(255, 255, 255, 0.85); }
+.hero .show-diagram { background: rgba(0, 7, 43, 0.55); border-color: rgba(255, 255, 255, 0.35); }
+.eyebrow { color: #ff7ce6; font: 700 13px/1 var(--body); letter-spacing: 0.16em; text-transform: uppercase; }
+h1 { font: 700 clamp(34px, 6vw, 54px)/1.05 var(--display); letter-spacing: -0.01em; margin: 0; text-wrap: balance; }
+.hero p { color: rgba(255, 255, 255, 0.82); margin: 0; max-width: 62ch; }
 
 .login { align-items: center; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; display: flex; flex-wrap: wrap; gap: 10px 14px; padding: 14px 16px; }
 .login .label { color: var(--muted); font: 600 11px/1 var(--mono); letter-spacing: 0.12em; text-transform: uppercase; }
