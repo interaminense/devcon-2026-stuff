@@ -643,22 +643,33 @@
 		const post = await request(`/o/cms/blogs/${block.assetId}`);
 
 		block.contentHtml = post.content || '';
+		block.languageId = post.defaultLanguageId || 'en_US';
 		block.excerpt = (post.contentRawText || '').replace(/\s+/g, ' ').trim().slice(0, 600);
 	}
 
-	// Accepting creates a new draft post instead of a draft version of the
-	// published one: on this DXP the post page already shows a draft version
-	// to visitors. The draft opens with the new intro, then the original body.
+	// Accepting saves the rewrite as a draft version of the same post: the
+	// new intro goes on top of the original body, and the editor reviews and
+	// publishes it in the CMS. The localized fields win over the plain ones,
+	// so both are sent.
 
-	function createDraft(block, fields) {
-		return request(`/o/cms/blogs/scopes/${SPACE_GROUP_ID}`, {
+	function saveDraft(block, fields) {
+		const localized = (value) => ({[block.languageId]: value});
+
+		const content = `${fields['new text'] ? `<p>${escape(fields['new text'])}</p>` : ''}${block.contentHtml || ''}`;
+		const subtitle = fields['new subtitle'] || block.text;
+		const title = fields['new title'];
+
+		return request(`/o/cms/blogs/${block.assetId}`, {
 			body: JSON.stringify({
-				content: `${fields['new text'] ? `<p>${escape(fields['new text'])}</p>` : ''}${block.contentHtml || ''}`,
+				content,
+				content_i18n: localized(content),
 				status: {code: 2},
-				subtitle: fields['new subtitle'] || block.text,
-				title: fields['new title'],
+				subtitle,
+				subtitle_i18n: localized(subtitle),
+				title,
+				title_i18n: localized(title),
 			}),
-			method: 'POST',
+			method: 'PATCH',
 		});
 	}
 
@@ -974,7 +985,7 @@
 					${target.acceptable && fields['new title'] ? `
 						<div class="ldp-advisor-modal__actions">
 							<button class="ldp-advisor-accept" type="button">Accept and open in CMS</button>
-							<span class="ldp-advisor-modal__hint">Saves a new draft post with this rewrite. The published post stays as it is.</span>
+							<span class="ldp-advisor-modal__hint">Saves this rewrite as a draft of the post and opens it in the CMS to review and publish.</span>
 						</div>` : ''}
 				`;
 
@@ -997,7 +1008,7 @@
 				button.textContent = 'Saving the draft...';
 
 				try {
-					const draft = await createDraft(block, fields);
+					const draft = await saveDraft(block, fields);
 
 					button.outerHTML = `<a class="ldp-advisor-accept" href="/c/cms/edit_content_item?objectEntryId=${draft.id}" target="_blank">Open the draft in CMS &rarr;</a>`;
 

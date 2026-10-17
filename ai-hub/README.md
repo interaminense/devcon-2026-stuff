@@ -170,7 +170,7 @@ After *Update*, open *Source* and check that `<prompt>` still holds the text and
 
 # AI Hub Agent: DevCon 2026 · LDP Post Advisor
 
-Used by the *LDP Content Advisor* client extension on the Swell Lab `/blog` page. It receives the post readers open least from the post list (clicks on "Read the post", the `surfBlogPostClicked` custom event) and the post they open most, for comparison, and suggests a better title, subtitle, and opening paragraph. *Accept and open in CMS* saves the rewrite as a new draft post and opens it in the CMS.
+Used by the *LDP Content Advisor* client extension on the Swell Lab `/blog` page. It receives the post readers open least from the post list (clicks on "Read the post", the `surfBlogPostClicked` custom event) and the post they open most, for comparison, and suggests a better title, subtitle, and opening paragraph. *Accept and open in CMS* saves the rewrite as a draft version of the same post and opens it in the CMS to review and publish.
 
 ## Agent
 
@@ -225,4 +225,4 @@ Post data:
 
 After *Update*, open *Source* and check that `<prompt>` still holds the text and that `<tools>` and `<rag>` are `[]` and `{}`.
 
-Accepting creates a new draft post rather than a draft version of the published one: on DXP 2026.Q3.6 the post page (display page template) shows a draft version of a published CMS 2.0 entry to visitors, while the `/blog` list keeps the approved one.
+Known issue (DXP 2026.Q3.6): until the draft is published, the post page (display page template) already shows the draft version to visitors, while the `/blog` list keeps the approved one. Publish or discard the draft right after reviewing it.
