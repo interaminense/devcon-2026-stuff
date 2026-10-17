@@ -13,7 +13,7 @@ DEMO = pathlib.Path.home() / 'dev/projects/devcon-2026/devcon-2026-stuff/demo'
 OUT = pathlib.Path(__file__).parent / 'devcon-live-guide.html'
 
 SITE = 'https://webserver-lctacdemodevcon-prd.lfr.cloud'
-LOGIN = SITE + '/web/devcon-demo/home?p_p_id=com_liferay_login_web_portlet_LoginPortlet&p_p_state=maximized&_com_liferay_login_web_portlet_LoginPortlet_redirect=%2Fweb%2Fdevcon-demo'
+LOGIN = SITE + '/c/portal/login?redirect=/web/devcon-demo'
 DOC_URL = '/documents/d/devcon-demo/ldp-demo-card-js'
 
 PROMPT = '''You are an analytics assistant. You receive one website metric from Liferay Data Platform: its name, the period, the value, the previous period's value, and the change.
@@ -278,8 +278,6 @@ KIND = {
 	'ui': 'In the UI',
 	'code': 'In the editor',
 	'say': 'Say',
-	'check': 'Expect',
-	'warn': 'Heads up',
 }
 
 
@@ -306,6 +304,11 @@ parts = []
 
 p = Part('1', 'LDP connected to DXP', 'Topic 04')
 p.step('say', 'Before any code: the data lives in LDP, and DXP is already connected to it. The card asks DXP, and DXP asks LDP.')
+p.step('ui', f'''<p><strong>Log in</strong></p>
+<ol>
+	<li>Open the link below and sign in.</li>
+</ol>
+<div class="table-scroll"><table class="values"><tbody><tr><th scope="row">Log in</th><td><a href="{e(LOGIN)}" target="_blank" rel="noopener"><code>{e(LOGIN)}</code></a></td><td>{copy_button(LOGIN)}</td></tr></tbody></table></div>''')
 p.step('ui', '''<ol>
 	<li>Tab 2: Control Panel &rarr; Instance Settings &rarr; Platform &rarr; <b>Analytics Cloud</b>. Point at <b>Connected</b>.</li>
 	<li><b>Properties</b> tab: show <b>SWELL LAB DevCon 2026</b> and the synced Swell Lab site.</li>
@@ -321,7 +324,6 @@ p.step('ui', '<p><strong>Register the Custom Element</strong></p><ol><li>Tab 4: 
 p.step('say', 'Instanceable lets the same card go on a page twice, each with its own configuration. That is the whole dashboard idea.')
 p.step('ui', '<p><strong>Put it on a page</strong></p><ol><li>Tab 5: DEVCON Demo &rarr; Site Builder &rarr; <b>Pages</b> &rarr; <b>New</b>.</li><li><b>Basic Templates</b> &rarr; <b>Blank</b> &rarr; name below &rarr; <b>Add</b>.</li><li><b>Components</b> panel &rarr; <b>Fragments</b> &rarr; Layout Elements &rarr; drag <b>Grid</b>. Set <b>Number of Modules</b> to 2.</li><li><b>Widgets</b> tab &rarr; search the name below &rarr; drag it into the <b>left</b> module &rarr; <b>Publish</b>.</li></ol>'
 	+ values([v('Page name', 'Demo'), v('Widget search', 'LDP Demo Card')]))
-p.step('check', '&ldquo;Hello, DEVCON 2026!&rdquo; on the page.')
 parts.append(p)
 
 p = Part('3', 'Real LDP data', 'Topic 04')
@@ -331,7 +333,6 @@ p.step('ui', '<p><strong>Get the channel ID from LDP</strong></p><ol><li>Tab 1: 
 p.step('say', 'One property is one channel. The channel ID is all the card needs to know whose data to ask for.')
 p.step('code', code_block('ldp-demo-card.js', code[1], code[2], 'Point at <code>CHANNEL_ID</code>, <code>RANGE_KEY = 7</code>, the <code>site</code> query and the <code>x-csrf-token</code> header.'))
 p.step(*ship(2))
-p.step('check', '&ldquo;Unique visitors: N&rdquo;, the same N as LDP on Last 7 days.')
 parts.append(p)
 
 p = Part('4', 'Two instances, one card', 'Topic 04')
@@ -339,7 +340,6 @@ p.step('say', 'Now a real card: a metric picker, the value, and the trend agains
 p.step('code', code_block('ldp-demo-card.js', code[2], code[3], 'Point at <code>METRICS</code> and <code>formatTrend</code>. The config lives only in memory.'))
 p.step(*ship(3))
 p.step('ui', '<ol><li>Edit the Demo page &rarr; drag a second <b>LDP Demo Card</b> into the <b>right</b> module &rarr; <b>Publish</b>.</li><li>Right card &rarr; select <b>Sessions</b>.</li><li>Reload the page.</li></ol>')
-p.step('check', 'After the reload the right card is back to Unique visitors.')
 p.step('say', 'The setting was in memory, so it is gone. A dashboard has to remember each card, separately, and we do not want a backend for that.')
 parts.append(p)
 
@@ -353,8 +353,6 @@ p.step('say', 'Publishing the Object gives us a REST API for free, at /o/c/democ
 p.step('code', code_block('ldp-demo-card.js', code[3], code[4], 'Point at <code>getKey</code>, <code>loadConfig</code> (GET, 404 means never configured) and <code>saveConfig</code> (PUT creates, then replaces).'))
 p.step(*ship(4))
 p.step('ui', '<ol><li>Right card &rarr; select <b>Sessions</b>.</li><li>Reload the page.</li></ol>')
-p.step('check', 'Right card stays on Sessions after the reload.')
-p.step('warn', 'A red <code>GET &hellip; 404</code> in DevTools on first load is expected: that card was never configured. After the select changes you see <code>PUT 200</code>.')
 parts.append(p)
 
 p = Part('6', 'AI Hub insight', 'Topic 05')
@@ -365,7 +363,6 @@ p.step('ui', '<p><strong>Connect DXP to AI Hub</strong></p><ol><li>Tab 6: AI Hub
 		v('Service URL', 'https://na1.hub.liferay.com', 'Where the AI Hub of this region lives. DXP asks it for tokens.'),
 		v('Environment URL (in AI Hub)', 'https://webserver-lctacdemodevcon-prd.lfr.cloud', 'The DXP origin AI Hub trusts: it allows the browser calls (CORS) and calls DXP back on the user&rsquo;s behalf. Must match exactly, no trailing slash.'),
 	]))
-p.step('warn', 'The projector shows everything: paste the <b>Client Secret</b> with the screen mirrored off, or show the field already filled. If the secret was shown, generate a new one after the talk.')
 p.step('say', 'DXP keeps the secret. The browser only gets a short-lived token from DXP, and AI Hub acts on behalf of the signed-in user.')
 p.step('say', 'An AI Hub agent is an agent definition plus a workflow with an LLM node. The card sends what it shows; AI Hub never reads LDP itself.')
 p.step('ui', '<p><strong>Create the agent</strong></p><ol><li>Tab 6: AI Hub &rarr; <b>Agent Builder</b>.</li><li><b>Make Shorter</b> &rarr; &#8942; &rarr; <b>Duplicate</b>.</li><li>On the copy: &#8942; &rarr; <b>View</b> &rarr; fill in the fields below &rarr; <b>Save</b>.</li></ol>'
@@ -373,12 +370,10 @@ p.step('ui', '<p><strong>Create the agent</strong></p><ol><li>Tab 6: AI Hub &rar
 p.step('say', 'The external reference code is the agent&rsquo;s address. It is the only thing the card needs to know about it.')
 p.step('ui', '<p><strong>Write its workflow</strong></p><ol><li><b>View Workflow</b> &rarr; click the LLM node in the middle.</li><li>In the panel on the right, fill in the fields below &rarr; <b>Update</b>.</li></ol>'
 	+ values([v('Node Name', 'ldpMetricInsight', 'The node&rsquo;s id inside the workflow. It also comes back in the answer as <code>nodeName</code>.'), v('Input variables', '[{"name":"metrics","type":"string"}]', 'The values this node reads. Only these are replaced as <code>{{name}}</code> in the prompt and the user message.'), v('Output variables', '[{"name":"insight","type":"string"}]', 'Where the node stores the model&rsquo;s reply.'), v('Prompt', PROMPT, 'The system message: the model&rsquo;s role, the rules, and the shape of the answer.'), v('User message', 'Metric summary:\n{{metrics}}', 'The message the model answers. <code>{{metrics}}</code> becomes the text the card sent.'), v('Tools', '[]', 'Tools the model may call, such as MCP servers. None here; must be <code>[]</code>, never empty.'), v('RAG', '{}', 'Documents the model may search before answering. None here; must be <code>{}</code>, never empty.')]))
-p.step('warn', 'Never leave <b>Tools</b> or <b>RAG</b> empty: the save fails with &ldquo;Unable to parse definition&rdquo;. After <b>Update</b>, open <b>Source</b> once and check that <code>&lt;prompt&gt;</code> still has the text; an empty prompt saves fine, but the agent never answers.')
 p.step('say', '<code>{{metrics}}</code> is replaced by the text the card sends. Only the node&rsquo;s input variables are replaced.')
 p.step('code', code_block('ldp-demo-card.js', code[4], code[5]))
 p.step(*ship(5))
 p.step('ui', '<ol><li>Right card &rarr; <b>&#10022; AI insight</b>.</li></ol>')
-p.step('check', '&ldquo;Asking AI Hub&hellip;&rdquo;, then two or three sentences citing the value, the previous period and one action.')
 p.step('say', 'We format the text before sending it: plain labeled lines. Easier for the model, and the firewall in front of AI Hub rejects nested JSON.')
 parts.append(p)
 
@@ -391,7 +386,7 @@ def render_part(part):
 		key = f'{part.letter}{index}'
 		steps.append(f'''
 <li class="step k-{kind}">
-	<label class="done"><input id="done-{key}" type="checkbox" data-key="{key}"><span class="sr">Done</span></label>
+	{'' if kind == 'say' else f'<label class="done"><input id="done-{key}" type="checkbox" data-key="{key}"><span class="sr">Done</span></label>'}
 	<div class="step-body">
 		<span class="kind">{KIND[kind]}</span>
 		{body if body.lstrip().startswith('<') else f'<p>{body}</p>'}
@@ -453,11 +448,11 @@ page = f'''<title>Live Demo Guide</title>
 body {{
 	background: var(--bg);
 	color: var(--fg);
-	font: 17px/1.6 var(--body);
+	font: 20px/1.6 var(--body);
 	padding-inline: 16px;
 }}
 
-.wrap {{ margin: 0 auto; max-width: 1180px; padding-block: 32px 96px; }}
+.wrap {{ margin: 0 auto; max-width: 1280px; padding-block: 32px 96px; }}
 
 a {{ color: var(--accent); }}
 
@@ -475,36 +470,31 @@ code {{ font-family: var(--mono); font-size: 0.88em; background: var(--surface-2
 	margin-bottom: 8px;
 	padding: 36px 36px 30px;
 }}
-.hero .login {{ background: rgba(0, 7, 43, 0.55); border-color: rgba(255, 255, 255, 0.18); }}
 .hero .toggle {{ color: rgba(255, 255, 255, 0.85); }}
 .hero .show-diagram {{ background: rgba(0, 7, 43, 0.55); border-color: rgba(255, 255, 255, 0.35); }}
-.eyebrow {{ color: #ff7ce6; font: 700 13px/1 var(--body); letter-spacing: 0.16em; text-transform: uppercase; }}
+.eyebrow {{ color: #ff7ce6; font: 700 15px/1 var(--body); letter-spacing: 0.16em; text-transform: uppercase; }}
 h1 {{ font: 700 clamp(34px, 6vw, 54px)/1.05 var(--display); letter-spacing: -0.01em; margin: 0; text-wrap: balance; }}
-.hero p {{ color: rgba(255, 255, 255, 0.82); margin: 0; max-width: 62ch; }}
 
-.login {{ align-items: center; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; display: flex; flex-wrap: wrap; gap: 10px 14px; padding: 14px 16px; }}
-.login .label {{ color: var(--muted); font: 600 11px/1 var(--mono); letter-spacing: 0.12em; text-transform: uppercase; }}
-.login code {{ background: none; flex: 1 1 280px; min-width: 0; padding: 0; }}
 
 .agenda {{ border-block: 1px solid var(--line-soft); margin-top: 8px; padding-block: 18px; scroll-margin-top: 16px; }}
-.agenda-title {{ color: var(--muted); font: 600 12px/1 var(--mono); letter-spacing: 0.14em; margin: 0 0 10px; text-transform: uppercase; }}
+.agenda-title {{ color: var(--muted); font: 600 14px/1 var(--mono); letter-spacing: 0.14em; margin: 0 0 10px; text-transform: uppercase; }}
 .agenda ol {{ display: grid; list-style: none; margin: 0; padding: 0; }}
 .agenda a {{ align-items: baseline; border-top: 1px solid var(--line-soft); color: var(--fg); display: grid; gap: 16px; grid-template-columns: 2.2em minmax(0, 1fr) auto; padding: 10px 4px; text-decoration: none; }}
 .agenda li:first-child a {{ border-top: 0; }}
 .agenda a:hover .a-title, .agenda a:focus-visible .a-title {{ color: var(--accent); }}
-.a-letter {{ color: var(--accent); font: 800 20px/1 var(--display); }}
-.a-title {{ font: 600 20px/1.3 var(--display); }}
-.a-topic {{ color: var(--muted); font: 500 13px/1 var(--mono); letter-spacing: 0.08em; text-transform: uppercase; }}
-.to-agenda {{ background: var(--surface-2); border: 1px solid var(--line); border-radius: 999px; bottom: calc(16px + env(safe-area-inset-bottom, 0px)); color: var(--fg); font-size: 14px; padding: 8px 14px; position: fixed; right: 16px; text-decoration: none; z-index: 5; }}
+.a-letter {{ color: var(--accent); font: 800 24px/1 var(--display); }}
+.a-title {{ font: 600 24px/1.3 var(--display); }}
+.a-topic {{ color: var(--muted); font: 500 15px/1 var(--mono); letter-spacing: 0.08em; text-transform: uppercase; }}
+.to-agenda {{ background: var(--surface-2); border: 1px solid var(--line); border-radius: 999px; bottom: calc(16px + env(safe-area-inset-bottom, 0px)); color: var(--fg); font-size: 17px; padding: 8px 14px; position: fixed; right: 16px; text-decoration: none; z-index: 5; }}
 .to-agenda:hover {{ border-color: var(--accent); }}
 .toggles {{ display: flex; flex-wrap: wrap; gap: 8px 20px; }}
-.toggle {{ align-items: center; color: var(--muted); cursor: pointer; display: flex; flex: none; font-size: 15px; gap: 6px; }}
+.toggle {{ align-items: center; color: var(--muted); cursor: pointer; display: flex; flex: none; font-size: 18px; gap: 6px; }}
 body.no-say .k-say {{ display: none; }}
-.show-diagram {{ background: var(--surface-2); border: 1px solid var(--c-dxp); border-radius: 8px; color: var(--fg); cursor: pointer; font: 500 15px/1 var(--body); padding: 9px 14px; }}
+.show-diagram {{ background: var(--surface-2); border: 1px solid var(--c-dxp); border-radius: 8px; color: var(--fg); cursor: pointer; font: 500 18px/1 var(--body); padding: 9px 14px; }}
 .show-diagram:hover, .show-diagram:focus-visible {{ background: color-mix(in srgb, var(--c-dxp) 18%, var(--surface-2)); }}
 .diagram-modal {{ background: var(--bg); border: 1px solid var(--line); border-radius: 16px; color: var(--fg); height: 94vh; max-height: none; max-width: none; overflow: auto; padding: 20px 24px 28px; width: 96vw; }}
 .diagram-modal::backdrop {{ background: rgba(3, 6, 14, 0.75); backdrop-filter: blur(3px); }}
-.close-diagram {{ background: var(--surface-2); border: 1px solid var(--line); border-radius: 8px; color: var(--fg); cursor: pointer; float: right; font: 500 14px/1 var(--body); padding: 8px 14px; position: sticky; top: 0; z-index: 1; }}
+.close-diagram {{ background: var(--surface-2); border: 1px solid var(--line); border-radius: 8px; color: var(--fg); cursor: pointer; float: right; font: 500 17px/1 var(--body); padding: 8px 14px; position: sticky; top: 0; z-index: 1; }}
 .close-diagram:hover, .close-diagram:focus-visible {{ border-color: var(--accent); }}
 .diagram-modal .diagram {{ margin-top: 0; }}
 .diagram {{ display: grid; gap: 16px; margin-top: 8px; }}
@@ -536,20 +526,20 @@ body.no-say .k-say {{ display: none; }}
 .flow-step {{ background: var(--surface); border: 1px solid var(--line); border-radius: 12px; display: grid; gap: 12px; grid-template-columns: auto minmax(0, 1fr); padding: 14px 16px; }}
 .flow-step {{ border-color: color-mix(in srgb, var(--c) 45%, transparent); }}
 .flow-wide {{ grid-column: 1 / -1; }}
-.flow-n {{ align-items: center; background: var(--c); border-radius: 50%; color: var(--bg); display: flex; font: 700 14px var(--mono); height: 28px; justify-content: center; width: 28px; }}
+.flow-n {{ align-items: center; background: var(--c); border-radius: 50%; color: var(--bg); display: flex; font: 700 17px var(--mono); height: 28px; justify-content: center; width: 28px; }}
 .flow-body {{ display: grid; gap: 6px; min-width: 0; }}
 .flow-body p {{ margin: 0; }}
-.flow-title b {{ font: 700 17px var(--display); }}
-.flow-title span {{ color: var(--muted); font: 500 12px var(--mono); letter-spacing: 0.08em; margin-left: 6px; text-transform: uppercase; }}
+.flow-title b {{ font: 700 20px var(--display); }}
+.flow-title span {{ color: var(--muted); font: 500 14px var(--mono); letter-spacing: 0.08em; margin-left: 6px; text-transform: uppercase; }}
 .flow-calls {{ display: flex; flex-wrap: wrap; gap: 6px; }}
-.flow-calls code {{ font-size: 12.5px; }}
-.flow-text {{ color: var(--muted); font-size: 15px; line-height: 1.5; }}
+.flow-calls code {{ font-size: 15px; }}
+.flow-text {{ color: var(--muted); font-size: 18px; line-height: 1.5; }}
 
 .part {{ padding-top: 40px; scroll-margin-top: 16px; }}
 .part-head {{ align-items: center; display: flex; gap: 14px; margin-bottom: 18px; }}
-.letter {{ align-items: center; background: var(--accent-soft); border: 1px solid var(--accent); border-radius: 10px; color: var(--accent); display: flex; flex: none; font: 800 22px/1 var(--display); height: 44px; justify-content: center; width: 44px; }}
-h2 {{ font: 700 28px/1.15 var(--display); margin: 0; text-wrap: balance; }}
-.topic {{ color: var(--muted); font: 500 12px/1 var(--mono); letter-spacing: 0.08em; text-transform: uppercase; }}
+.letter {{ align-items: center; background: var(--accent-soft); border: 1px solid var(--accent); border-radius: 10px; color: var(--accent); display: flex; flex: none; font: 800 26px/1 var(--display); height: 44px; justify-content: center; width: 44px; }}
+h2 {{ font: 700 33px/1.15 var(--display); margin: 0; text-wrap: balance; }}
+.topic {{ color: var(--muted); font: 500 14px/1 var(--mono); letter-spacing: 0.08em; text-transform: uppercase; }}
 
 .steps {{ display: grid; gap: 10px; list-style: none; margin: 0; padding: 0; }}
 .step {{ background: var(--surface); border: 1px solid var(--line); border-radius: 12px; display: grid; gap: 12px; grid-template-columns: auto minmax(0, 1fr); padding: 14px 16px; }}
@@ -558,43 +548,41 @@ h2 {{ font: 700 28px/1.15 var(--display); margin: 0; text-wrap: balance; }}
 .step-body > * {{ max-width: 100%; min-width: 0; }}
 .step-body p {{ margin: 0; }}
 .step-body ol {{ display: grid; gap: 4px; margin: 0; padding-left: 20px; }}
-.kind {{ font: 600 12px/1 var(--mono); letter-spacing: 0.12em; text-transform: uppercase; }}
+.kind {{ font: 600 14px/1 var(--mono); letter-spacing: 0.12em; text-transform: uppercase; }}
 .k-ui .kind {{ color: var(--accent); }}
 .k-code .kind {{ color: var(--fg); }}
-.k-say {{ background: transparent; border-style: dashed; border-color: color-mix(in srgb, var(--say) 45%, transparent); }}
+.k-say {{ grid-template-columns: minmax(0, 1fr); background: transparent; border-style: dashed; border-color: color-mix(in srgb, var(--say) 45%, transparent); }}
 .k-say .kind {{ color: var(--say); }}
-.k-say p {{ font-size: 19px; font-style: italic; line-height: 1.5; }}
-.k-check {{ border-color: color-mix(in srgb, var(--check) 40%, transparent); }}
-.k-check .kind {{ color: var(--check); }}
-.k-warn {{ border-color: color-mix(in srgb, var(--warn) 40%, transparent); }}
-.k-warn .kind {{ color: var(--warn); }}
+.k-say p {{ font-size: 22px; font-style: italic; line-height: 1.5; }}
 
 .done {{ cursor: pointer; padding-top: 1px; }}
 .done input {{ accent-color: var(--check); cursor: pointer; height: 18px; width: 18px; }}
 .sr {{ clip: rect(0 0 0 0); height: 1px; overflow: hidden; position: absolute; width: 1px; }}
 
 .table-scroll {{ overflow-x: auto; }}
-.values {{ border-collapse: collapse; width: 100%; }}
+.values {{ border-collapse: collapse; font-size: inherit; width: 100%; }}
 .values th, .values td {{ border-top: 1px solid var(--line-soft); padding: 8px 10px 8px 0; text-align: left; vertical-align: middle; }}
 .values tr:first-child th, .values tr:first-child td {{ border-top: 0; }}
 .values th {{ color: var(--muted); font-weight: 500; white-space: nowrap; width: 1%; }}
 .values td:last-child {{ text-align: right; width: 1%; }}
-.values thead th {{ color: var(--muted); font: 600 11px/1 var(--mono); letter-spacing: 0.12em; padding-bottom: 10px; text-transform: uppercase; }}
+.values thead th {{ color: var(--muted); font: 600 13px/1 var(--mono); letter-spacing: 0.12em; padding-bottom: 10px; text-transform: uppercase; }}
 .values.described td:nth-child(2) {{ width: 30%; }}
-.values .purpose {{ color: var(--muted); font-size: 15px; line-height: 1.45; min-width: 260px; padding-left: 12px; width: 48%; }}
+.values .purpose {{ color: var(--muted); font-size: 18px; line-height: 1.45; min-width: 260px; padding-left: 12px; width: 48%; }}
 .values td code {{ white-space: pre-wrap; }}
-.pill {{ background: var(--accent-soft); border-radius: 999px; color: var(--accent); font-size: 13px; padding: 2px 10px; }}
+.values a {{ color: var(--say); text-underline-offset: 4px; }}
+.values a code {{ color: inherit; }}
+.pill {{ background: var(--accent-soft); border-radius: 999px; color: var(--accent); font-size: 15px; padding: 2px 10px; }}
 
-.copy {{ background: var(--surface-2); border: 1px solid var(--line); border-radius: 8px; color: var(--fg); cursor: pointer; font: 500 14px/1 var(--body); padding: 8px 12px; white-space: nowrap; }}
+.copy {{ background: var(--surface-2); border: 1px solid var(--line); border-radius: 8px; color: var(--fg); cursor: pointer; font: 500 17px/1 var(--body); padding: 8px 12px; white-space: nowrap; }}
 .copy:hover, .copy:focus-visible {{ border-color: var(--accent); outline: none; }}
 .copy.ok {{ border-color: var(--check); color: var(--check); }}
 
 .code {{ margin: 0; min-width: 0; }}
 .code figcaption {{ align-items: center; display: flex; flex-wrap: wrap; gap: 8px 12px; margin-bottom: 8px; }}
-.file {{ font: 600 15px/1 var(--mono); }}
-.legend {{ color: var(--muted); flex: 1; font-size: 14px; }}
+.file {{ font: 600 18px/1 var(--mono); }}
+.legend {{ color: var(--muted); flex: 1; font-size: 17px; }}
 .code-scroll {{ background: var(--code-bg); border: 1px solid var(--line); border-radius: 10px; max-height: 70vh; overflow: auto; }}
-.code pre {{ display: grid; font: 15px/1.6 var(--mono); grid-template-columns: auto 1fr; margin: 0; padding: 12px 0; tab-size: 4; }}
+.code pre {{ display: grid; font: 18px/1.6 var(--mono); grid-template-columns: auto 1fr; margin: 0; padding: 12px 0; tab-size: 4; }}
 .ln {{ color: var(--code-old); padding: 0 12px 0 14px; text-align: right; user-select: none; }}
 .lc {{ padding-right: 16px; white-space: pre; }}
 .old {{ color: var(--code-old); }}
@@ -605,14 +593,13 @@ h2 {{ font: 700 28px/1.15 var(--display); margin: 0; text-wrap: balance; }}
 .nu {{ color: var(--code-number); }}
 .fn {{ color: var(--code-fn); }}
 .ty {{ color: var(--code-type); }}
-body.flat .old {{ color: #b9c3dc; }}
-.code-note {{ color: var(--muted); font-size: 16px; margin: 8px 0 0; }}
+.code-note {{ color: var(--muted); font-size: 19px; margin: 8px 0 0; }}
 
 .reset-card {{ background: var(--surface); border: 1px solid color-mix(in srgb, var(--warn) 40%, transparent); border-radius: 12px; display: grid; gap: 12px; padding: 16px 18px; }}
 .reset-card ol {{ display: grid; gap: 6px; margin: 0; padding-left: 22px; }}
 .reset-card p {{ color: var(--muted); margin: 0; }}
 
-.foot {{ align-items: center; color: var(--muted); display: flex; flex-wrap: wrap; font-size: 15px; gap: 12px; justify-content: space-between; padding-top: 32px; }}
+.foot {{ align-items: center; color: var(--muted); display: flex; flex-wrap: wrap; font-size: 18px; gap: 12px; justify-content: space-between; padding-top: 32px; }}
 .reset {{ background: var(--surface-2); border: 1px solid var(--line); border-radius: 8px; color: var(--fg); cursor: pointer; font: inherit; justify-self: start; padding: 8px 14px; }}
 .reset:hover, .reset:focus-visible {{ border-color: var(--warn); }}
 
@@ -632,16 +619,9 @@ html {{ scroll-behavior: smooth; }}
 	<header class="hero">
 		<span class="eyebrow">DEVCON 2026 &middot; Live demo</span>
 		<h1>Live Demo Guide</h1>
-		<p>One LDP metric card, from an empty site to an AI insight. Bright code is what changed since the previous step; dimmed code was already there.</p>
-		<div class="login">
-			<span class="label">Log in</span>
-			<code>{e(LOGIN)}</code>
-			{copy_button(LOGIN)}
-		</div>
 		<div class="toggles">
 			<button class="show-diagram" id="open-diagram" type="button">Show how the card works</button>
 			<label class="toggle"><input id="no-say" type="checkbox"> Hide the &ldquo;Say&rdquo; boxes</label>
-			<label class="toggle"><input id="flat" type="checkbox"> Show code without the change highlight</label>
 		</div>
 	</header>
 
@@ -753,7 +733,7 @@ html {{ scroll-behavior: smooth; }}
 		}}
 	}});
 
-	for (const id of ['flat', 'no-say']) {{
+	for (const id of ['no-say']) {{
 		const toggle = document.getElementById(id);
 
 		toggle.checked = store.get(id) === '1';
