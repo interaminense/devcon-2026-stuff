@@ -538,6 +538,9 @@ body.no-say .k-say {{ display: none; }}
 .dg-name {{ fill: var(--fg); font: 700 16px var(--display); }}
 .dg-path {{ fill: var(--muted); font: 12px var(--mono); }}
 .dg-dashed {{ stroke-dasharray: 4 3; }}
+.dg-steps {{ display: grid; gap: 10px; list-style: none; margin: 0; padding: 0; }}
+.dg-steps li {{ align-items: baseline; color: var(--muted); display: grid; font-size: 18px; gap: 12px; grid-template-columns: 30px minmax(0, 1fr); }}
+.dg-step-n {{ align-items: center; background: var(--c); border-radius: 50%; color: var(--bg); display: inline-flex; font: 700 13px/1 var(--mono); height: 26px; justify-content: center; width: 26px; }}
 .dg-card {{ fill: var(--surface); stroke: var(--line); }}
 .dg-card-label {{ fill: var(--muted); font: 600 12px var(--display); }}
 .dg-card-value {{ fill: var(--fg); font: 700 26px var(--display); }}

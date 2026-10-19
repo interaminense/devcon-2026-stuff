@@ -23,6 +23,16 @@ RIGHT = [
 	('AI Hub', 'na1.hub.liferay.com · agent', 440, ' app-hub'),
 ]
 
+FLOW = [
+	('dxp', 'Client Extensions puts <code>&lt;ldp-demo-card&gt;</code> on the page, pointing to the card&rsquo;s JS URL.'),
+	('dxp', 'The browser loads the card code from Documents and Media.'),
+	('ldp', 'The card asks the Analytics proxy for its metric. DXP forwards the GraphQL query to LDP.'),
+	('dxp', 'The card loads and saves its metric in the Objects API, one entry per widget instance.'),
+	('hub', 'The card asks DXP for an AI Hub token. DXP signs in with the Client ID and Secret.'),
+	('hub', 'The card sends its numbers to the AI Hub agent. The LLM writes the insight shown under the chart.'),
+]
+
+
 def box(x, y, w, h, title, sub, cls=''):
 	return (
 		f'<rect class="dg-box{cls}" x="{x}" y="{y}" width="{w}" height="{h}" rx="10"/>'
@@ -156,6 +166,7 @@ def render():
 	<h2 class="agenda-title">Diagram Flow</h2>
 	<div class="diagram-scroll">{svg}</div>
 	<p class="dg-legend"><span class="app-dxp">DXP</span><span class="app-ldp">LDP</span><span class="app-hub">AI Hub</span></p>
+	<ol class="dg-steps">{''.join(f'<li><span class="dg-step-n app-{app}">{n}</span><span>{text}</span></li>' for n, (app, text) in enumerate(FLOW, 1))}</ol>
 </section>'''
 
 

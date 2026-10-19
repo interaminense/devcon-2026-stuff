@@ -186,6 +186,7 @@ def render(diagram):
 		</div>
 	</div>
 	<div class="scroll"><svg role="img" aria-label="{e(diagram['title'])}" viewBox="0 0 {W} {height}" xmlns="http://www.w3.org/2000/svg">{defs}{body}</svg></div>
+	<ol class="steps">{''.join(f'<li data-step="{n}"><span class="step-n">{n}</span><span>{text}</span></li>' for n, text in enumerate(diagram['steps'], 1))}</ol>
 </section>'''
 
 
@@ -195,6 +196,7 @@ HUB = ('AI Hub', 'agent → LLM')
 DIAGRAMS = [
 	{
 		'id': 'live-views',
+		'steps': ['Client Extensions loads the global script on every page, for signed-in users.', 'Every 30 s, the script asks the Analytics proxy for this page&rsquo;s views in the last 24 hours. DXP gets them from LDP.'],
 		'num': '1',
 		'title': 'Page views, last 24 hours',
 		'browser': ('any page · signed in', 'polls every 30 s'),
@@ -211,6 +213,7 @@ DIAGRAMS = [
 	},
 	{
 		'id': 'dashboard',
+		'steps': ['DXP renders the Swell Lab Dashboard page from its template, laid out with fragments.', 'Client Extensions loads the metric card and visitors behavior widgets.', 'Each card lists the LDP channels from the Analytics settings API.', 'Each card asks the Analytics proxy for its metric: site, pages or visit frequency. DXP gets it from LDP.', 'Each card loads and saves its setup in the <code>ldpmetriccards</code> Object.', 'The card asks DXP for a short-lived AI Hub token.', 'The card sends its numbers to the AI Hub agent and shows the insight under the chart.'],
 		'num': '2',
 		'title': 'Custom dashboard page',
 		'browser': ('Swell Lab Dashboard', 'metric cards + behavior'),
@@ -240,6 +243,7 @@ DIAGRAMS = [
 	},
 	{
 		'id': 'blogs',
+		'steps': ['CMS 2.0 blog posts feed the collection display and the post display page.', 'DXP renders <code>/blog</code> with one <code>sl-blog-card</code> per post.', 'The browser sends views, impressions and the <code>surfBlogPostClicked</code> click straight to LDP.'],
 		'num': '3',
 		'title': 'Blogs',
 		'browser': ('/blog · post page', 'sl-blog-card × N'),
@@ -256,6 +260,7 @@ DIAGRAMS = [
 	},
 	{
 		'id': 'blogs-advisor',
+		'steps': ['Client Extensions loads the Content Advisor script on <code>/blog</code>, for editors.', 'It asks the Analytics proxy for clicks per post and marks the most and the least clicked card.', 'It reads the weakest post from the CMS 2.0 API.', 'It asks DXP for a short-lived AI Hub token.', 'It sends the post and its numbers to the POST_ADVISOR agent, which suggests improvements.', 'On Accept, it saves the suggestion as a draft of the same post (PATCH).', 'It opens that draft in the CMS editor.'],
 		'num': '3.1',
 		'title': 'Blogs: most viewed and least viewed',
 		'browser': ('/blog · editor', 'best · weakest card'),
@@ -283,6 +288,7 @@ DIAGRAMS = [
 	},
 	{
 		'id': 'blogs-next-posts',
+		'steps': ['Client Extensions renders the Next posts widget, only for editors.', 'It reads the existing posts from the CMS 2.0 API.', 'It asks the Analytics proxy for clicks per post.', 'It asks the Analytics CMS API how often each post was shown in lists.', 'It asks DXP for a short-lived AI Hub token.', 'It sends the top posts to the NEXT_POSTS agent, which returns three post ideas.', 'It saves the chosen idea as a new draft post (POST).'],
 		'num': '3.2',
 		'title': 'Blogs: suggested next posts',
 		'browser': ('/blog · editor', 'three post ideas'),
@@ -382,6 +388,14 @@ svg {{ display: block; height: auto; min-width: 780px; width: 100%; }}
 .an-g.is-now .line {{ animation: an-flow 0.9s linear infinite; stroke-dasharray: 9 6; stroke-width: 2.6; }}
 .an-g.is-now .box {{ filter: drop-shadow(0 0 8px color-mix(in srgb, var(--c) 70%, transparent)); }}
 @keyframes an-flow {{ to {{ stroke-dashoffset: -30; }} }}
+.steps {{ display: grid; gap: 10px; list-style: none; margin: 0; padding: 0; }}
+.steps li {{ align-items: baseline; color: var(--muted); display: grid; gap: 12px; grid-template-columns: 28px minmax(0, 1fr); transition: color 0.3s ease, opacity 0.3s ease; }}
+.steps li span:last-child {{ min-width: 0; }}
+.step-n {{ align-items: center; border: 1px solid var(--line); border-radius: 50%; color: var(--fg); display: inline-flex; font: 700 12px/1 var(--mono); height: 26px; justify-content: center; width: 26px; }}
+.steps code {{ background: var(--surface-2); border-radius: 4px; color: var(--fg); font: 0.85em var(--mono); padding: 1px 5px; }}
+.steps.is-playing li {{ opacity: 0.45; }}
+.steps li.is-now {{ color: var(--fg); opacity: 1; }}
+.steps li.is-now .step-n {{ background: var(--c-hub); border-color: var(--c-hub); }}
 @media (prefers-reduced-motion: reduce) {{
 	* {{ animation: none !important; transition: none !important; }}
 }}
@@ -389,7 +403,7 @@ svg {{ display: block; height: auto; min-width: 780px; width: 100%; }}
 
 <div class="wrap">
 	<header>
-		<h1>Swell Lab Client Extensions</h1>
+		<h1>Swell Lab Use Cases Explanations</h1>
 		<p class="legend"><span class="dxp">DXP</span><span class="ldp">LDP</span><span class="hub">AI Hub</span></p>
 	</header>
 	{''.join(render(d) for d in DIAGRAMS)}
@@ -403,6 +417,8 @@ svg {{ display: block; height: auto; min-width: 780px; width: 100%; }}
 		const groups = [...card.querySelectorAll('.an-g')];
 		const dots = [...card.querySelectorAll('.walk-dot')];
 		const play = card.querySelector('[data-act="play"]');
+		const list = card.querySelector('.steps');
+		const items = [...list.querySelectorAll('li')];
 		let step = last;
 		let timer = null;
 
@@ -424,6 +440,12 @@ svg {{ display: block; height: auto; min-width: 780px; width: 100%; }}
 
 				dot.classList.toggle('is-now', s === step);
 				dot.classList.toggle('is-done', s < step);
+			}}
+
+			list.classList.toggle('is-playing', !done);
+
+			for (const item of items) {{
+				item.classList.toggle('is-now', !done && Number(item.dataset.step) === step);
 			}}
 		}};
 
