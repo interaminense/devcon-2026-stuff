@@ -474,6 +474,7 @@ code {{ font-family: var(--mono); font-size: 0.88em; background: var(--surface-2
 .hero .show-diagram {{ background: rgba(0, 7, 43, 0.55); border-color: rgba(255, 255, 255, 0.35); }}
 .eyebrow {{ color: #ff7ce6; font: 700 15px/1 var(--body); letter-spacing: 0.16em; text-transform: uppercase; }}
 h1 {{ font: 700 clamp(34px, 6vw, 54px)/1.05 var(--display); letter-spacing: -0.01em; margin: 0; text-wrap: balance; }}
+.lede {{ color: rgba(255, 255, 255, 0.86); font-size: 22px; line-height: 1.5; margin: 0; max-width: 60ch; }}
 
 
 .agenda {{ border-block: 1px solid var(--line-soft); margin-top: 8px; padding-block: 18px; scroll-margin-top: 16px; }}
@@ -619,6 +620,7 @@ html {{ scroll-behavior: smooth; }}
 	<header class="hero">
 		<span class="eyebrow">DEVCON 2026 &middot; Live demo</span>
 		<h1>Live Demo Guide</h1>
+		<p class="lede">Today we build a custom dashboard right inside DXP, using the Liferay tools you already have. We keep the flow simple on purpose: easy to follow, and easy to build yourself.</p>
 		<div class="toggles">
 			<button class="show-diagram" id="open-diagram" type="button">Show how the card works</button>
 			<label class="toggle"><input id="no-say" type="checkbox"> Hide the &ldquo;Say&rdquo; boxes</label>
