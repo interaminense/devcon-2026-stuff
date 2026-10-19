@@ -354,7 +354,9 @@ h1 {{ font-size: clamp(30px, 5vw, 44px); font-weight: 700; margin: 0; text-wrap:
 .legend .dxp {{ --c: var(--c-dxp); }}
 .legend .ldp {{ --c: var(--c-ldp); }}
 .legend .hub {{ --c: var(--c-hub); }}
-.card {{ background: var(--surface); border: 1px solid var(--line); border-radius: 16px; display: grid; gap: 16px; padding: 24px; }}
+.card {{ background: var(--surface); border: 1px solid var(--line); border-radius: 16px; display: grid; gap: 16px; padding: 24px; transition: opacity 0.3s ease, filter 0.3s ease, border-color 0.3s ease; }}
+.wrap:has(.card:hover, .card:focus-within) .card:not(:hover, :focus-within) {{ filter: saturate(0.5); opacity: 0.3; }}
+.card:hover, .card:focus-within {{ border-color: color-mix(in srgb, var(--c-hub) 60%, var(--line)); }}
 h2 {{ align-items: center; display: flex; font-size: 26px; font-weight: 700; gap: 14px; margin: 0; text-wrap: balance; }}
 .num {{ align-items: center; border: 1px solid var(--c-hub); border-radius: 10px; color: var(--c-hub); display: inline-flex; font: 700 18px/1 var(--mono); height: 40px; justify-content: center; min-width: 40px; padding: 0 8px; }}
 .scroll {{ overflow-x: auto; }}
