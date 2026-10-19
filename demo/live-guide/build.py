@@ -7,7 +7,7 @@ import sys
 
 sys.path.insert(0, str(pathlib.Path(__file__).parent))
 
-from diagram import render as render_diagram
+from diagram import render as render_diagram, render_walkthrough
 
 DEMO = pathlib.Path.home() / 'dev/projects/devcon-2026/devcon-2026-stuff/demo'
 OUT = pathlib.Path(__file__).parent / 'devcon-live-guide.html'
@@ -486,7 +486,33 @@ h1 {{ font: 700 clamp(34px, 6vw, 54px)/1.05 var(--display); letter-spacing: -0.0
 .a-topic {{ color: var(--muted); font: 500 15px/1 var(--mono); letter-spacing: 0.08em; text-transform: uppercase; }}
 .to-agenda {{ background: var(--surface-2); border: 1px solid var(--line); border-radius: 999px; bottom: calc(16px + env(safe-area-inset-bottom, 0px)); color: var(--fg); font-size: 17px; padding: 8px 14px; position: fixed; right: 16px; text-decoration: none; z-index: 5; }}
 .to-agenda:hover {{ border-color: var(--accent); }}
-.below-hero {{ display: flex; padding-block: 28px; }}
+.below-hero {{ display: flex; flex-wrap: wrap; gap: 12px; padding-block: 28px; }}
+.dg-card-saved {{ fill: var(--check); font: 600 11px var(--mono); }}
+#walk-modal[open] {{ display: flex; flex-direction: column; overflow: hidden; }}
+.walk {{ flex: 1; grid-template-rows: auto minmax(0, 1fr) auto; min-height: 0; }}
+.walk .diagram-scroll {{ display: flex; justify-content: center; min-height: 0; overflow: hidden; }}
+.walk .diagram-scroll svg {{ height: 100%; max-width: 100%; min-width: 0; width: auto; }}
+.an-g {{ transition: opacity 0.6s ease; }}
+.an-g.is-hidden {{ opacity: 0; }}
+.an-g.is-past {{ opacity: 0.35; }}
+.an-g.is-now .dg-line {{ animation: an-flow 0.9s linear infinite; stroke-dasharray: 9 6; stroke-width: 2.4; }}
+.an-g.is-now .dg-box[class*="app-"], .an-g.is-now .dg-card {{ filter: drop-shadow(0 0 8px color-mix(in srgb, var(--c, var(--accent)) 70%, transparent)); }}
+@keyframes an-flow {{ to {{ stroke-dashoffset: -30; }} }}
+.walk-bar {{ align-items: center; display: flex; flex-wrap: wrap; gap: 16px 24px; justify-content: space-between; }}
+.walk-captions {{ flex: 1 1 420px; min-height: 84px; min-width: 0; }}
+.walk-caption {{ align-items: flex-start; display: flex; gap: 14px; }}
+.walk-caption[hidden] {{ display: none; }}
+.walk-caption h3 {{ font: 700 22px/1.2 var(--display); margin: 0 0 4px; }}
+.walk-caption p {{ color: var(--muted); font-size: 18px; margin: 0; max-width: 70ch; }}
+.walk-n {{ align-items: center; background: var(--accent); border-radius: 10px; color: var(--fg); display: flex; flex: none; font: 700 16px/1 var(--mono); height: 40px; justify-content: center; min-width: 40px; padding: 0 8px; }}
+.walk-controls {{ align-items: center; display: flex; flex-wrap: wrap; gap: 8px; }}
+.walk-btn {{ background: var(--surface-2); border: 1px solid var(--line); border-radius: 8px; color: var(--fg); cursor: pointer; font: 600 16px/1 var(--body); min-width: 40px; padding: 10px 12px; }}
+.walk-btn:hover, .walk-btn:focus-visible {{ border-color: var(--accent); }}
+.walk-play {{ min-width: 80px; }}
+.walk-dots {{ display: flex; gap: 6px; margin-left: 8px; }}
+.walk-dot {{ background: transparent; border: 1px solid var(--line); border-radius: 50%; color: var(--muted); cursor: pointer; font: 600 12px/1 var(--mono); height: 28px; padding: 0; width: 28px; }}
+.walk-dot.is-done {{ border-color: var(--accent); color: var(--fg); }}
+.walk-dot.is-now {{ background: var(--accent); border-color: var(--accent); color: var(--fg); }}
 .options {{ align-items: stretch; display: flex; position: fixed; right: 0; top: 50%; transform: translateY(-50%); z-index: 6; }}
 .options-tab {{ background: var(--surface-2); border: 1px solid var(--line); border-radius: 10px 0 0 10px; border-right: 0; color: var(--fg); cursor: pointer; font: 700 26px/1 var(--body); padding: 14px 10px; }}
 .options-tab:hover, .options-tab:focus-visible {{ border-color: var(--accent); color: var(--accent); }}
@@ -613,7 +639,7 @@ h2 {{ font: 700 33px/1.15 var(--display); margin: 0; text-wrap: balance; }}
 }}
 
 @media (prefers-reduced-motion: reduce) {{
-	* {{ scroll-behavior: auto !important; transition: none !important; }}
+	* {{ animation: none !important; scroll-behavior: auto !important; transition: none !important; }}
 }}
 html {{ scroll-behavior: smooth; }}
 </style>
@@ -627,6 +653,7 @@ html {{ scroll-behavior: smooth; }}
 
 	<div class="below-hero">
 		<button class="show-diagram" id="open-diagram" type="button">Diagram Flow</button>
+		<button class="show-diagram" id="open-walk" type="button">Animated Walkthrough</button>
 	</div>
 
 	<aside class="options" id="options">
@@ -639,6 +666,11 @@ html {{ scroll-behavior: smooth; }}
 	<dialog class="diagram-modal" id="diagram-modal" aria-label="Diagram Flow">
 		<button class="close-diagram" id="close-diagram" type="button" aria-label="Close">&times;</button>
 		{render_diagram()}
+	</dialog>
+
+	<dialog class="diagram-modal" id="walk-modal" aria-label="Animated Walkthrough">
+		<button class="close-diagram" id="close-walk" type="button" aria-label="Close">&times;</button>
+		{render_walkthrough()}
 	</dialog>
 
 	<nav class="agenda" id="agenda" aria-label="Agenda">
@@ -735,6 +767,94 @@ html {{ scroll-behavior: smooth; }}
 			modal.close();
 		}}
 	}});
+
+	const walkModal = document.getElementById('walk-modal');
+	const walk = document.getElementById('walk');
+	const walkSteps = Number(walk.dataset.steps);
+	const walkGroups = [...walk.querySelectorAll('.an-g')];
+	const walkCaptions = [...walk.querySelectorAll('.walk-caption')];
+	const walkDots = [...walk.querySelectorAll('.walk-dot')];
+	const walkPlay = document.getElementById('walk-play');
+	const WALK_DELAY = 5000;
+	let walkStep = 1;
+	let walkTimer = null;
+
+	const showWalkStep = (step) => {{
+		walkStep = Math.min(Math.max(step, 1), walkSteps);
+		const last = walkStep === walkSteps;
+
+		for (const group of walkGroups) {{
+			const s = Number(group.dataset.s);
+
+			group.classList.toggle('is-hidden', s > walkStep);
+			group.classList.toggle('is-now', !last && s === walkStep);
+			group.classList.toggle('is-past', !last && s < walkStep);
+		}}
+
+		for (const caption of walkCaptions) {{
+			caption.hidden = Number(caption.dataset.step) !== walkStep;
+		}}
+
+		for (const dot of walkDots) {{
+			const s = Number(dot.dataset.step);
+
+			dot.classList.toggle('is-now', s === walkStep);
+			dot.classList.toggle('is-done', s < walkStep);
+		}}
+	}};
+
+	const stopWalk = () => {{
+		clearInterval(walkTimer);
+		walkTimer = null;
+		walkPlay.textContent = 'Play';
+	}};
+
+	const playWalk = () => {{
+		if (walkStep === walkSteps) {{
+			showWalkStep(1);
+		}}
+
+		clearInterval(walkTimer);
+		walkPlay.textContent = 'Pause';
+		walkTimer = setInterval(() => {{
+			showWalkStep(walkStep + 1);
+
+			if (walkStep === walkSteps) {{
+				stopWalk();
+			}}
+		}}, WALK_DELAY);
+	}};
+
+	document.getElementById('open-walk').addEventListener('click', () => {{
+		walkModal.showModal();
+		showWalkStep(1);
+		playWalk();
+	}});
+	document.getElementById('close-walk').addEventListener('click', () => walkModal.close());
+	walkModal.addEventListener('click', (event) => {{
+		if (event.target === walkModal) {{
+			walkModal.close();
+		}}
+	}});
+	walkModal.addEventListener('close', stopWalk);
+	walkPlay.addEventListener('click', () => (walkTimer ? stopWalk() : playWalk()));
+	document.getElementById('walk-prev').addEventListener('click', () => {{
+		stopWalk();
+		showWalkStep(walkStep - 1);
+	}});
+	document.getElementById('walk-next').addEventListener('click', () => {{
+		stopWalk();
+		showWalkStep(walkStep + 1);
+	}});
+
+	for (const dot of walkDots) {{
+		dot.addEventListener('click', () => {{
+			stopWalk();
+			showWalkStep(Number(dot.dataset.step));
+		}});
+	}}
+
+	showWalkStep(1);
 
 	document.getElementById('reset').addEventListener('click', () => {{
 		for (const box of boxes) {{
