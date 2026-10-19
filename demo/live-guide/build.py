@@ -496,7 +496,7 @@ h1 {{ font: 700 clamp(34px, 6vw, 54px)/1.05 var(--display); letter-spacing: -0.0
 body.no-say .k-say {{ display: none; }}
 .show-diagram {{ background: var(--surface-2); border: 1px solid var(--c-dxp); border-radius: 8px; color: var(--fg); cursor: pointer; font: 500 18px/1 var(--body); padding: 9px 14px; }}
 .show-diagram:hover, .show-diagram:focus-visible {{ background: color-mix(in srgb, var(--c-dxp) 18%, var(--surface-2)); }}
-.diagram-modal {{ background: var(--bg); border: 1px solid var(--line); border-radius: 16px; color: var(--fg); height: 94vh; max-height: none; max-width: none; overflow: auto; padding: 20px 24px 28px; width: 96vw; }}
+.diagram-modal {{ background: var(--bg); border: 1px solid var(--line); border-radius: 16px; color: var(--fg); height: 94vh; max-height: none; max-width: none; overflow: auto; padding: 24px 24px 8px; width: 96vw; }}
 .diagram-modal::backdrop {{ background: rgba(3, 6, 14, 0.75); backdrop-filter: blur(3px); }}
 .close-diagram {{ align-items: center; background: var(--surface-2); border: 1px solid var(--line); border-radius: 50%; box-shadow: 0 6px 20px rgba(0, 0, 0, 0.45); color: var(--fg); cursor: pointer; display: flex; font: 400 28px/1 var(--body); height: 44px; justify-content: center; padding: 0 0 3px; position: fixed; right: calc(2vw + 14px); top: calc(3vh + 12px); width: 44px; z-index: 2; }}
 .close-diagram:hover, .close-diagram:focus-visible {{ background: var(--accent); border-color: var(--accent); }}
@@ -537,18 +537,6 @@ body.no-say .k-say {{ display: none; }}
 .dg-legend {{ align-items: center; color: var(--muted); display: flex; flex-wrap: wrap; font-size: 14px; gap: 8px 18px; margin: 0; }}
 .dg-legend span[class*="app-"] {{ align-items: center; color: var(--fg); display: inline-flex; gap: 8px; }}
 .dg-legend span[class*="app-"]::before {{ background: var(--c); border-radius: 3px; content: ""; height: 12px; width: 12px; }}
-.flow {{ display: grid; gap: 10px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr)); list-style: none; margin: 0; padding: 0; }}
-.flow-step {{ background: var(--surface); border: 1px solid var(--line); border-radius: 12px; display: grid; gap: 12px; grid-template-columns: auto minmax(0, 1fr); padding: 14px 16px; }}
-.flow-step {{ border-color: color-mix(in srgb, var(--c) 45%, transparent); }}
-.flow-wide {{ grid-column: 1 / -1; }}
-.flow-n {{ align-items: center; background: var(--c); border-radius: 50%; color: var(--bg); display: flex; font: 700 17px var(--mono); height: 28px; justify-content: center; width: 28px; }}
-.flow-body {{ display: grid; gap: 6px; min-width: 0; }}
-.flow-body p {{ margin: 0; }}
-.flow-title b {{ font: 700 20px var(--display); }}
-.flow-title span {{ color: var(--muted); font: 500 14px var(--mono); letter-spacing: 0.08em; margin-left: 6px; text-transform: uppercase; }}
-.flow-calls {{ display: flex; flex-wrap: wrap; gap: 6px; }}
-.flow-calls code {{ font-size: 15px; }}
-.flow-text {{ color: var(--muted); font-size: 18px; line-height: 1.5; }}
 
 .part {{ padding-top: 72px; scroll-margin-top: 16px; }}
 .part-head {{ align-items: center; display: flex; gap: 14px; margin-bottom: 28px; }}

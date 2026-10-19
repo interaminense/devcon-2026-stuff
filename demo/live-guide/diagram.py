@@ -23,19 +23,6 @@ RIGHT = [
 	('AI Hub', 'na1.hub.liferay.com · agent', 440, ' app-hub'),
 ]
 
-APP = {'0': 'dxp', '1': 'dxp', '2': 'dxp', '3': 'ldp', '4': 'dxp', '5': 'hub', '6': 'hub'}
-
-STEPS = [
-	('0', 'Setup', 'part 2', ['Documents and Media → File Upload', 'Client Extensions → Custom Element'], 'You upload ldp-demo-card.js and register it with its URL, ?v=N and Instanceable. Each upload needs a new ?v=N.'),
-	('1', 'Page', 'part 2', ['GET /web/devcon-demo/demo'], 'DXP renders the page with <ldp-demo-card> and a <script> pointing at the registered JavaScript URL.'),
-	('2', 'Script', 'part 2', ['GET /documents/d/devcon-demo/ldp-demo-card-js?v=N'], 'Documents and Media serves the file as JavaScript; customElements.define starts every instance.'),
-	('3', 'Metric', 'parts 3–4', ['POST /o/analytics-rest/v1.0/graphql'], 'Same origin: the session and x-csrf-token are the auth. DXP forwards site(channelId, rangeKey: 7) to LDP with the workspace token and returns value, previousValue and trend.'),
-	('4', 'Config', 'part 5', ['GET …/democardconfigs/by-external-reference-code/{id}', 'PUT same URL { metric }'], 'One entry per widget instance, keyed by its portlet id. 404 means never configured; PUT creates, then replaces.'),
-	('5', 'Token', 'part 6', ['POST /o/ai-hub-cell/v1.0/authorization-tokens'], 'DXP uses the Client ID and Secret on the server and hands the card accessToken, userToken and serviceURL.'),
-	('6', 'Insight', 'part 6', ['GET {serviceURL}/o/ai-hub/v1.0/agent-instances/subscribe', 'POST {serviceURL}/o/ai-hub/v1.0/agent-instances'], 'The card talks to AI Hub directly (cross-origin, allowed by the Environment URL): it opens an event stream, starts the agent with { metrics }, and the insight comes back as the event DEVCON_2026_DEMO_LDP_METRIC_INSIGHT.'),
-]
-
-
 def box(x, y, w, h, title, sub, cls=''):
 	return (
 		f'<rect class="dg-box{cls}" x="{x}" y="{y}" width="{w}" height="{h}" rx="10"/>'
@@ -89,7 +76,6 @@ def render():
 
 	parts.append(f'<rect class="dg-group app-dxp" x="{dx}" y="{dy}" width="{dw}" height="{dh}" rx="14"/>')
 	parts.append(f'<text class="dg-group-name app-dxp" x="{dx + 25}" y="{dy + 30}">DXP</text>')
-	parts.append(f'<text class="dg-path" x="{dx + 72}" y="{dy + 30}">same origin as the page</text>')
 
 	parts.append(f'<rect class="dg-box dg-browser" x="{bx}" y="{by}" width="{bw}" height="{bh}" rx="12"/>')
 	parts.append(f'<text class="dg-name" x="{bx + 18}" y="{by + 30}">Browser</text>')
@@ -165,22 +151,9 @@ def render():
 		f'viewBox="0 0 {W} {H}" xmlns="http://www.w3.org/2000/svg">{defs}{"".join(parts)}</svg>'
 	)
 
-	steps = ''.join(
-		f'''<li class="flow-step app-{APP[n]}{" flow-wide" if n == "6" else ""}">
-	<span class="flow-n">{n}</span>
-	<div class="flow-body">
-		<p class="flow-title"><b>{e(title)}</b> <span>{e(part)}</span></p>
-		<p class="flow-calls">{"".join(f"<code>{e(call)}</code>" for call in calls)}</p>
-		<p class="flow-text">{e(text)}</p>
-	</div>
-</li>'''
-		for n, title, part, calls, text in STEPS
-	)
-
 	return f'''
 <section class="diagram" id="diagram">
 	<h2 class="agenda-title">Diagram Flow</h2>
 	<div class="diagram-scroll">{svg}</div>
-	<p class="dg-legend"><span class="app-dxp">DXP</span><span class="app-ldp">LDP</span><span class="app-hub">AI Hub</span><span class="dg-legend-note">Each call takes the color of the application that answers it.</span></p>
-	<ol class="flow">{steps}</ol>
+	<p class="dg-legend"><span class="app-dxp">DXP</span><span class="app-ldp">LDP</span><span class="app-hub">AI Hub</span></p>
 </section>'''
