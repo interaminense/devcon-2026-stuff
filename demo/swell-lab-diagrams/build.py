@@ -64,29 +64,66 @@ def render(diagram):
 	height = (route_y + 50) if has_route else (bottom + 36)
 	parts = []
 
-	parts.append(f'<rect class="group dxp" x="{GROUP_X}" y="16" width="{GROUP_W}" height="{bottom + 20 - 16}" rx="14"/>')
-	parts.append(f'<text class="group-name dxp" x="{GROUP_X + 25}" y="44">DXP</text>')
+	def add(steps, markup):
+		parts.append((tuple(steps), markup))
+
+	sub_steps = {i: [] for i in range(rows)}
+	right_steps = {key: [] for key in rights}
+
+	for arrow in arrows:
+		kind = arrow[0]
+
+		if kind in ('browser', 'right'):
+			sub_steps[arrow[1]] += arrow[2]
+
+		if kind == 'right':
+			for key, (_, _, first, last, _) in rights.items():
+				if first <= arrow[1] <= last:
+					right_steps[key] += arrow[2]
+		elif kind == 'down':
+			sub_steps[arrow[1]] += arrow[3]
+			sub_steps[arrow[2]] += arrow[3]
+		elif kind == 'route':
+			right_steps[arrow[1]] += arrow[2]
+
+	add([0], f'<rect class="group dxp" x="{GROUP_X}" y="16" width="{GROUP_W}" height="{bottom + 20 - 16}" rx="14"/>'
+		f'<text class="group-name dxp" x="{GROUP_X + 25}" y="44">DXP</text>')
 
 	b_top, b_bottom = row_y(0) - 10, bottom
 	title, sub = diagram['browser']
-	parts.append(f'<rect class="box browser" x="{BROWSER_X}" y="{b_top}" width="{BROWSER_W}" height="{b_bottom - b_top}" rx="12"/>')
-	parts.append(f'<text class="name" x="{BROWSER_X + 18}" y="{b_top + 30}">Browser</text>')
-	parts.append(f'<text class="path" x="{BROWSER_X + 18}" y="{b_top + 52}">{e(title)}</text>')
+	browser = (
+		f'<rect class="box browser" x="{BROWSER_X}" y="{b_top}" width="{BROWSER_W}" height="{b_bottom - b_top}" rx="12"/>'
+		f'<text class="name" x="{BROWSER_X + 18}" y="{b_top + 30}">Browser</text>'
+		f'<text class="path" x="{BROWSER_X + 18}" y="{b_top + 52}">{e(title)}</text>'
+	)
 
 	if sub:
-		parts.append(f'<text class="path" x="{BROWSER_X + 18}" y="{b_top + 72}">{e(sub)}</text>')
+		browser += f'<text class="path" x="{BROWSER_X + 18}" y="{b_top + 72}">{e(sub)}</text>'
+
+	add([0], browser)
 
 	for i, (title, sub) in enumerate(subs):
-		parts.append(box(SUB_X, row_y(i), SUB_W, SUB_H, title, sub, 'dxp'))
+		add(sorted(sub_steps[i]), box(SUB_X, row_y(i), SUB_W, SUB_H, title, sub, 'dxp'))
 
 	right_boxes = {}
 
 	for key, (title, sub, first, last, app) in rights.items():
 		y, h = row_y(first), row_y(last) + SUB_H - row_y(first)
 		right_boxes[key] = (y, h)
-		parts.append(box(RIGHT_X, y, RIGHT_W, h, title, sub, app))
+		add(sorted(right_steps[key]), box(RIGHT_X, y, RIGHT_W, h, title, sub, app))
 
 	left, sub_end = BROWSER_X + BROWSER_W, SUB_X + SUB_W
+
+	def add_badges(x1, x2, y, numbers, app):
+		if len(numbers) == 1:
+			add(numbers, badge((x1 + x2) / 2, y, numbers[0], app))
+
+			return
+
+		gap = (x2 - x1) / (len(numbers) + 1)
+
+		for i, n in enumerate(numbers):
+			add([n], badge(x1 + gap * (i + 1), y, n, app))
 
 	for arrow in arrows:
 		kind = arrow[0]
@@ -96,42 +133,59 @@ def render(diagram):
 			y = row_mid(i)
 
 			if direction == 'in':
-				parts.append(line(SUB_X - 4, y, left + 4, y, 'dxp'))
+				add(numbers, line(SUB_X - 4, y, left + 4, y, 'dxp'))
 			else:
-				parts.append(line(left + 4, y, SUB_X - 4, y, 'dxp', start=direction == 'both'))
+				add(numbers, line(left + 4, y, SUB_X - 4, y, 'dxp', start=direction == 'both'))
 
-			parts.append(badges(left, SUB_X, y, numbers, app))
+			add_badges(left, SUB_X, y, numbers, app)
 		elif kind == 'right':
 			_, i, numbers, app = arrow
 			y = row_mid(i)
-			parts.append(line(sub_end + 4, y, RIGHT_X - 4, y, app, start=True))
-			parts.append(badges(sub_end, RIGHT_X, y, numbers, app))
+			add(numbers, line(sub_end + 4, y, RIGHT_X - 4, y, app, start=True))
+			add_badges(sub_end, RIGHT_X, y, numbers, app)
 		elif kind == 'down':
 			_, i, j, numbers, app = arrow
 			x = SUB_X + SUB_W - 40
-			parts.append(line(x, row_y(i) + SUB_H + 3, x, row_y(j) - 3, app))
-			parts.append(badge(x - 26, (row_y(i) + SUB_H + row_y(j)) / 2, numbers[0], app))
+			add(numbers, line(x, row_y(i) + SUB_H + 3, x, row_y(j) - 3, app)
+				+ badge(x - 26, (row_y(i) + SUB_H + row_y(j)) / 2, numbers[0], app))
 		elif kind == 'route':
 			_, key, numbers, app, label = arrow
 			y, h = right_boxes[key]
 			bx = BROWSER_X + BROWSER_W / 2
 			rx = RIGHT_X + RIGHT_W / 2
-			parts.append(
+			add(numbers,
 				f'<path class="line {app}" d="M{bx} {b_bottom + 4} V{route_y} H{rx} V{y + h + 4}" '
 				f'marker-start="url(#a-{app})" marker-end="url(#a-{app})"/>'
-			)
-			parts.append(badges(bx, rx, route_y, numbers, app))
-			parts.append(f'<text class="route {app}" x="{(bx + rx) / 2}" y="{route_y + 32}" text-anchor="middle">{e(label)}</text>')
+				f'<text class="route {app}" x="{(bx + rx) / 2}" y="{route_y + 32}" text-anchor="middle">{e(label)}</text>')
+			add_badges(bx, rx, route_y, numbers, app)
 
 	defs = '<defs>' + ''.join(
 		f'<marker id="a-{app}" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="head {app}" d="M0 0 L10 5 L0 10 z"/></marker>'
 		for app in ('dxp', 'ldp', 'hub')
 	) + '</defs>'
 
+	last = max(n for arrow in arrows for n in (arrow[3] if arrow[0] == 'down' else arrow[2]))
+	body = ''.join(
+		f'<g class="an-g" data-s="{min(steps)}" data-now="{" ".join(map(str, steps))}">{markup}</g>'
+		for steps, markup in parts
+	)
+	dots = ''.join(
+		f'<button class="walk-dot" type="button" data-step="{n}" aria-label="Step {n}">{n}</button>'
+		for n in range(1, last + 1)
+	) + f'<button class="walk-dot" type="button" data-step="{last + 1}" aria-label="Full diagram">✓</button>'
+
 	return f'''
-<section class="card" id="{diagram['id']}">
-	<h2><span class="num">{e(diagram['num'])}</span>{e(diagram['title'])}</h2>
-	<div class="scroll"><svg role="img" aria-label="{e(diagram['title'])}" viewBox="0 0 {W} {height}" xmlns="http://www.w3.org/2000/svg">{defs}{''.join(parts)}</svg></div>
+<section class="card walk" id="{diagram['id']}" data-last="{last + 1}">
+	<div class="card-head">
+		<h2><span class="num">{e(diagram['num'])}</span>{e(diagram['title'])}</h2>
+		<div class="walk-controls">
+			<button class="walk-btn" type="button" data-act="prev" aria-label="Previous step">&lsaquo;</button>
+			<button class="walk-btn walk-play" type="button" data-act="play">Play</button>
+			<button class="walk-btn" type="button" data-act="next" aria-label="Next step">&rsaquo;</button>
+			<div class="walk-dots">{dots}</div>
+		</div>
+	</div>
+	<div class="scroll"><svg role="img" aria-label="{e(diagram['title'])}" viewBox="0 0 {W} {height}" xmlns="http://www.w3.org/2000/svg">{defs}{body}</svg></div>
 </section>'''
 
 
@@ -313,6 +367,24 @@ svg {{ display: block; height: auto; min-width: 780px; width: 100%; }}
 .badge {{ fill: var(--c); }}
 .badge-n {{ fill: var(--bg); font: 700 13px var(--mono); }}
 .route {{ fill: var(--c); font: 13px var(--mono); }}
+.card-head {{ align-items: center; display: flex; flex-wrap: wrap; gap: 12px 24px; justify-content: space-between; }}
+.walk-controls {{ align-items: center; display: flex; flex-wrap: wrap; gap: 8px; }}
+.walk-btn {{ background: var(--surface-2); border: 1px solid var(--line); border-radius: 8px; color: var(--fg); cursor: pointer; font: 600 16px/1 var(--display); min-width: 40px; padding: 10px 12px; }}
+.walk-btn:hover, .walk-btn:focus-visible {{ border-color: var(--c-hub); }}
+.walk-play {{ min-width: 76px; }}
+.walk-dots {{ display: flex; flex-wrap: wrap; gap: 6px; margin-left: 6px; }}
+.walk-dot {{ background: transparent; border: 1px solid var(--line); border-radius: 50%; color: var(--muted); cursor: pointer; font: 600 12px/1 var(--mono); height: 28px; padding: 0; width: 28px; }}
+.walk-dot.is-done {{ border-color: var(--c-hub); color: var(--fg); }}
+.walk-dot.is-now {{ background: var(--c-hub); border-color: var(--c-hub); color: var(--fg); }}
+.an-g {{ transition: opacity 0.5s ease; }}
+.an-g.is-hidden {{ opacity: 0; }}
+.an-g.is-past {{ opacity: 0.3; }}
+.an-g.is-now .line {{ animation: an-flow 0.9s linear infinite; stroke-dasharray: 9 6; stroke-width: 2.6; }}
+.an-g.is-now .box {{ filter: drop-shadow(0 0 8px color-mix(in srgb, var(--c) 70%, transparent)); }}
+@keyframes an-flow {{ to {{ stroke-dashoffset: -30; }} }}
+@media (prefers-reduced-motion: reduce) {{
+	* {{ animation: none !important; transition: none !important; }}
+}}
 </style>
 
 <div class="wrap">
@@ -322,6 +394,79 @@ svg {{ display: block; height: auto; min-width: 780px; width: 100%; }}
 	</header>
 	{''.join(render(d) for d in DIAGRAMS)}
 </div>
+<script>
+(() => {{
+	const DELAY = 2600;
+
+	for (const card of document.querySelectorAll('.walk')) {{
+		const last = Number(card.dataset.last);
+		const groups = [...card.querySelectorAll('.an-g')];
+		const dots = [...card.querySelectorAll('.walk-dot')];
+		const play = card.querySelector('[data-act="play"]');
+		let step = last;
+		let timer = null;
+
+		const show = (next) => {{
+			step = Math.min(Math.max(next, 1), last);
+			const done = step === last;
+
+			for (const group of groups) {{
+				const first = Number(group.dataset.s);
+				const now = group.dataset.now.split(' ').map(Number);
+
+				group.classList.toggle('is-hidden', first > step);
+				group.classList.toggle('is-now', !done && now.includes(step));
+				group.classList.toggle('is-past', !done && first > 0 && first <= step && !now.includes(step));
+			}}
+
+			for (const dot of dots) {{
+				const s = Number(dot.dataset.step);
+
+				dot.classList.toggle('is-now', s === step);
+				dot.classList.toggle('is-done', s < step);
+			}}
+		}};
+
+		const stop = () => {{
+			clearInterval(timer);
+			timer = null;
+			play.textContent = 'Play';
+		}};
+
+		const start = () => {{
+			show(step === last ? 1 : step);
+			clearInterval(timer);
+			play.textContent = 'Pause';
+			timer = setInterval(() => {{
+				show(step + 1);
+
+				if (step === last) {{
+					stop();
+				}}
+			}}, DELAY);
+		}};
+
+		play.addEventListener('click', () => (timer ? stop() : start()));
+		card.querySelector('[data-act="prev"]').addEventListener('click', () => {{
+			stop();
+			show(step - 1);
+		}});
+		card.querySelector('[data-act="next"]').addEventListener('click', () => {{
+			stop();
+			show(step + 1);
+		}});
+
+		for (const dot of dots) {{
+			dot.addEventListener('click', () => {{
+				stop();
+				show(Number(dot.dataset.step));
+			}});
+		}}
+
+		show(last);
+	}}
+}})();
+</script>
 '''
 
 OUT.write_text(page)
