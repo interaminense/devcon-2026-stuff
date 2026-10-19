@@ -498,7 +498,7 @@ body.no-say .k-say {{ display: none; }}
 .show-diagram:hover, .show-diagram:focus-visible {{ background: color-mix(in srgb, var(--c-dxp) 18%, var(--surface-2)); }}
 .diagram-modal {{ background: var(--bg); border: 1px solid var(--line); border-radius: 16px; color: var(--fg); height: 94vh; max-height: none; max-width: none; overflow: auto; padding: 20px 24px 28px; width: 96vw; }}
 .diagram-modal::backdrop {{ background: rgba(3, 6, 14, 0.75); backdrop-filter: blur(3px); }}
-.close-diagram {{ align-items: center; background: var(--surface-2); border: 1px solid var(--line); border-radius: 50%; box-shadow: 0 6px 20px rgba(0, 0, 0, 0.45); color: var(--fg); cursor: pointer; display: flex; float: right; font: 400 28px/1 var(--body); height: 44px; justify-content: center; padding: 0 0 3px; position: sticky; top: 0; width: 44px; z-index: 2; }}
+.close-diagram {{ align-items: center; background: var(--surface-2); border: 1px solid var(--line); border-radius: 50%; box-shadow: 0 6px 20px rgba(0, 0, 0, 0.45); color: var(--fg); cursor: pointer; display: flex; font: 400 28px/1 var(--body); height: 44px; justify-content: center; padding: 0 0 3px; position: fixed; right: calc(2vw + 14px); top: calc(3vh + 12px); width: 44px; z-index: 2; }}
 .close-diagram:hover, .close-diagram:focus-visible {{ background: var(--accent); border-color: var(--accent); }}
 .diagram-modal .diagram {{ margin-top: 0; }}
 .diagram {{ display: grid; gap: 16px; margin-top: 8px; }}
