@@ -4,23 +4,23 @@ import html
 
 e = html.escape
 
-W, H = 1100, 620
+W, H = 1150, 620
 
 BROWSER = (30, 40, 220, 462)
-DXP = (350, 16, 370, 506)
+DXP = (350, 16, 440, 506)
 SUB_X, SUB_W, SUB_H = 375, 320, 62
 SUBS = [
 	('Client Extensions', 'Custom Element · points to the JS URL', 60),
 	('Documents and Media', 'hosts ldp-demo-card.js, the card code', 142),
 	('Analytics proxy', '/o/analytics-rest/v1.0/graphql', 224),
 	('Objects API', '/o/c/democardconfigs', 306),
-	('AI Hub connection', '/o/ai-hub-cell/v1.0/…tokens', 400),
+	('AI Hub connection', '/o/ai-hub-cell/v1.0/…tokens', 440),
 ]
-RIGHT_X, RIGHT_W = 840, 230
+RIGHT_X, RIGHT_W = 890, 230
 RIGHT = [
 	('LDP', 'GraphQL · property channel', 224, ' app-ldp'),
 	('LLM', 'runs the prompt', 300, ' app-hub dg-soft'),
-	('AI Hub', 'na1.hub.liferay.com · agent', 400, ' app-hub'),
+	('AI Hub', 'na1.hub.liferay.com · agent', 440, ' app-hub'),
 ]
 
 APP = {'0': 'dxp', '1': 'dxp', '2': 'dxp', '3': 'ldp', '4': 'dxp', '5': 'hub', '6': 'hub'}
@@ -101,13 +101,13 @@ def render():
 		parts.append(box(SUB_X, y, SUB_W, SUB_H, title, sub, ' app-dxp'))
 
 	link_edge = SUB_X + SUB_W
-	link_x = link_edge + 12
+	link_x = link_edge + 24
 	cx_mid, dm_mid = 60 + SUB_H / 2, 142 + SUB_H / 2
 	parts.append(
 		f'<path class="dg-line app-dxp dg-dashed" d="M{link_edge + 2} {cx_mid} H{link_x} V{dm_mid} H{link_edge + 4}" '
 		f'marker-end="url(#dg-a-dxp)"/>'
 	)
-	parts.append(f'<text class="dg-path" x="{link_x + 22}" y="{(cx_mid + dm_mid) / 2 + 4}">JavaScript URL</text>')
+	parts.append(f'<text class="dg-path" x="{link_x + 10}" y="{(cx_mid + dm_mid) / 2 + 4}">JS URL</text>')
 
 	for title, sub, y, cls in RIGHT:
 		parts.append(box(RIGHT_X, y, RIGHT_W, SUB_H, title, sub, cls))
@@ -116,7 +116,7 @@ def render():
 	left, right_edge = bx + bw, SUB_X
 	sub_end = SUB_X + SUB_W
 	a_mid = (left + right_edge) / 2
-	r_mid = (sub_end + RIGHT_X) / 2
+	r_mid = (dx + dw + RIGHT_X) / 2
 
 	parts.append(arrow(right_edge - 4, mid['Client Extensions'], left + 4, mid['Client Extensions'], cls=' app-dxp'))
 	parts.append(badge(a_mid, mid['Client Extensions'], 1, ' app-dxp'))
@@ -140,7 +140,7 @@ def render():
 	parts.append(badge(r_mid, y5, 5, ' app-hub'))
 
 	hub_x = RIGHT_X + RIGHT_W / 2
-	hub_bottom = 400 + SUB_H
+	hub_bottom = 440 + SUB_H
 	route_y = 568
 	browser_x = bx + bw / 2
 	parts.append(
@@ -150,8 +150,8 @@ def render():
 	parts.append(badge((browser_x + hub_x) / 2, route_y, 6, ' app-hub'))
 	parts.append(f'<text class="dg-route app-hub" x="{(browser_x + hub_x) / 2}" y="{route_y + 32}" text-anchor="middle">browser ⇄ AI Hub, cross-origin</text>')
 
-	parts.append(arrow(hub_x, 400 - 4, hub_x, 300 + SUB_H + 4, both=True, cls=' app-hub'))
-	parts.append(badge(hub_x + 28, (400 + 300 + SUB_H) / 2, 6, ' app-hub'))
+	parts.append(arrow(hub_x, 440 - 4, hub_x, 300 + SUB_H + 4, both=True, cls=' app-hub'))
+	parts.append(badge(hub_x + 28, (440 + 300 + SUB_H) / 2, 6, ' app-hub'))
 
 	defs = '''<defs>
 	<marker id="dg-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="dg-head" d="M0 0 L10 5 L0 10 z"/></marker>
