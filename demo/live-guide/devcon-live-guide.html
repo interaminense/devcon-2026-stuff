@@ -61,8 +61,6 @@ code { font-family: var(--mono); font-size: 0.88em; background: var(--surface-2)
 	margin-bottom: 8px;
 	padding: 36px 36px 30px;
 }
-.hero .toggle { color: rgba(255, 255, 255, 0.85); }
-.hero .show-diagram { background: rgba(0, 7, 43, 0.55); border-color: rgba(255, 255, 255, 0.35); }
 .eyebrow { color: #ff7ce6; font: 700 15px/1 var(--body); letter-spacing: 0.16em; text-transform: uppercase; }
 h1 { font: 700 clamp(34px, 6vw, 54px)/1.05 var(--display); letter-spacing: -0.01em; margin: 0; text-wrap: balance; }
 .lede { color: rgba(255, 255, 255, 0.86); font-size: 22px; line-height: 1.5; margin: 0; max-width: 60ch; }
@@ -79,8 +77,13 @@ h1 { font: 700 clamp(34px, 6vw, 54px)/1.05 var(--display); letter-spacing: -0.01
 .a-topic { color: var(--muted); font: 500 15px/1 var(--mono); letter-spacing: 0.08em; text-transform: uppercase; }
 .to-agenda { background: var(--surface-2); border: 1px solid var(--line); border-radius: 999px; bottom: calc(16px + env(safe-area-inset-bottom, 0px)); color: var(--fg); font-size: 17px; padding: 8px 14px; position: fixed; right: 16px; text-decoration: none; z-index: 5; }
 .to-agenda:hover { border-color: var(--accent); }
-.toggles { display: flex; flex-wrap: wrap; gap: 8px 20px; }
-.toggle { align-items: center; color: var(--muted); cursor: pointer; display: flex; flex: none; font-size: 18px; gap: 6px; margin-left: auto; }
+.below-hero { display: flex; margin-top: 16px; }
+.options { align-items: stretch; display: flex; position: fixed; right: 0; top: 50%; transform: translateY(-50%); z-index: 6; }
+.options-tab { background: var(--surface-2); border: 1px solid var(--line); border-radius: 10px 0 0 10px; border-right: 0; color: var(--fg); cursor: pointer; font: 700 26px/1 var(--body); padding: 14px 10px; }
+.options-tab:hover, .options-tab:focus-visible { border-color: var(--accent); color: var(--accent); }
+.options-panel { align-items: center; background: var(--surface-2); border: 1px solid var(--line); border-right: 0; display: flex; padding: 14px 18px calc(14px) 14px; padding-right: max(18px, env(safe-area-inset-right, 0px)); }
+.options-panel[hidden] { display: none; }
+.toggle { align-items: center; color: var(--fg); cursor: pointer; display: flex; font-size: 18px; gap: 8px; white-space: nowrap; }
 body.no-say .k-say { display: none; }
 .show-diagram { background: var(--surface-2); border: 1px solid var(--c-dxp); border-radius: 8px; color: var(--fg); cursor: pointer; font: 500 18px/1 var(--body); padding: 9px 14px; }
 .show-diagram:hover, .show-diagram:focus-visible { background: color-mix(in srgb, var(--c-dxp) 18%, var(--surface-2)); }
@@ -212,11 +215,18 @@ html { scroll-behavior: smooth; }
 		<span class="eyebrow">DEVCON 2026 &middot; Live demo</span>
 		<h1>Live Demo Guide</h1>
 		<p class="lede">Today we're going to build a custom dashboard right inside DXP, using the Liferay tools you already have. We keep the flow simple on purpose: easy to follow, and easy to build yourself.</p>
-		<div class="toggles">
-			<button class="show-diagram" id="open-diagram" type="button">Show how the card works</button>
+	</header>
+
+	<div class="below-hero">
+		<button class="show-diagram" id="open-diagram" type="button">Show how the card works</button>
+	</div>
+
+	<aside class="options" id="options">
+		<button class="options-tab" id="options-tab" type="button" aria-controls="options-panel" aria-expanded="false" aria-label="Show options">&lsaquo;</button>
+		<div class="options-panel" id="options-panel" hidden>
 			<label class="toggle"><input id="no-say" type="checkbox"> Hide the &ldquo;Say&rdquo; boxes</label>
 		</div>
-	</header>
+	</aside>
 
 	<dialog class="diagram-modal" id="diagram-modal" aria-label="How the card works">
 		<button class="close-diagram" id="close-diagram" type="button">Close</button>
@@ -747,6 +757,18 @@ Write at most three short sentences for a marketing manager: what the number say
 			store.set('done-' + box.dataset.key, null);
 			paint(box);
 		}
+	});
+
+	const optionsTab = document.getElementById('options-tab');
+	const optionsPanel = document.getElementById('options-panel');
+
+	optionsTab.addEventListener('click', () => {
+		const open = optionsPanel.hidden;
+
+		optionsPanel.hidden = !open;
+		optionsTab.setAttribute('aria-expanded', String(open));
+		optionsTab.setAttribute('aria-label', open ? 'Hide options' : 'Show options');
+		optionsTab.innerHTML = open ? '&rsaquo;' : '&lsaquo;';
 	});
 
 	for (const id of ['no-say']) {
