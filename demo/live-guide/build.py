@@ -486,7 +486,7 @@ h1 {{ font: 700 clamp(34px, 6vw, 54px)/1.05 var(--display); letter-spacing: -0.0
 .a-topic {{ color: var(--muted); font: 500 15px/1 var(--mono); letter-spacing: 0.08em; text-transform: uppercase; }}
 .to-agenda {{ background: var(--surface-2); border: 1px solid var(--line); border-radius: 999px; bottom: calc(16px + env(safe-area-inset-bottom, 0px)); color: var(--fg); font-size: 17px; padding: 8px 14px; position: fixed; right: 16px; text-decoration: none; z-index: 5; }}
 .to-agenda:hover {{ border-color: var(--accent); }}
-.below-hero {{ display: flex; margin-top: 16px; }}
+.below-hero {{ display: flex; padding-block: 28px; }}
 .options {{ align-items: stretch; display: flex; position: fixed; right: 0; top: 50%; transform: translateY(-50%); z-index: 6; }}
 .options-tab {{ background: var(--surface-2); border: 1px solid var(--line); border-radius: 10px 0 0 10px; border-right: 0; color: var(--fg); cursor: pointer; font: 700 26px/1 var(--body); padding: 14px 10px; }}
 .options-tab:hover, .options-tab:focus-visible {{ border-color: var(--accent); color: var(--accent); }}
@@ -627,7 +627,7 @@ html {{ scroll-behavior: smooth; }}
 	</header>
 
 	<div class="below-hero">
-		<button class="show-diagram" id="open-diagram" type="button">Show how the card works</button>
+		<button class="show-diagram" id="open-diagram" type="button">Diagram Flow</button>
 	</div>
 
 	<aside class="options" id="options">
