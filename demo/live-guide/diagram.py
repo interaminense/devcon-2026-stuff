@@ -100,9 +100,14 @@ def render():
 	for title, sub, y in SUBS:
 		parts.append(box(SUB_X, y, SUB_W, SUB_H, title, sub, ' app-dxp'))
 
-	link_x = SUB_X + SUB_W - 40
-	parts.append(arrow(link_x, 60 + SUB_H + 2, link_x, 142 - 2, cls=' app-dxp dg-dashed'))
-	parts.append(f'<text class="dg-path" x="{link_x - 10}" y="{(60 + SUB_H + 142) / 2 + 4}" text-anchor="end">JavaScript URL</text>')
+	link_edge = SUB_X + SUB_W
+	link_x = link_edge + 12
+	cx_mid, dm_mid = 60 + SUB_H / 2, 142 + SUB_H / 2
+	parts.append(
+		f'<path class="dg-line app-dxp dg-dashed" d="M{link_edge + 2} {cx_mid} H{link_x} V{dm_mid} H{link_edge + 4}" '
+		f'marker-end="url(#dg-a-dxp)"/>'
+	)
+	parts.append(f'<text class="dg-path" x="{link_x + 22}" y="{(cx_mid + dm_mid) / 2 + 4}">JavaScript URL</text>')
 
 	for title, sub, y, cls in RIGHT:
 		parts.append(box(RIGHT_X, y, RIGHT_W, SUB_H, title, sub, cls))
