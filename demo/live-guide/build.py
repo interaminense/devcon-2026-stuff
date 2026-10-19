@@ -515,6 +515,17 @@ body.no-say .k-say {{ display: none; }}
 .dg-browser {{ fill: var(--bg); stroke: var(--fg); stroke-opacity: 0.4; }}
 .dg-name {{ fill: var(--fg); font: 700 16px var(--display); }}
 .dg-path {{ fill: var(--muted); font: 12px var(--mono); }}
+.dg-dashed {{ stroke-dasharray: 4 3; }}
+.dg-card {{ fill: var(--surface); stroke: var(--line); }}
+.dg-card-label {{ fill: var(--muted); font: 600 12px var(--display); }}
+.dg-card-value {{ fill: var(--fg); font: 700 26px var(--display); }}
+.dg-card-trend {{ font: 600 12px var(--mono); }}
+.dg-up {{ fill: var(--check); stroke: var(--check); }}
+.dg-down {{ fill: var(--warn); stroke: var(--warn); }}
+.dg-spark {{ fill: none; stroke-linecap: round; stroke-linejoin: round; stroke-width: 2; }}
+.dg-spark-dot {{ stroke: none; }}
+.dg-card-ai {{ fill: var(--c-hub); font: 600 12px var(--display); }}
+.dg-card-text {{ fill: var(--line); }}
 .dg-route {{ fill: var(--c); font: 12px var(--mono); }}
 .dg-line {{ fill: none; stroke: var(--muted); stroke-width: 1.6; }}
 .dg-line[class*="app-"] {{ stroke: var(--c); }}
@@ -637,7 +648,7 @@ html {{ scroll-behavior: smooth; }}
 		</div>
 	</aside>
 
-	<dialog class="diagram-modal" id="diagram-modal" aria-label="How the card works">
+	<dialog class="diagram-modal" id="diagram-modal" aria-label="Diagram Flow">
 		<button class="close-diagram" id="close-diagram" type="button">Close</button>
 		{render_diagram()}
 	</dialog>

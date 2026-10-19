@@ -10,8 +10,8 @@ BROWSER = (30, 40, 220, 462)
 DXP = (350, 16, 370, 506)
 SUB_X, SUB_W, SUB_H = 375, 320, 62
 SUBS = [
-	('Client Extensions', 'Custom Element · ldp-demo-card', 60),
-	('Documents and Media', '/documents/d/devcon-demo/…', 142),
+	('Client Extensions', 'Custom Element · points to the JS URL', 60),
+	('Documents and Media', 'hosts ldp-demo-card.js, the card code', 142),
 	('Analytics proxy', '/o/analytics-rest/v1.0/graphql', 224),
 	('Objects API', '/o/c/democardconfigs', 306),
 	('AI Hub connection', '/o/ai-hub-cell/v1.0/…tokens', 400),
@@ -58,6 +58,30 @@ def arrow(x1, y1, x2, y2, both=False, cls=''):
 	return f'<line class="dg-line{cls}" x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}"{start} marker-end="url(#{marker})"/>'
 
 
+def mini_card(x, y, label, value, trend, direction, points, insight=False):
+	w, h = 192, 210 if insight else 140
+	px = [x + 14 + i * ((w - 28) / (len(points) - 1)) for i in range(len(points))]
+	low, high = min(points), max(points)
+	py = [y + 118 - (p - low) / (high - low) * 30 for p in points]
+	line = ' '.join(f'{a:.1f},{b:.1f}' for a, b in zip(px, py))
+	parts = [
+		f'<rect class="dg-card" x="{x}" y="{y}" width="{w}" height="{h}" rx="8"/>',
+		f'<text class="dg-card-label" x="{x + 14}" y="{y + 24}">{e(label)}</text>',
+		f'<text class="dg-card-value" x="{x + 14}" y="{y + 56}">{e(value)}</text>',
+		f'<text class="dg-card-trend dg-{direction}" x="{x + 14}" y="{y + 76}">{e(trend)}</text>',
+		f'<polyline class="dg-spark dg-{direction}" points="{line}"/>',
+		f'<circle class="dg-spark-dot dg-{direction}" cx="{px[-1]:.1f}" cy="{py[-1]:.1f}" r="3"/>',
+	]
+
+	if insight:
+		parts.append(f'<text class="dg-card-ai" x="{x + 14}" y="{y + 150}">✦ AI insight</text>')
+		parts.append(f'<rect class="dg-card-text" x="{x + 14}" y="{y + 162}" width="{w - 28}" height="6" rx="3"/>')
+		parts.append(f'<rect class="dg-card-text" x="{x + 14}" y="{y + 176}" width="{w - 60}" height="6" rx="3"/>')
+		parts.append(f'<rect class="dg-card-text" x="{x + 14}" y="{y + 190}" width="{w - 90}" height="6" rx="3"/>')
+
+	return ''.join(parts)
+
+
 def render():
 	bx, by, bw, bh = BROWSER
 	dx, dy, dw, dh = DXP
@@ -69,11 +93,16 @@ def render():
 
 	parts.append(f'<rect class="dg-box dg-browser" x="{bx}" y="{by}" width="{bw}" height="{bh}" rx="12"/>')
 	parts.append(f'<text class="dg-name" x="{bx + 18}" y="{by + 30}">Browser</text>')
-	parts.append(f'<text class="dg-path" x="{bx + 18}" y="{by + 52}">&lt;ldp-demo-card&gt; × 2</text>')
-	parts.append(f'<text class="dg-path" x="{bx + 18}" y="{by + 72}">one per widget instance</text>')
+	parts.append(f'<text class="dg-path" x="{bx + 18}" y="{by + 52}">Demo page · 2 instances</text>')
+	parts.append(mini_card(bx + 14, by + 72, 'Unique visitors', '1,284', '▲ 12.4%', 'up', [30, 26, 34, 31, 40, 37, 46]))
+	parts.append(mini_card(bx + 14, by + 232, 'Sessions', '1,912', '▼ 3.1%', 'down', [44, 40, 42, 36, 38, 33, 35], insight=True))
 
 	for title, sub, y in SUBS:
 		parts.append(box(SUB_X, y, SUB_W, SUB_H, title, sub, ' app-dxp'))
+
+	link_x = SUB_X + SUB_W - 40
+	parts.append(arrow(link_x, 60 + SUB_H + 2, link_x, 142 - 2, cls=' app-dxp dg-dashed'))
+	parts.append(f'<text class="dg-path" x="{link_x - 10}" y="{(60 + SUB_H + 142) / 2 + 4}" text-anchor="end">JavaScript URL</text>')
 
 	for title, sub, y, cls in RIGHT:
 		parts.append(box(RIGHT_X, y, RIGHT_W, SUB_H, title, sub, cls))
@@ -145,7 +174,7 @@ def render():
 
 	return f'''
 <section class="diagram" id="diagram">
-	<h2 class="agenda-title">How the card works</h2>
+	<h2 class="agenda-title">Diagram Flow</h2>
 	<div class="diagram-scroll">{svg}</div>
 	<p class="dg-legend"><span class="app-dxp">DXP</span><span class="app-ldp">LDP</span><span class="app-hub">AI Hub</span><span class="dg-legend-note">Each call takes the color of the application that answers it.</span></p>
 	<ol class="flow">{steps}</ol>
