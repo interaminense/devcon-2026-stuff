@@ -235,23 +235,19 @@ def code_block(name, prev, cur, note=''):
 
 
 def values(rows, title=None):
-	described = any(len(row) > 3 for row in rows)
 	body = []
 
 	for row in rows:
 		field, value, copyable = row[:3]
-		purpose = f'<td class="purpose">{row[3]}</td>' if described else ''
 
 		if copyable:
-			body.append(f'<tr><th scope="row">{field}</th><td><code>{e(value)}</code></td>{purpose}<td>{copy_button(value)}</td></tr>')
+			body.append(f'<tr><th scope="row">{field}</th><td><code>{e(value)}</code></td><td>{copy_button(value)}</td></tr>')
 		else:
-			body.append(f'<tr><th scope="row">{field}</th><td>{value}</td>{purpose}<td></td></tr>')
+			body.append(f'<tr><th scope="row">{field}</th><td>{value}</td><td></td></tr>')
 
 	head = f'<caption>{title}</caption>' if title else ''
-	cols = '<thead><tr><th scope="col">Field</th><th scope="col">Value</th><th scope="col">What it&rsquo;s for</th><th></th></tr></thead>' if described else ''
-	cls = 'values described' if described else 'values'
 
-	return f'<div class="table-scroll"><table class="{cls}">{head}{cols}<tbody>{''.join(body)}</tbody></table></div>'
+	return f'<div class="table-scroll"><table class="values">{head}<tbody>{''.join(body)}</tbody></table></div>'
 
 
 def v(field, value, purpose=None):
