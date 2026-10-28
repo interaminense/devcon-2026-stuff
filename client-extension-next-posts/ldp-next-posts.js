@@ -32,18 +32,6 @@ const STYLE = `
 			padding: 28px 32px;
 		}
 
-		.ldp-next-posts .np-badge {
-			background: #1d2b36;
-			border-radius: 999px;
-			color: #ffd9a8;
-			display: inline-block;
-			font: 600 0.75rem Inter, sans-serif;
-			letter-spacing: 0.06em;
-			margin-bottom: 10px;
-			padding: 4px 12px;
-			text-transform: uppercase;
-		}
-
 		.ldp-next-posts table {
 			background: #fff;
 			border-radius: 12px;
@@ -633,7 +621,6 @@ class LdpNextPosts extends HTMLElement {
 			${STYLE}
 			<div class="np-head">
 				<div>
-					<span class="np-badge">Editors only · visitors don't see this</span>
 					<h2>What should we write next?</h2>
 					<span class="np-period">Surf Journal posts · last ${RANGE_KEY} days · ${this.data.listViews.toLocaleString()} views of the post list · Liferay Data Platform</span>
 				</div>

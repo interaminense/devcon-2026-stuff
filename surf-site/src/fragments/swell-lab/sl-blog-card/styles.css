@@ -17,14 +17,11 @@
 	padding: 56px 0 72px;
 }
 
-/* The collection lists posts oldest first and cannot be sorted, so the list
-   is reversed visually: the newest post comes first, reading row by row */
+/* Every card in a row takes the height of the tallest one */
 
 .sl-blog-list .lfr-layout-structure-item-collection > .container-fluid {
 	display: flex;
-	flex-direction: row-reverse;
-	flex-wrap: wrap-reverse;
-	justify-content: flex-end;
+	flex-wrap: wrap;
 	margin-inline: -12px;
 	overflow: visible !important;
 	width: calc(100% + 24px);
@@ -33,4 +30,21 @@
 
 .sl-blog-list .lfr-layout-structure-item-collection .row {
 	display: contents;
+}
+
+.sl-blog-list .lfr-layout-structure-item-collection .col,
+.sl-blog-list .lfr-layout-structure-item-collection .col > div,
+.sl-blog-list .lfr-layout-structure-item-collection .col > div > div {
+	display: flex;
+	flex-direction: column;
+}
+
+.sl-blog-list .lfr-layout-structure-item-collection .col > div,
+.sl-blog-list .lfr-layout-structure-item-collection .col > div > div,
+.sl-blog-list .sl-blog-card {
+	flex: 1 1 auto;
+}
+
+.sl-blog-card .sl-card__link {
+	margin-top: auto;
 }
