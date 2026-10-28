@@ -221,7 +221,7 @@ def code_block(name, prev, cur, note=''):
 		for i, line in enumerate(render_lines(prev, cur), 1)
 	)
 	label = 'All new' if prev is None else ''
-	note_html = f'<p class="code-note">{note}</p>' if note else ''
+	note_html = f'<p class="code-note">{note}</p>' if note and not SHORT else ''
 
 	return f'''
 <figure class="code">
