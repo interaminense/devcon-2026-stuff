@@ -743,7 +743,7 @@ html {{ scroll-behavior: smooth; }}
 
 	<dialog class="diagram-modal" id="walk-modal" aria-label="{'Diagram Flow' if SHORT else 'Animated Walkthrough'}">
 		<button class="close-diagram" id="close-walk" type="button" aria-label="Close">&times;</button>
-		{render_walkthrough('Diagram Flow', play=False) if SHORT else render_walkthrough()}
+		{render_walkthrough('Diagram Flow', play=False, captions=False) if SHORT else render_walkthrough()}
 	</dialog>
 
 	<nav class="agenda" id="agenda" aria-label="Agenda">

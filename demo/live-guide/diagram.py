@@ -10,9 +10,9 @@ BROWSER = (30, 40, 220, 462)
 DXP = (350, 16, 440, 506)
 SUB_X, SUB_W, SUB_H = 375, 320, 62
 SUBS = [
-	('Client Extensions', 'Custom Element · points to the JS URL', 60),
-	('Documents and Media', 'hosts ldp-demo-card.js, the card code', 142),
-	('Analytics proxy', '/o/analytics-rest/v1.0/graphql', 224),
+	('Client Extensions', 'Type: Custom Element', 60),
+	('Documents and Media', 'Hosts the JS, injected via the CX', 142),
+	('LDP proxy', '/o/analytics-rest/v1.0/graphql', 224),
 	('Objects API', '/o/c/democardconfigs', 306),
 	('AI Hub connection', '/o/ai-hub-cell/v1.0/…tokens', 440),
 ]
@@ -26,7 +26,7 @@ RIGHT = [
 FLOW = [
 	('dxp', 'Client Extensions puts <code>&lt;ldp-demo-card&gt;</code> on the page, pointing to the card&rsquo;s JS URL.'),
 	('dxp', 'The browser loads the card code from Documents and Media.'),
-	('ldp', 'The card asks the Analytics proxy for its metric. DXP forwards the GraphQL query to LDP.'),
+	('ldp', 'The card asks the LDP proxy for its metric. DXP forwards the GraphQL query to LDP.'),
 	('dxp', 'The card loads and saves its metric in the Objects API, one entry per widget instance.'),
 	('hub', 'The card asks DXP for an AI Hub token. DXP signs in with the Client ID and Secret.'),
 	('hub', 'The card sends its numbers to the AI Hub agent. The LLM writes the insight shown under the chart.'),
@@ -119,7 +119,7 @@ def render():
 	parts.append(arrow(right_edge - 4, mid['Documents and Media'], left + 4, mid['Documents and Media'], cls=' app-dxp'))
 	parts.append(badge(a_mid, mid['Documents and Media'], 2, ' app-dxp'))
 
-	y3 = mid['Analytics proxy']
+	y3 = mid['LDP proxy']
 	parts.append(arrow(left + 4, y3, right_edge - 4, y3, both=True, cls=' app-dxp'))
 	parts.append(badge(a_mid, y3, 3, ' app-ldp'))
 	parts.append(arrow(sub_end + 4, y3, RIGHT_X - 4, y3, both=True, cls=' app-ldp'))
@@ -157,7 +157,7 @@ def render():
 </defs>'''
 
 	svg = (
-		'<svg role="img" aria-label="The demo card in the browser loads from Documents and Media, reads LDP through the DXP analytics proxy, stores its configuration in the Objects API, gets an AI Hub token from DXP, and then talks to AI Hub directly, which runs the LLM." '
+		'<svg role="img" aria-label="The demo card in the browser loads from Documents and Media, reads LDP through the DXP LDP proxy, stores its configuration in the Objects API, gets an AI Hub token from DXP, and then talks to AI Hub directly, which runs the LLM." '
 		f'viewBox="0 0 {W} {H}" xmlns="http://www.w3.org/2000/svg">{defs}{"".join(parts)}</svg>'
 	)
 
@@ -174,7 +174,7 @@ WALK = [
 	('Setup', 'Upload ldp-demo-card.js to Documents and Media, then register it in Client Extensions with its JS URL.'),
 	('Page', 'DXP renders the demo page with two ldp-demo-card widgets and a script tag for the JS URL.'),
 	('Script', 'The browser loads the card code from Documents and Media. Each widget becomes a live card.'),
-	('Metric', 'Each card asks the analytics proxy, with the user\'s session. DXP forwards the GraphQL query to LDP and returns value, previous value and trend.'),
+	('Metric', 'Each card asks the LDP proxy, with the user\'s session. DXP forwards the GraphQL query to LDP and returns value, previous value and trend.'),
 	('Config', 'Each card saves its metric in Objects, keyed by its widget instance. After a reload, every card remembers its own setup.'),
 	('Token', 'DXP signs in to AI Hub with the Client ID and Secret, and hands the card a short-lived token.'),
 	('Insight', 'The card calls the AI Hub agent directly. The LLM runs the prompt, and the insight shows up under the chart.'),
@@ -182,7 +182,7 @@ WALK = [
 ]
 
 
-def render_walkthrough(heading='Animated Walkthrough', play=True):
+def render_walkthrough(heading='Animated Walkthrough', play=True, captions=True):
 	bx, by, bw, bh = BROWSER
 	dx, dy, dw, dh = DXP
 	groups = {}
@@ -225,7 +225,7 @@ def render_walkthrough(heading='Animated Walkthrough', play=True):
 				f'<rect class="dg-card-text" x="{x + 14}" y="{y + 176}" width="{w - 60}" height="6" rx="3"/>'
 				f'<rect class="dg-card-text" x="{x + 14}" y="{y + 190}" width="{w - 90}" height="6" rx="3"/>')
 
-	sub_step = {'Client Extensions': 1, 'Documents and Media': 1, 'Analytics proxy': 4, 'Objects API': 5, 'AI Hub connection': 6}
+	sub_step = {'Client Extensions': 1, 'Documents and Media': 1, 'LDP proxy': 4, 'Objects API': 5, 'AI Hub connection': 6}
 
 	for title, sub, y in SUBS:
 		add(sub_step[title], box(SUB_X, y, SUB_W, SUB_H, title, sub, ' app-dxp'))
@@ -233,7 +233,7 @@ def render_walkthrough(heading='Animated Walkthrough', play=True):
 	link_edge = SUB_X + SUB_W
 	link_x = link_edge + 24
 	cx_mid, dm_mid = 60 + SUB_H / 2, 142 + SUB_H / 2
-	add(1, f'<path class="dg-line app-dxp dg-dashed" d="M{link_edge + 2} {cx_mid} H{link_x} V{dm_mid} H{link_edge + 4}" marker-end="url(#an-a-dxp)"/>'
+	add(1, f'<path class="dg-line app-dxp dg-dashed" d="M{link_edge + 4} {cx_mid} H{link_x} V{dm_mid} H{link_edge + 2}" marker-start="url(#an-a-dxp)"/>'
 		f'<text class="dg-path" x="{link_x + 10}" y="{(cx_mid + dm_mid) / 2 + 4}">JS URL</text>')
 
 	right_step = {'LDP': 4, 'LLM': 7, 'AI Hub': 6}
@@ -253,7 +253,7 @@ def render_walkthrough(heading='Animated Walkthrough', play=True):
 	add(2, an_arrow(right_edge - 4, mid['Client Extensions'], left + 4, mid['Client Extensions'], cls=' app-dxp') + badge(a_mid, mid['Client Extensions'], 1, ' app-dxp'))
 	add(3, an_arrow(right_edge - 4, mid['Documents and Media'], left + 4, mid['Documents and Media'], cls=' app-dxp') + badge(a_mid, mid['Documents and Media'], 2, ' app-dxp'))
 
-	y3 = mid['Analytics proxy']
+	y3 = mid['LDP proxy']
 	add(4, an_arrow(left + 4, y3, right_edge - 4, y3, both=True, cls=' app-dxp') + badge(a_mid, y3, 3, ' app-ldp')
 		+ an_arrow(sub_end + 4, y3, RIGHT_X - 4, y3, both=True, cls=' app-ldp') + badge(r_mid, y3, 3, ' app-ldp'))
 
@@ -287,7 +287,7 @@ def render_walkthrough(heading='Animated Walkthrough', play=True):
 		f'<button class="walk-dot" type="button" data-step="{i}" aria-label="Step {i}: {e(title)}">{i if i < len(WALK) else "✓"}</button>'
 		for i, (title, _) in enumerate(WALK, 1)
 	)
-	captions = ''.join(
+	captions = '' if not captions else ''.join(
 		f'<div class="walk-caption" data-step="{i}" hidden><span class="walk-n">{i if i < len(WALK) else "All"}</span><div><h3>{e(title)}</h3><p>{e(text)}</p></div></div>'
 		for i, (title, text) in enumerate(WALK, 1)
 	)
