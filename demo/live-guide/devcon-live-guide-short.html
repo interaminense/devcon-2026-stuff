@@ -292,13 +292,6 @@ html { scroll-behavior: smooth; }
 	</header>
 	
 	<ol class="steps"><li class="sub"><h3>LDP connected to DXP</h3></li>
-<li class="step k-say">
-	
-	<div class="step-body">
-		<span class="kind">Say</span>
-		<p>The data lives in LDP, and this DXP is already connected to it. Our card will only ever talk to DXP; DXP talks to LDP.</p>
-	</div>
-</li>
 <li class="step k-ui">
 	
 	<div class="step-body">
@@ -350,13 +343,6 @@ html { scroll-behavior: smooth; }
 		<p class="step-title"><strong>Register the Custom Element</strong></p><ol><li>Tab 4: Applications &rarr; <b>Client Extensions</b> &rarr; <b>New</b> &rarr; <b>Add Custom Element</b>.</li><li>Fill in the fields below &rarr; <b>Publish</b>.</li></ol><div class="table-scroll"><table class="values"><tbody><tr><th scope="row">Name</th><td><code>LDP Demo Card</code></td><td><button class="copy" type="button" data-copy="c3">Copy</button></td></tr><tr><th scope="row">HTML Element Name</th><td><code>ldp-demo-card</code></td><td><button class="copy" type="button" data-copy="c4">Copy</button></td></tr><tr><th scope="row">JavaScript URL</th><td><code>/documents/d/devcon-demo/ldp-demo-card-js?v=1</code></td><td><button class="copy" type="button" data-copy="c5">Copy</button></td></tr><tr><th scope="row">Instanceable</th><td><span class="pill">checked</span></td><td></td></tr></tbody></table></div>
 	</div>
 </li>
-<li class="step k-say">
-	
-	<div class="step-body">
-		<span class="kind">Say</span>
-		<p>Instanceable means one card, many copies on a page, each with its own settings. That is the whole dashboard idea.</p>
-	</div>
-</li>
 <li class="step k-ui">
 	
 	<div class="step-body">
@@ -364,25 +350,11 @@ html { scroll-behavior: smooth; }
 		<p class="step-title"><strong>Put it on a page</strong></p><ol><li>Tab 5: DEVCON Demo &rarr; Site Builder &rarr; <b>Pages</b> &rarr; <b>New</b>.</li><li><b>Basic Templates</b> &rarr; <b>Blank</b> &rarr; name below &rarr; <b>Add</b>.</li><li><b>Components</b> panel &rarr; <b>Fragments</b> &rarr; Layout Elements &rarr; drag <b>Grid</b>. Set <b>Number of Modules</b> to 2.</li><li><b>Widgets</b> tab &rarr; search the name below &rarr; drag it into the <b>left</b> module &rarr; <b>Publish</b>.</li></ol><div class="table-scroll"><table class="values"><tbody><tr><th scope="row">Page name</th><td><code>Demo</code></td><td><button class="copy" type="button" data-copy="c6">Copy</button></td></tr><tr><th scope="row">Widget search</th><td><code>LDP Demo Card</code></td><td><button class="copy" type="button" data-copy="c7">Copy</button></td></tr></tbody></table></div>
 	</div>
 </li><li class="sub"><h3>Real LDP data</h3></li>
-<li class="step k-say">
-	
-	<div class="step-body">
-		<span class="kind">Say</span>
-		<p>The card posts a GraphQL query to DXP with the user&rsquo;s session. DXP signs it and forwards it to LDP, so no LDP credential ever reaches the browser.</p>
-	</div>
-</li>
 <li class="step k-ui">
 	
 	<div class="step-body">
 		<span class="kind">In the UI</span>
 		<p class="step-title"><strong>Get the channel ID from LDP</strong></p><ol><li>Tab 1: open <code>ldp-internal.liferay.com</code> &rarr; workspace <b>Liferay Data Platform</b> &rarr; property <b>SWELL LAB DevCon 2026</b> &rarr; <b>Sites</b>.</li><li>The channel ID is the number in the URL, between the workspace and <code>/sites</code>. Copy it.</li><li>Leave the Sites dashboard on <b>Last 7 days</b>: the card must show the same numbers.</li></ol><div class="table-scroll"><table class="values"><tbody><tr><th scope="row">LDP Sites URL</th><td><code>https://ldp-internal.liferay.com/workspace/liferay-data-platform/845351493326064678/sites</code></td><td><button class="copy" type="button" data-copy="c8">Copy</button></td></tr><tr><th scope="row">Channel ID</th><td><code>845351493326064678</code></td><td><button class="copy" type="button" data-copy="c9">Copy</button></td></tr></tbody></table></div>
-	</div>
-</li>
-<li class="step k-say">
-	
-	<div class="step-body">
-		<span class="kind">Say</span>
-		<p>One LDP property is one channel. The channel ID is the only thing the card needs to know whose data to read.</p>
 	</div>
 </li>
 <li class="step k-code">
@@ -415,13 +387,6 @@ html { scroll-behavior: smooth; }
 <div class="table-scroll"><table class="values"><tbody><tr><th scope="row">JavaScript URL</th><td><code>/documents/d/devcon-demo/ldp-demo-card-js?v=2</code></td><td><button class="copy" type="button" data-copy="c11">Copy</button></td></tr></tbody></table></div>
 	</div>
 </li><li class="sub"><h3>Two instances, one card</h3></li>
-<li class="step k-say">
-	
-	<div class="step-body">
-		<span class="kind">Say</span>
-		<p>Now it looks like a real card: pick a metric, see its value and the trend against the previous period. LDP computes the trend for us.</p>
-	</div>
-</li>
 <li class="step k-code">
 	
 	<div class="step-body">
@@ -458,13 +423,6 @@ html { scroll-behavior: smooth; }
 		<span class="kind">In the UI</span>
 		<ol><li>Edit the Demo page &rarr; drag a second <b>LDP Demo Card</b> into the <b>right</b> module &rarr; <b>Publish</b>.</li><li>Right card &rarr; select <b>Sessions</b>.</li><li>Reload the page.</li></ol>
 	</div>
-</li>
-<li class="step k-say">
-	
-	<div class="step-body">
-		<span class="kind">Say</span>
-		<p>The choice was only in memory, so the reload wiped it. A dashboard has to remember every card on its own, and we don&rsquo;t want to build a backend for that.</p>
-	</div>
 </li></ol>
 </section>
 <section class="part" id="part-2">
@@ -479,13 +437,6 @@ html { scroll-behavior: smooth; }
 	<div class="step-body">
 		<span class="kind">In the UI</span>
 		<p class="step-title"><strong>Create the Object</strong></p><ol><li>Control Panel &rarr; Object &rarr; <b>Objects</b> &rarr; folder <b>DEVCON Demo</b> &rarr; <b>Create New Object</b> &rarr; fill in &rarr; <b>Save</b>.</li></ol><div class="table-scroll"><table class="values"><tbody><tr><th scope="row">Label</th><td><code>Demo Card Config</code></td><td><button class="copy" type="button" data-copy="c14">Copy</button></td></tr><tr><th scope="row">Plural Label</th><td><code>Demo Card Configs</code></td><td><button class="copy" type="button" data-copy="c15">Copy</button></td></tr><tr><th scope="row">Object Name</th><td><code>DemoCardConfig</code></td><td><button class="copy" type="button" data-copy="c16">Copy</button></td></tr></tbody></table></div><ol start="2"><li><b>Fields</b> &rarr; <b>Add Field</b> &rarr; fill in &rarr; <b>Save</b>.</li></ol><div class="table-scroll"><table class="values"><tbody><tr><th scope="row">Label</th><td><code>Metric</code></td><td><button class="copy" type="button" data-copy="c17">Copy</button></td></tr><tr><th scope="row">Field Name</th><td><code>metric</code></td><td><button class="copy" type="button" data-copy="c18">Copy</button></td></tr><tr><th scope="row">Type</th><td><span class="pill">Text</span></td><td></td></tr></tbody></table></div><ol start="3"><li><b>Details</b> &rarr; Scope <b>Company</b> &rarr; <b>Publish</b>.</li></ol>
-	</div>
-</li>
-<li class="step k-say">
-	
-	<div class="step-body">
-		<span class="kind">Say</span>
-		<p>Publishing the Object gives us a REST API for free at <code>/o/c/democardconfigs</code>. Each card saves under its widget instance ID, which DXP already generates, so no extra key to manage.</p>
 	</div>
 </li>
 <li class="step k-code">
@@ -540,32 +491,11 @@ html { scroll-behavior: smooth; }
 		<p class="step-title"><strong>Connect DXP to AI Hub</strong></p><ol><li>Tab 6: AI Hub &rarr; the account configuration &rarr; copy the <b>Client ID</b> and the <b>Client Secret</b>.</li><li>In the same configuration, check the <b>Environment URL</b>: the DXP address below, with no slash at the end.</li><li>Tab 2: Control Panel &rarr; Instance Settings &rarr; Platform &rarr; <b>AI Hub</b> &rarr; paste the values &rarr; <b>Save</b>.</li></ol><div class="table-scroll"><table class="values"><tbody><tr><th scope="row">Client ID</th><td>Copied from AI Hub</td><td></td></tr><tr><th scope="row">Client Secret</th><td>Copied from AI Hub</td><td></td></tr><tr><th scope="row">Service URL</th><td><code>https://na1.hub.liferay.com</code></td><td><button class="copy" type="button" data-copy="c21">Copy</button></td></tr><tr><th scope="row">Environment URL (in AI Hub)</th><td><code>https://webserver-lctacdemodevcon-prd.lfr.cloud</code></td><td><button class="copy" type="button" data-copy="c22">Copy</button></td></tr></tbody></table></div>
 	</div>
 </li>
-<li class="step k-say">
-	
-	<div class="step-body">
-		<span class="kind">Say</span>
-		<p>The secret stays on the DXP server. The browser only gets a short-lived token, and AI Hub acts on behalf of the signed-in user.</p>
-	</div>
-</li>
-<li class="step k-say">
-	
-	<div class="step-body">
-		<span class="kind">Say</span>
-		<p>An agent is a definition plus a workflow with an LLM node. The card sends the numbers it already shows; AI Hub never reads LDP on its own.</p>
-	</div>
-</li>
 <li class="step k-ui">
 	
 	<div class="step-body">
 		<span class="kind">In the UI</span>
 		<p class="step-title"><strong>Create the agent</strong></p><ol><li>Tab 6: AI Hub &rarr; <b>Agent Builder</b>.</li><li><b>Make Shorter</b> &rarr; &#8942; &rarr; <b>Duplicate</b>.</li><li>On the copy: &#8942; &rarr; <b>View</b> &rarr; fill in the fields below &rarr; <b>Save</b>.</li></ol><div class="table-scroll"><table class="values"><tbody><tr><th scope="row">Title</th><td><code>DevCon 2026 Demo LDP Metric Insight</code></td><td><button class="copy" type="button" data-copy="c23">Copy</button></td></tr><tr><th scope="row">Description</th><td><code>Turns one LDP metric from the DEVCON demo card into a short insight.</code></td><td><button class="copy" type="button" data-copy="c24">Copy</button></td></tr><tr><th scope="row">External reference code</th><td><code>DEVCON_2026_DEMO_LDP_METRIC_INSIGHT</code></td><td><button class="copy" type="button" data-copy="c25">Copy</button></td></tr><tr><th scope="row">Input variables</th><td><code>metrics</code></td><td><button class="copy" type="button" data-copy="c26">Copy</button></td></tr><tr><th scope="row">Output variable</th><td><code>insight</code></td><td><button class="copy" type="button" data-copy="c27">Copy</button></td></tr></tbody></table></div>
-	</div>
-</li>
-<li class="step k-say">
-	
-	<div class="step-body">
-		<span class="kind">Say</span>
-		<p>The external reference code is the agent&rsquo;s address: the only thing the card needs to know to call it.</p>
 	</div>
 </li>
 <li class="step k-ui">
@@ -576,13 +506,6 @@ html { scroll-behavior: smooth; }
 
 Write at most three short sentences for a marketing manager: what the number says, how it compares with the previous period, and one concrete action. Plain text only. Never invent numbers. If there is too little data, say so in one sentence.</code></td><td><button class="copy" type="button" data-copy="c31">Copy</button></td></tr><tr><th scope="row">User message</th><td><code>Metric summary:
 {{metrics}}</code></td><td><button class="copy" type="button" data-copy="c32">Copy</button></td></tr><tr><th scope="row">Tools</th><td><code>[]</code></td><td><button class="copy" type="button" data-copy="c33">Copy</button></td></tr><tr><th scope="row">RAG</th><td><code>{}</code></td><td><button class="copy" type="button" data-copy="c34">Copy</button></td></tr></tbody></table></div>
-	</div>
-</li>
-<li class="step k-say">
-	
-	<div class="step-body">
-		<span class="kind">Say</span>
-		<p>At run time <code>{{metrics}}</code> becomes the text the card sends. Only variables listed as node inputs get filled in.</p>
 	</div>
 </li>
 <li class="step k-code">
@@ -620,13 +543,6 @@ Write at most three short sentences for a marketing manager: what the number say
 	<div class="step-body">
 		<span class="kind">In the UI</span>
 		<ol><li>Right card &rarr; <b>&#10022; AI insight</b>.</li></ol>
-	</div>
-</li>
-<li class="step k-say">
-	
-	<div class="step-body">
-		<span class="kind">Say</span>
-		<p>We send plain labeled lines, not JSON: easier for the model to read, and the AI Hub firewall rejects nested JSON anyway.</p>
 	</div>
 </li></ol>
 </section>

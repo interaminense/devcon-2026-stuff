@@ -374,35 +374,8 @@ p.step('ui', '<ol><li>Right card &rarr; <b>&#10022; AI insight</b>.</li></ol>')
 p.step('say', 'We format the text before sending it: plain labeled lines. Easier for the model, and the firewall in front of AI Hub rejects nested JSON.')
 parts.append(p)
 
-# The short guide keeps every step, but groups the six parts into three
-# topics and tightens what the presenter says
-SHORT_SAY = {
-	'Before any code: the data lives in LDP, and DXP is already connected to it. The card asks DXP, and DXP asks LDP.':
-		'The data lives in LDP, and this DXP is already connected to it. Our card will only ever talk to DXP; DXP talks to LDP.',
-	'Instanceable lets the same card go on a page twice, each with its own configuration. That is the whole dashboard idea.':
-		'Instanceable means one card, many copies on a page, each with its own settings. That is the whole dashboard idea.',
-	'The card calls DXP on the same origin, with the user&rsquo;s session and the CSRF token. DXP forwards the GraphQL query to LDP. No LDP token in the browser.':
-		'The card posts a GraphQL query to DXP with the user&rsquo;s session. DXP signs it and forwards it to LDP, so no LDP credential ever reaches the browser.',
-	'One property is one channel. The channel ID is all the card needs to know whose data to ask for.':
-		'One LDP property is one channel. The channel ID is the only thing the card needs to know whose data to read.',
-	'Now a real card: a metric picker, the value, and the trend against the previous period, which LDP computes for us.':
-		'Now it looks like a real card: pick a metric, see its value and the trend against the previous period. LDP computes the trend for us.',
-	'The setting was in memory, so it is gone. A dashboard has to remember each card, separately, and we do not want a backend for that.':
-		'The choice was only in memory, so the reload wiped it. A dashboard has to remember every card on its own, and we don&rsquo;t want to build a backend for that.',
-	'Publishing the Object gives us a REST API for free, at /o/c/democardconfigs. Each entry is keyed by the widget instance id, which DXP already generates.':
-		'Publishing the Object gives us a REST API for free at <code>/o/c/democardconfigs</code>. Each card saves under its widget instance ID, which DXP already generates, so no extra key to manage.',
-	'DXP keeps the secret. The browser only gets a short-lived token from DXP, and AI Hub acts on behalf of the signed-in user.':
-		'The secret stays on the DXP server. The browser only gets a short-lived token, and AI Hub acts on behalf of the signed-in user.',
-	'An AI Hub agent is an agent definition plus a workflow with an LLM node. The card sends what it shows; AI Hub never reads LDP itself.':
-		'An agent is a definition plus a workflow with an LLM node. The card sends the numbers it already shows; AI Hub never reads LDP on its own.',
-	'The external reference code is the agent&rsquo;s address. It is the only thing the card needs to know about it.':
-		'The external reference code is the agent&rsquo;s address: the only thing the card needs to know to call it.',
-	'<code>{{metrics}}</code> is replaced by the text the card sends. Only the node&rsquo;s input variables are replaced.':
-		'At run time <code>{{metrics}}</code> becomes the text the card sends. Only variables listed as node inputs get filled in.',
-	'We format the text before sending it: plain labeled lines. Easier for the model, and the firewall in front of AI Hub rejects nested JSON.':
-		'We send plain labeled lines, not JSON: easier for the model to read, and the AI Hub firewall rejects nested JSON anyway.',
-}
-
+# The short guide groups the six parts into three topics and keeps only
+# the steps to do, without the presenter notes
 if SHORT:
 	topics = [
 		('1', 'Connect to LDP and Fetch Real Data', 'Topic 01', [0, 1, 2, 3], ''),
@@ -419,7 +392,8 @@ if SHORT:
 				merged.step('sub', parts[index].title)
 
 			for kind, body in parts[index].items:
-				merged.step(kind, SHORT_SAY.get(body, body) if kind == 'say' else body)
+				if kind != 'say':
+					merged.step(kind, body)
 
 		short_parts.append(merged)
 
