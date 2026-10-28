@@ -225,8 +225,9 @@
 		.ldp-advisor-badge--inline {
 			align-items: center;
 			flex-direction: row;
-			flex-wrap: wrap;
+			flex-wrap: nowrap;
 			margin-bottom: 4px;
+			white-space: nowrap;
 			position: static;
 		}
 
