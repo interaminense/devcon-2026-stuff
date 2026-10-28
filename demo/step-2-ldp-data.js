@@ -40,6 +40,14 @@ async function getMetric(metric) {
 
 class LdpDemoCard extends HTMLElement {
 	async connectedCallback() {
+		// DXP can connect the same card twice while the page loads: set it up
+		// only once
+		if (this.ready) {
+			return;
+		}
+
+		this.ready = true;
+
 		this.innerHTML = '<p>Loading...</p>';
 
 		const result = await getMetric('visitorsMetric');

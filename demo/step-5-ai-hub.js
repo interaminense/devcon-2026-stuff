@@ -311,6 +311,14 @@ class LdpDemoCard extends HTMLElement {
 	config = {metric: 'visitorsMetric'};
 
 	async connectedCallback() {
+		// DXP can connect the same card twice while the page loads: set it up
+		// only once
+		if (this.ready) {
+			return;
+		}
+
+		this.ready = true;
+
 		this.classList.add('ldp-demo-card');
 
 		this.key = getKey(this);
