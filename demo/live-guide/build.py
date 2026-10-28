@@ -374,30 +374,34 @@ p.step('ui', '<ol><li>Right card &rarr; <b>&#10022; AI insight</b>.</li></ol>')
 p.step('say', 'We format the text before sending it: plain labeled lines. Easier for the model, and the firewall in front of AI Hub rejects nested JSON.')
 parts.append(p)
 
-# The short guide groups the six parts into three topics and keeps only
-# the steps to do, without the presenter notes
+# The short guide ships four versions instead of five: the first upload
+# already reads LDP. It reuses the full guide's UI steps, without the
+# presenter notes
 if SHORT:
-	topics = [
-		('1', 'Connect to LDP and Fetch Real Data', 'Topic 01', [0, 1, 2, 3], ''),
-		('2', 'Persist Card Settings with Liferay Objects', 'Topic 02', [4], ''),
-		('3', 'Get Data Insights with AI Hub', 'Topic 03', [5], ''),
-	]
-	short_parts = []
+	ldp, first, data, two, objects, hub = [part.items for part in parts]
+	name = 'ldp-demo-card.js'
 
-	for letter, title, topic, indexes, intro in topics:
-		merged = Part(letter, title, topic, intro)
+	p1 = Part('1', 'Connect to LDP and Fetch Real Data', 'Topic 01')
+	p1.step('sub', 'LDP connected to DXP')
+	p1.step(*ldp[1]).step(*ldp[2]).step(*data[1])
+	p1.step('sub', 'The first client extension')
+	p1.step('code', code_block(name, None, code[2]))
+	p1.step(*first[1]).step(*first[2]).step(*first[4])
+	p1.step('sub', 'Two metrics, one card')
+	p1.step('code', code_block(name, code[2], code[3]))
+	p1.step(*ship(2)).step(*two[3])
 
-		for index in indexes:
-			if len(indexes) > 1:
-				merged.step('sub', parts[index].title)
+	p2 = Part('2', 'Persist Card Settings with Liferay Objects', 'Topic 02')
+	p2.step(*objects[0])
+	p2.step('code', code_block(name, code[3], code[4]))
+	p2.step(*ship(3)).step(*objects[4])
 
-			for kind, body in parts[index].items:
-				if kind != 'say':
-					merged.step(kind, body)
+	p3 = Part('3', 'Get Data Insights with AI Hub', 'Topic 03')
+	p3.step(*hub[0]).step(*hub[3]).step(*hub[5])
+	p3.step('code', code_block(name, code[4], code[5]))
+	p3.step(*ship(4)).step(*hub[9])
 
-		short_parts.append(merged)
-
-	parts = short_parts
+	parts = [p1, p2, p3]
 
 
 def render_part(part):
