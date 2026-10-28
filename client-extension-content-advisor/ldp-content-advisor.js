@@ -640,11 +640,38 @@
 			return;
 		}
 
-		const post = await request(`/o/cms/blogs/${block.assetId}`);
+		const post = await loadPublishedPost(block.assetId);
 
+		block.postId = post.id;
 		block.contentHtml = post.content || '';
 		block.languageId = post.defaultLanguageId || 'en_US';
 		block.excerpt = (post.contentRawText || '').replace(/\s+/g, ' ').trim().slice(0, 600);
+	}
+
+	// Once a post has a draft version, the site renders a snapshot of the
+	// published version with its own id, which the CMS API does not know. The
+	// snapshot points to the post (its head), and the post lists its versions.
+
+	async function loadPublishedPost(id) {
+		const entry = await request(
+			`/api/jsonws/object.objectentry/get-object-entry?objectEntryId=${id}&p_auth=${Liferay.authToken}`
+		);
+
+		if (String(entry.headObjectEntryId) === String(id)) {
+			return request(`/o/cms/blogs/${id}`);
+		}
+
+		const head = await request(`/o/cms/blogs/${entry.headObjectEntryId}`);
+
+		const versions = await request(
+			`/o/cms/blogs/scopes/${SPACE_GROUP_ID}/by-external-reference-code/${encodeURIComponent(head.externalReferenceCode)}/versions`
+		);
+
+		const published = versions.items.filter(
+			(version) => version.status?.code === 0
+		);
+
+		return published[published.length - 1] || head;
 	}
 
 	// Accepting saves the rewrite as a draft version of the same post: the
@@ -659,7 +686,7 @@
 		const subtitle = fields['new subtitle'] || block.text;
 		const title = fields['new title'];
 
-		return request(`/o/cms/blogs/${block.assetId}`, {
+		return request(`/o/cms/blogs/${block.postId}`, {
 			body: JSON.stringify({
 				content,
 				content_i18n: localized(content),
