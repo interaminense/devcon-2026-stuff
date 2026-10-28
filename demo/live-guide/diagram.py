@@ -91,7 +91,7 @@ def render():
 	parts.append(f'<text class="dg-name" x="{bx + 18}" y="{by + 30}">Browser</text>')
 	parts.append(f'<text class="dg-path" x="{bx + 18}" y="{by + 52}">Demo page · 2 instances</text>')
 	parts.append(mini_card(bx + 14, by + 72, 'Unique visitors', '1,284', '▲ 12.4%', 'up', [30, 26, 34, 31, 40, 37, 46]))
-	parts.append(mini_card(bx + 14, by + 232, 'Views', '1,874', '▼ 3.1%', 'down', [44, 40, 42, 36, 38, 33, 35], insight=True))
+	parts.append(mini_card(bx + 14, by + 232, 'Sessions per visitor', '1.9', '▲ 37.7%', 'up', [30, 34, 31, 36, 37, 39, 44], insight=True))
 
 	for title, sub, y in SUBS:
 		parts.append(box(SUB_X, y, SUB_W, SUB_H, title, sub, ' app-dxp'))
@@ -202,7 +202,7 @@ def render_walkthrough(heading='Animated Walkthrough', play=True, captions=True)
 
 	cards = [
 		(bx + 14, by + 72, 'Unique visitors', '1,284', '▲ 12.4%', 'up', [30, 26, 34, 31, 40, 37, 46], False),
-		(bx + 14, by + 232, 'Views', '1,874', '▼ 3.1%', 'down', [44, 40, 42, 36, 38, 33, 35], True),
+		(bx + 14, by + 232, 'Sessions per visitor', '1.9', '▲ 37.7%', 'up', [30, 34, 31, 36, 37, 39, 44], True),
 	]
 
 	for x, y, label, value, trend, direction, points, insight in cards:

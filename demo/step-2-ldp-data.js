@@ -5,10 +5,9 @@ const CHANNEL_ID = '845351493326064678';
 const RANGE_KEY = 7;
 
 async function getMetric(metric) {
-	// page() without a page URL returns the totals of the whole site
 	const query = `
 		query ($channelId: String!, $rangeKey: Int) {
-			page(channelId: $channelId, rangeKey: $rangeKey) {
+			site(channelId: $channelId, interval: "D", rangeKey: $rangeKey) {
 				${metric} {
 					previousValue
 					trend {
@@ -36,7 +35,7 @@ async function getMetric(metric) {
 
 	const {data} = await response.json();
 
-	return data.page[metric];
+	return data.site[metric];
 }
 
 class LdpDemoCard extends HTMLElement {

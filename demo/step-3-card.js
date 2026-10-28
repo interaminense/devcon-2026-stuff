@@ -5,7 +5,7 @@ const CHANNEL_ID = '845351493326064678';
 const RANGE_KEY = 7;
 
 const METRICS = {
-	viewsMetric: 'Views',
+	sessionsPerVisitorMetric: 'Sessions per visitor',
 	visitorsMetric: 'Unique visitors',
 };
 
@@ -43,15 +43,42 @@ const STYLE = `
 			color: var(--secondary);
 			font-size: var(--font-size-sm);
 		}
+
+		.ldp-demo-card .chart {
+			display: block;
+			height: 48px;
+			margin-top: var(--spacer-3);
+			width: 100%;
+		}
+
+		.ldp-demo-card .chart polyline {
+			fill: none;
+			stroke: currentColor;
+			stroke-linejoin: round;
+			stroke-width: 2;
+			vector-effect: non-scaling-stroke;
+		}
+
+		.ldp-demo-card .up {
+			color: var(--success);
+		}
+
+		.ldp-demo-card .down {
+			color: var(--danger);
+		}
 	</style>
 `;
 
 async function getMetric(metric) {
-	// page() without a page URL returns the totals of the whole site
 	const query = `
 		query ($channelId: String!, $rangeKey: Int) {
-			page(channelId: $channelId, rangeKey: $rangeKey) {
+			site(channelId: $channelId, interval: "D", rangeKey: $rangeKey) {
 				${metric} {
+					histogram {
+						metrics {
+							value
+						}
+					}
 					previousValue
 					trend {
 						percentage
@@ -78,19 +105,49 @@ async function getMetric(metric) {
 
 	const {data} = await response.json();
 
-	return data.page[metric];
+	return data.site[metric];
+}
+
+// Same format as LDP: at most one decimal, truncated, and 1.2K from a thousand
+const NUMBER_FORMAT = new Intl.NumberFormat('en-US', {
+	maximumFractionDigits: 1,
+	notation: 'compact',
+	roundingMode: 'trunc',
+});
+
+function formatValue(value) {
+	return NUMBER_FORMAT.format(value);
+}
+
+// A mini line chart of the daily values, colored by the trend
+function renderChart(result) {
+	const values = result.histogram.metrics.map(({value}) => value);
+	const max = Math.max(...values);
+	const min = Math.min(...values);
+	const points = values
+		.map((value, index) => {
+			const x = (index / (values.length - 1)) * 100;
+			const y = 28 - ((value - min) / (max - min || 1)) * 24;
+
+			return `${x.toFixed(1)},${y.toFixed(1)}`;
+		})
+		.join(' ');
+	const percentage = result.trend?.percentage;
+	const direction = percentage > 0 ? 'up' : percentage < 0 ? 'down' : '';
+
+	return `<svg class="chart ${direction}" preserveAspectRatio="none" viewBox="0 0 100 32"><polyline points="${points}"/></svg>`;
 }
 
 function formatTrend(result) {
 	const percentage = result.trend?.percentage;
 
 	if (percentage === null || percentage === undefined) {
-		return `Previous period: ${result.previousValue}`;
+		return `Previous period: ${formatValue(result.previousValue)}`;
 	}
 
 	const arrow = percentage > 0 ? '▲' : percentage < 0 ? '▼' : '';
 
-	return `${arrow} ${Math.abs(percentage).toFixed(1)}% vs previous period (${result.previousValue})`;
+	return `${arrow} ${Math.abs(percentage).toFixed(1)}% vs previous period (${formatValue(result.previousValue)})`;
 }
 
 class LdpDemoCard extends HTMLElement {
@@ -115,6 +172,7 @@ class LdpDemoCard extends HTMLElement {
 			<select>${options}</select>
 			<div class="value">...</div>
 			<div class="trend">Last 7 days</div>
+			<div class="chart-slot"></div>
 		`;
 
 		this.querySelector('select').addEventListener('change', (event) => {
@@ -125,8 +183,9 @@ class LdpDemoCard extends HTMLElement {
 
 		const result = await getMetric(this.config.metric);
 
-		this.querySelector('.value').textContent = result.value.toLocaleString();
+		this.querySelector('.value').textContent = formatValue(result.value);
 		this.querySelector('.trend').textContent = formatTrend(result);
+		this.querySelector('.chart-slot').innerHTML = renderChart(result);
 	}
 }
 
