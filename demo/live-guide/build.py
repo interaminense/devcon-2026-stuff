@@ -460,6 +460,12 @@ RESET = '''	<section class="part" id="reset-demo">
 	</section>
 '''
 
+# Steps have no checkbox column; code boxes take the full width, grow to fit
+# the whole file and wrap long lines, so nothing scrolls
+SHORT_CSS = '''.step { grid-template-columns: minmax(0, 1fr); }
+.code-scroll { max-height: none; overflow: visible; }
+.lc { overflow-wrap: anywhere; white-space: pre-wrap; }'''
+
 LEDE = (
 	"Today we're going to build a custom dashboard card right inside DXP, in three moves: read real LDP data, remember each card's settings with Objects, and ask AI Hub what the numbers mean."
 	if SHORT else
@@ -714,6 +720,7 @@ h2 {{ font: 700 33px/1.15 var(--display); margin: 0; text-wrap: balance; }}
 	* {{ animation: none !important; scroll-behavior: auto !important; transition: none !important; }}
 }}
 html {{ scroll-behavior: smooth; }}
+{SHORT_CSS if SHORT else ''}
 </style>
 
 <div class="wrap">
