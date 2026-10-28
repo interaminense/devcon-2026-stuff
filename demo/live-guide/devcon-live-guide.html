@@ -164,7 +164,11 @@ body.no-say .k-say { display: none; }
 h2 { font: 700 33px/1.15 var(--display); margin: 0; text-wrap: balance; }
 .topic { color: var(--muted); font: 500 14px/1 var(--mono); letter-spacing: 0.08em; text-transform: uppercase; }
 
+.part-intro { color: rgba(255, 255, 255, 0.86); font-size: 22px; line-height: 1.5; margin: -8px 0 32px; max-width: 62ch; }
 .steps { display: grid; gap: 20px; list-style: none; margin: 0; padding: 0; }
+.steps .sub { border-bottom: 1px solid var(--line); margin-top: 28px; padding-bottom: 10px; }
+.steps .sub:first-child { margin-top: 0; }
+.steps .sub h3 { color: var(--accent); font: 700 24px/1.2 var(--display); margin: 0; }
 .step { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; display: grid; gap: 12px; grid-template-columns: auto minmax(0, 1fr); padding: 26px 24px; transition: opacity 0.3s ease, filter 0.3s ease, border-color 0.3s ease; }
 .step.is-done { opacity: 0.45; }
 .wrap:has(.step:hover, .step:focus-within) .step:not(:hover, :focus-within) { filter: saturate(0.5); opacity: 0.3; }
@@ -305,6 +309,7 @@ html { scroll-behavior: smooth; }
 		<span class="letter">1</span>
 		<div><h2>LDP connected to DXP</h2><span class="topic">Topic 04</span></div>
 	</header>
+	
 	<ol class="steps">
 <li class="step k-say">
 	
@@ -340,6 +345,7 @@ html { scroll-behavior: smooth; }
 		<span class="letter">2</span>
 		<div><h2>The first client extension</h2><span class="topic">Topic 04</span></div>
 	</header>
+	
 	<ol class="steps">
 <li class="step k-code">
 	<label class="done"><input id="done-21" type="checkbox" data-key="21"><span class="sr">Done</span></label>
@@ -391,6 +397,7 @@ html { scroll-behavior: smooth; }
 		<span class="letter">3</span>
 		<div><h2>Real LDP data</h2><span class="topic">Topic 04</span></div>
 	</header>
+	
 	<ol class="steps">
 <li class="step k-say">
 	
@@ -449,6 +456,7 @@ html { scroll-behavior: smooth; }
 		<span class="letter">4</span>
 		<div><h2>Two instances, one card</h2><span class="topic">Topic 04</span></div>
 	</header>
+	
 	<ol class="steps">
 <li class="step k-say">
 	
@@ -507,6 +515,7 @@ html { scroll-behavior: smooth; }
 		<span class="letter">5</span>
 		<div><h2>Persistence with Objects</h2><span class="topic">Topic 05</span></div>
 	</header>
+	
 	<ol class="steps">
 <li class="step k-ui">
 	<label class="done"><input id="done-51" type="checkbox" data-key="51"><span class="sr">Done</span></label>
@@ -565,6 +574,7 @@ html { scroll-behavior: smooth; }
 		<span class="letter">6</span>
 		<div><h2>AI Hub insight</h2><span class="topic">Topic 05</span></div>
 	</header>
+	
 	<ol class="steps">
 <li class="step k-ui">
 	<label class="done"><input id="done-61" type="checkbox" data-key="61"><span class="sr">Done</span></label>

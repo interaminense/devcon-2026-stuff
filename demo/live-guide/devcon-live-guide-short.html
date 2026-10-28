@@ -1,0 +1,860 @@
+<title>Live Demo Short Guide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;500;600;700;800&amp;family=JetBrains+Mono:wght@400;600&amp;display=swap">
+<style>
+/* Layout: one reading column, a sticky part switcher on top, each part a numbered run of typed steps. */
+:root {
+	color-scheme: dark;
+	--bg: #00072b;
+	--surface: #0a1145;
+	--surface-2: #141c5c;
+	--line: #27307a;
+	--fg: #ffffff;
+	--muted: #a3abd6;
+	--accent: #e500bd;
+	--accent-soft: rgba(229, 0, 189, 0.16);
+	--say: #00c2fb;
+	--check: #5fd3a2;
+	--warn: #f60062;
+	--code-bg: #000420;
+	--code-new: #f4f7ff;
+	--code-comment: #8f9bbd;
+	--code-keyword: #7fb2ff;
+	--code-string: #f2c78a;
+	--code-number: #f29e74;
+	--code-fn: #8fe3c4;
+	--code-type: #c3a6ff;
+	--line-soft: rgba(39, 48, 122, 0.5);
+	--c-dxp: #3d7bff;
+	--c-ldp: #00c2fb;
+	--c-hub: #e500bd;
+	--code-old: #4c5590;
+	--display: 'Source Sans 3', 'Source Sans Pro', 'Segoe UI', system-ui, sans-serif;
+	--body: 'Source Sans 3', 'Source Sans Pro', 'Segoe UI', system-ui, sans-serif;
+	--mono: 'JetBrains Mono', ui-monospace, 'SFMono-Regular', Menlo, monospace;
+}
+
+* { box-sizing: border-box; }
+
+body {
+	background: var(--bg);
+	color: var(--fg);
+	font: 20px/1.6 var(--body);
+	padding-inline: 16px;
+}
+
+.wrap { margin: 0 auto; max-width: 1280px; padding-block: 32px 96px; }
+
+a { color: var(--accent); }
+
+code { font-family: var(--mono); font-size: 0.88em; background: var(--surface-2); border-radius: 4px; padding: 1px 5px; overflow-wrap: anywhere; }
+
+.hero {
+	background:
+		radial-gradient(circle at 0% 0%, rgba(11, 95, 255, 0.85) 0, transparent 45%),
+		radial-gradient(circle at 100% 100%, rgba(229, 0, 189, 0.85) 0, transparent 50%),
+		radial-gradient(circle at 70% 20%, rgba(123, 44, 255, 0.55) 0, transparent 45%),
+		linear-gradient(135deg, #030028 0%, #1514a4 55%, #3a0a8a 100%);
+	border-radius: 20px;
+	display: grid;
+	gap: 14px;
+	margin-bottom: 8px;
+	padding: 36px 36px 30px;
+}
+.eyebrow { color: #ff7ce6; font: 700 15px/1 var(--body); letter-spacing: 0.16em; text-transform: uppercase; }
+h1 { font: 700 clamp(34px, 6vw, 54px)/1.05 var(--display); letter-spacing: -0.01em; margin: 0; text-wrap: balance; }
+.lede { color: rgba(255, 255, 255, 0.86); font-size: 22px; line-height: 1.5; margin: 0; max-width: 60ch; }
+
+
+.agenda { border-block: 1px solid var(--line-soft); margin-top: 8px; padding-block: 18px; scroll-margin-top: 16px; }
+.agenda-title { color: var(--muted); font: 600 14px/1 var(--mono); letter-spacing: 0.14em; margin: 0 0 10px; text-transform: uppercase; }
+.agenda ol { display: grid; list-style: none; margin: 0; padding: 0; }
+.agenda a { align-items: baseline; border-top: 1px solid var(--line-soft); color: var(--fg); display: grid; gap: 16px; grid-template-columns: 2.2em minmax(0, 1fr) auto; padding: 10px 4px; text-decoration: none; }
+.agenda li:first-child a { border-top: 0; }
+.agenda a:hover .a-title, .agenda a:focus-visible .a-title { color: var(--accent); }
+.a-letter { color: var(--accent); font: 800 24px/1 var(--display); }
+.a-title { font: 600 24px/1.3 var(--display); }
+.a-topic { color: var(--muted); font: 500 15px/1 var(--mono); letter-spacing: 0.08em; text-transform: uppercase; }
+.to-agenda { background: var(--surface-2); border: 1px solid var(--line); border-radius: 999px; bottom: calc(16px + env(safe-area-inset-bottom, 0px)); color: var(--fg); font-size: 17px; padding: 8px 14px; position: fixed; right: 16px; text-decoration: none; z-index: 5; }
+.to-agenda:hover { border-color: var(--accent); }
+.below-hero { display: flex; flex-wrap: wrap; gap: 12px; padding-block: 28px; }
+.dg-card-saved { fill: var(--check); font: 600 11px var(--mono); }
+#walk-modal[open] { display: flex; flex-direction: column; overflow: hidden; }
+.walk { flex: 1; grid-template-rows: auto minmax(0, 1fr) auto; min-height: 0; }
+.walk .diagram-scroll { display: flex; justify-content: center; min-height: 0; overflow: hidden; }
+.walk .diagram-scroll svg { height: 100%; max-width: 100%; min-width: 0; width: auto; }
+.an-g { transition: opacity 0.6s ease; }
+.an-g.is-hidden { opacity: 0; }
+.an-g.is-past { opacity: 0.35; }
+.an-g.is-now .dg-line { animation: an-flow 0.9s linear infinite; stroke-dasharray: 9 6; stroke-width: 2.4; }
+.an-g.is-now .dg-box[class*="app-"], .an-g.is-now .dg-card { filter: drop-shadow(0 0 8px color-mix(in srgb, var(--c, var(--accent)) 70%, transparent)); }
+@keyframes an-flow { to { stroke-dashoffset: -30; } }
+.walk-bar { align-items: center; display: flex; flex-wrap: wrap; gap: 16px 24px; justify-content: space-between; }
+.walk-captions { flex: 1 1 420px; min-height: 84px; min-width: 0; }
+.walk-caption { align-items: flex-start; display: flex; gap: 14px; }
+.walk-caption[hidden] { display: none; }
+.walk-caption h3 { font: 700 22px/1.2 var(--display); margin: 0 0 4px; }
+.walk-caption p { color: var(--muted); font-size: 18px; margin: 0; max-width: 70ch; }
+.walk-n { align-items: center; background: var(--accent); border-radius: 10px; color: var(--fg); display: flex; flex: none; font: 700 16px/1 var(--mono); height: 40px; justify-content: center; min-width: 40px; padding: 0 8px; }
+.walk-controls { align-items: center; display: flex; flex-wrap: wrap; gap: 8px; }
+.walk-btn { background: var(--surface-2); border: 1px solid var(--line); border-radius: 8px; color: var(--fg); cursor: pointer; font: 600 16px/1 var(--body); min-width: 40px; padding: 10px 12px; }
+.walk-btn:hover, .walk-btn:focus-visible { border-color: var(--accent); }
+.walk-play { min-width: 80px; }
+.walk-dots { display: flex; gap: 6px; margin-left: 8px; }
+.walk-dot { background: transparent; border: 1px solid var(--line); border-radius: 50%; color: var(--muted); cursor: pointer; font: 600 12px/1 var(--mono); height: 28px; padding: 0; width: 28px; }
+.walk-dot.is-done { border-color: var(--accent); color: var(--fg); }
+.walk-dot.is-now { background: var(--accent); border-color: var(--accent); color: var(--fg); }
+.options { align-items: stretch; display: flex; position: fixed; right: 0; top: 50%; transform: translateY(-50%); z-index: 6; }
+.options-tab { background: var(--surface-2); border: 1px solid var(--line); border-radius: 10px 0 0 10px; border-right: 0; color: var(--fg); cursor: pointer; font: 700 26px/1 var(--body); padding: 14px 10px; }
+.options-tab:hover, .options-tab:focus-visible { border-color: var(--accent); color: var(--accent); }
+.options-panel { align-items: center; background: var(--surface-2); border: 1px solid var(--line); border-right: 0; display: flex; padding: 14px 18px calc(14px) 14px; padding-right: max(18px, env(safe-area-inset-right, 0px)); }
+.options-panel[hidden] { display: none; }
+.toggle { align-items: center; color: var(--fg); cursor: pointer; display: flex; font-size: 18px; gap: 8px; white-space: nowrap; }
+body.no-say .k-say { display: none; }
+.show-diagram { background: var(--surface-2); border: 1px solid var(--c-dxp); border-radius: 8px; color: var(--fg); cursor: pointer; font: 500 18px/1 var(--body); padding: 9px 14px; }
+.show-diagram:hover, .show-diagram:focus-visible { background: color-mix(in srgb, var(--c-dxp) 18%, var(--surface-2)); }
+.diagram-modal { background: var(--bg); border: 1px solid var(--line); border-radius: 16px; color: var(--fg); height: 94vh; max-height: none; max-width: none; overflow: auto; padding: 24px 24px 8px; width: 96vw; }
+.diagram-modal::backdrop { background: rgba(3, 6, 14, 0.75); backdrop-filter: blur(3px); }
+.close-diagram { align-items: center; background: var(--surface-2); border: 1px solid var(--line); border-radius: 50%; box-shadow: 0 6px 20px rgba(0, 0, 0, 0.45); color: var(--fg); cursor: pointer; display: flex; font: 400 28px/1 var(--body); height: 44px; justify-content: center; padding: 0 0 3px; position: fixed; right: calc(2vw + 14px); top: calc(3vh + 12px); width: 44px; z-index: 2; }
+.close-diagram:hover, .close-diagram:focus-visible { background: var(--accent); border-color: var(--accent); }
+.diagram-modal .diagram { margin-top: 0; }
+.diagram { display: grid; gap: 16px; margin-top: 8px; }
+.diagram-scroll { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; overflow-x: auto; padding: 16px; }
+.diagram svg { display: block; height: auto; min-width: 820px; width: 100%; }
+.app-dxp { --c: var(--c-dxp); }
+.app-ldp { --c: var(--c-ldp); }
+.app-hub { --c: var(--c-hub); }
+.dg-group { fill: color-mix(in srgb, var(--c) 5%, transparent); stroke: var(--c); stroke-dasharray: 6 5; stroke-opacity: 0.7; }
+.dg-group-name { fill: var(--c); font: 800 18px var(--display); }
+.dg-box { fill: var(--surface-2); stroke: var(--line); }
+.dg-box[class*="app-"] { fill: color-mix(in srgb, var(--c) 12%, var(--surface)); stroke: var(--c); }
+.dg-box.dg-soft { fill: color-mix(in srgb, var(--c) 6%, var(--surface)); stroke-dasharray: 4 4; }
+.dg-browser { fill: var(--bg); stroke: var(--fg); stroke-opacity: 0.4; }
+.dg-name { fill: var(--fg); font: 700 16px var(--display); }
+.dg-path { fill: var(--muted); font: 12px var(--mono); }
+.dg-dashed { stroke-dasharray: 4 3; }
+.dg-steps { display: grid; gap: 10px; list-style: none; margin: 0; padding: 0; }
+.dg-steps li { align-items: baseline; color: var(--muted); display: grid; font-size: 18px; gap: 12px; grid-template-columns: 30px minmax(0, 1fr); }
+.dg-step-n { align-items: center; background: var(--c); border-radius: 50%; color: var(--bg); display: inline-flex; font: 700 13px/1 var(--mono); height: 26px; justify-content: center; width: 26px; }
+.dg-card { fill: var(--surface); stroke: var(--line); }
+.dg-card-label { fill: var(--muted); font: 600 12px var(--display); }
+.dg-card-value { fill: var(--fg); font: 700 26px var(--display); }
+.dg-card-trend { font: 600 12px var(--mono); }
+.dg-up { fill: var(--check); stroke: var(--check); }
+.dg-down { fill: var(--warn); stroke: var(--warn); }
+.dg-spark { fill: none; stroke-linecap: round; stroke-linejoin: round; stroke-width: 2; }
+.dg-spark-dot { stroke: none; }
+.dg-card-ai { fill: var(--c-hub); font: 600 12px var(--display); }
+.dg-card-text { fill: var(--line); }
+.dg-route { fill: var(--c); font: 12px var(--mono); }
+.dg-line { fill: none; stroke: var(--muted); stroke-width: 1.6; }
+.dg-line[class*="app-"] { stroke: var(--c); }
+.dg-head { fill: var(--muted); }
+.dg-head[class*="app-"] { fill: var(--c); }
+.dg-badge { fill: var(--fg); }
+.dg-badge[class*="app-"] { fill: var(--c); }
+.dg-badge-n { fill: var(--bg); font: 700 13px var(--mono); }
+.dg-legend { align-items: center; color: var(--muted); display: flex; flex-wrap: wrap; font-size: 14px; gap: 8px 18px; margin: 0; }
+.dg-legend span[class*="app-"] { align-items: center; color: var(--fg); display: inline-flex; gap: 8px; }
+.dg-legend span[class*="app-"]::before { background: var(--c); border-radius: 3px; content: ""; height: 12px; width: 12px; }
+
+.part { padding-top: 72px; scroll-margin-top: 16px; }
+.part-head { align-items: center; display: flex; gap: 14px; margin-bottom: 28px; }
+.letter { align-items: center; background: var(--accent-soft); border: 1px solid var(--accent); border-radius: 10px; color: var(--accent); display: flex; flex: none; font: 800 26px/1 var(--display); height: 44px; justify-content: center; width: 44px; }
+h2 { font: 700 33px/1.15 var(--display); margin: 0; text-wrap: balance; }
+.topic { color: var(--muted); font: 500 14px/1 var(--mono); letter-spacing: 0.08em; text-transform: uppercase; }
+
+.part-intro { color: rgba(255, 255, 255, 0.86); font-size: 22px; line-height: 1.5; margin: -8px 0 32px; max-width: 62ch; }
+.steps { display: grid; gap: 20px; list-style: none; margin: 0; padding: 0; }
+.steps .sub { border-bottom: 1px solid var(--line); margin-top: 28px; padding-bottom: 10px; }
+.steps .sub:first-child { margin-top: 0; }
+.steps .sub h3 { color: var(--accent); font: 700 24px/1.2 var(--display); margin: 0; }
+.step { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; display: grid; gap: 12px; grid-template-columns: auto minmax(0, 1fr); padding: 26px 24px; transition: opacity 0.3s ease, filter 0.3s ease, border-color 0.3s ease; }
+.step.is-done { opacity: 0.45; }
+.wrap:has(.step:hover, .step:focus-within) .step:not(:hover, :focus-within) { filter: saturate(0.5); opacity: 0.3; }
+.step:hover, .step:focus-within { border-color: color-mix(in srgb, var(--accent) 60%, var(--line)); opacity: 1; }
+.step-body { display: grid; gap: 18px; grid-template-columns: minmax(0, 1fr); min-width: 0; }
+.step-body > * { max-width: 100%; min-width: 0; }
+.step-body p { margin: 0; }
+.step-body ol { display: grid; gap: 10px; margin: 0; padding-left: 20px; }
+.kind { font: 600 14px/1 var(--mono); letter-spacing: 0.12em; text-transform: uppercase; }
+.k-ui .kind { color: var(--accent); }
+.step-title { font-size: 30px; line-height: 1.25; }
+.k-code .kind { color: var(--fg); }
+.k-say { grid-template-columns: minmax(0, 1fr); background: transparent; border-style: dashed; border-color: color-mix(in srgb, var(--say) 45%, transparent); }
+.k-say .kind { color: var(--say); }
+.k-say p { font-size: 22px; font-style: italic; line-height: 1.5; }
+
+.done { cursor: pointer; padding-top: 1px; }
+.done input { accent-color: var(--check); cursor: pointer; height: 18px; width: 18px; }
+.sr { clip: rect(0 0 0 0); height: 1px; overflow: hidden; position: absolute; width: 1px; }
+
+.table-scroll { overflow-x: auto; }
+.values { border-collapse: collapse; font-size: inherit; width: 100%; }
+.values th, .values td { border: 1px solid var(--line); padding: 14px 14px; text-align: left; vertical-align: middle; }
+.values th { color: var(--muted); font-weight: 500; white-space: nowrap; width: 1%; }
+.values td:last-child { text-align: right; width: 1%; }
+.values thead th { color: var(--muted); font: 600 13px/1 var(--mono); letter-spacing: 0.12em; padding-bottom: 10px; text-transform: uppercase; }
+.values.described td:nth-child(2) { width: 46%; }
+.values .purpose { color: var(--muted); font-size: 18px; line-height: 1.45; min-width: 220px; width: 32%; }
+.values td code { white-space: pre-wrap; }
+.values a { color: var(--say); text-underline-offset: 4px; }
+.values a code { color: inherit; }
+.pill { background: var(--accent-soft); border-radius: 999px; color: var(--accent); font-size: 15px; padding: 2px 10px; }
+
+.copy { background: var(--surface-2); border: 1px solid var(--line); border-radius: 8px; color: var(--fg); cursor: pointer; font: 500 17px/1 var(--body); padding: 8px 12px; white-space: nowrap; }
+.copy:hover, .copy:focus-visible { border-color: var(--accent); outline: none; }
+.copy.ok { border-color: var(--check); color: var(--check); }
+
+.code { margin: 0; min-width: 0; }
+.code figcaption { align-items: center; display: flex; flex-wrap: wrap; gap: 8px 12px; margin-bottom: 8px; }
+.file { font: 600 18px/1 var(--mono); }
+.legend { color: var(--muted); flex: 1; font-size: 17px; }
+.code-scroll { background: var(--code-bg); border: 1px solid var(--line); border-radius: 10px; max-height: 70vh; overflow: auto; }
+.code pre { display: grid; font: 18px/1.75 var(--mono); grid-template-columns: auto 1fr; margin: 0; padding: 18px 0; tab-size: 4; }
+.ln { color: var(--code-old); padding: 0 12px 0 14px; text-align: right; user-select: none; }
+.lc { padding-right: 16px; white-space: pre; }
+.old { color: var(--code-old); }
+.tx, .pu { color: var(--code-new); }
+.cm { color: var(--code-comment); }
+.kw { color: var(--code-keyword); }
+.st { color: var(--code-string); }
+.nu { color: var(--code-number); }
+.fn { color: var(--code-fn); }
+.ty { color: var(--code-type); }
+.code-note { color: var(--muted); font-size: 19px; margin: 8px 0 0; }
+
+.reset-card { background: var(--surface); border: 1px solid color-mix(in srgb, var(--warn) 40%, transparent); border-radius: 12px; display: grid; gap: 12px; padding: 16px 18px; }
+.reset-card ol { display: grid; gap: 6px; margin: 0; padding-left: 22px; }
+.reset-card p { color: var(--muted); margin: 0; }
+
+.foot { align-items: center; color: var(--muted); display: flex; flex-wrap: wrap; font-size: 18px; gap: 12px; justify-content: space-between; padding-top: 32px; }
+.reset { background: var(--surface-2); border: 1px solid var(--line); border-radius: 8px; color: var(--fg); cursor: pointer; font: inherit; justify-self: start; padding: 8px 14px; }
+.reset:hover, .reset:focus-visible { border-color: var(--warn); }
+
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+@media (max-width: 560px) {
+	.values th { white-space: normal; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+	* { animation: none !important; scroll-behavior: auto !important; transition: none !important; }
+}
+html { scroll-behavior: smooth; }
+</style>
+
+<div class="wrap">
+	<header class="hero">
+		<span class="eyebrow">DEVCON 2026 &middot; Live demo</span>
+		<h1>Live Demo Guide</h1>
+		<p class="lede">Today we're going to build a custom dashboard card right inside DXP, in three moves: read real LDP data, remember each card's settings with Objects, and ask AI Hub what the numbers mean.</p>
+	</header>
+
+	<div class="below-hero">
+		<button class="show-diagram" id="open-diagram" type="button">Diagram Flow</button>
+		<button class="show-diagram" id="open-walk" type="button">Animated Walkthrough</button>
+	</div>
+
+	<aside class="options" id="options">
+		<button class="options-tab" id="options-tab" type="button" aria-controls="options-panel" aria-expanded="false" aria-label="Show options">&lsaquo;</button>
+		<div class="options-panel" id="options-panel" hidden>
+			<label class="toggle"><input id="no-say" type="checkbox"> Hide the &ldquo;Say&rdquo; boxes</label>
+		</div>
+	</aside>
+
+	<dialog class="diagram-modal" id="diagram-modal" aria-label="Diagram Flow">
+		<button class="close-diagram" id="close-diagram" type="button" aria-label="Close">&times;</button>
+		
+<section class="diagram" id="diagram">
+	<h2 class="agenda-title">Diagram Flow</h2>
+	<div class="diagram-scroll"><svg role="img" aria-label="The demo card in the browser loads from Documents and Media, reads LDP through the DXP analytics proxy, stores its configuration in the Objects API, gets an AI Hub token from DXP, and then talks to AI Hub directly, which runs the LLM." viewBox="0 0 1150 620" xmlns="http://www.w3.org/2000/svg"><defs>
+	<marker id="dg-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="dg-head" d="M0 0 L10 5 L0 10 z"/></marker>
+	<marker id="dg-a-dxp" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="dg-head app-dxp" d="M0 0 L10 5 L0 10 z"/></marker>
+	<marker id="dg-a-ldp" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="dg-head app-ldp" d="M0 0 L10 5 L0 10 z"/></marker>
+	<marker id="dg-a-hub" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="dg-head app-hub" d="M0 0 L10 5 L0 10 z"/></marker>
+</defs><rect class="dg-group app-dxp" x="350" y="16" width="440" height="506" rx="14"/><text class="dg-group-name app-dxp" x="375" y="46">DXP</text><rect class="dg-box dg-browser" x="30" y="40" width="220" height="462" rx="12"/><text class="dg-name" x="48" y="70">Browser</text><text class="dg-path" x="48" y="92">Demo page · 2 instances</text><rect class="dg-card" x="44" y="112" width="192" height="140" rx="8"/><text class="dg-card-label" x="58" y="136">Unique visitors</text><text class="dg-card-value" x="58" y="168">1,284</text><text class="dg-card-trend dg-up" x="58" y="188">▲ 12.4%</text><polyline class="dg-spark dg-up" points="58.0,224.0 85.3,230.0 112.7,218.0 140.0,222.5 167.3,209.0 194.7,213.5 222.0,200.0"/><circle class="dg-spark-dot dg-up" cx="222.0" cy="200.0" r="3"/><rect class="dg-card" x="44" y="272" width="192" height="210" rx="8"/><text class="dg-card-label" x="58" y="296">Sessions</text><text class="dg-card-value" x="58" y="328">1,912</text><text class="dg-card-trend dg-down" x="58" y="348">▼ 3.1%</text><polyline class="dg-spark dg-down" points="58.0,360.0 85.3,370.9 112.7,365.5 140.0,381.8 167.3,376.4 194.7,390.0 222.0,384.5"/><circle class="dg-spark-dot dg-down" cx="222.0" cy="384.5" r="3"/><text class="dg-card-ai" x="58" y="422">✦ AI insight</text><rect class="dg-card-text" x="58" y="434" width="164" height="6" rx="3"/><rect class="dg-card-text" x="58" y="448" width="132" height="6" rx="3"/><rect class="dg-card-text" x="58" y="462" width="102" height="6" rx="3"/><rect class="dg-box app-dxp" x="375" y="60" width="320" height="62" rx="10"/><text class="dg-name" x="391" y="86">Client Extensions</text><text class="dg-path" x="391" y="106">Custom Element · points to the JS URL</text><rect class="dg-box app-dxp" x="375" y="142" width="320" height="62" rx="10"/><text class="dg-name" x="391" y="168">Documents and Media</text><text class="dg-path" x="391" y="188">hosts ldp-demo-card.js, the card code</text><rect class="dg-box app-dxp" x="375" y="224" width="320" height="62" rx="10"/><text class="dg-name" x="391" y="250">Analytics proxy</text><text class="dg-path" x="391" y="270">/o/analytics-rest/v1.0/graphql</text><rect class="dg-box app-dxp" x="375" y="306" width="320" height="62" rx="10"/><text class="dg-name" x="391" y="332">Objects API</text><text class="dg-path" x="391" y="352">/o/c/democardconfigs</text><rect class="dg-box app-dxp" x="375" y="440" width="320" height="62" rx="10"/><text class="dg-name" x="391" y="466">AI Hub connection</text><text class="dg-path" x="391" y="486">/o/ai-hub-cell/v1.0/…tokens</text><path class="dg-line app-dxp dg-dashed" d="M697 91.0 H719 V173.0 H699" marker-end="url(#dg-a-dxp)"/><text class="dg-path" x="729" y="136.0">JS URL</text><rect class="dg-box app-ldp" x="890" y="224" width="230" height="62" rx="10"/><text class="dg-name" x="906" y="250">LDP</text><text class="dg-path" x="906" y="270">GraphQL · property channel</text><rect class="dg-box app-hub dg-soft" x="890" y="300" width="230" height="62" rx="10"/><text class="dg-name" x="906" y="326">LLM</text><text class="dg-path" x="906" y="346">runs the prompt</text><rect class="dg-box app-hub" x="890" y="440" width="230" height="62" rx="10"/><text class="dg-name" x="906" y="466">AI Hub</text><text class="dg-path" x="906" y="486">na1.hub.liferay.com · agent</text><line class="dg-line app-dxp" x1="371" y1="91.0" x2="254" y2="91.0" marker-end="url(#dg-a-dxp)"/><circle class="dg-badge app-dxp" cx="312.5" cy="91.0" r="13"/><text class="dg-badge-n" x="312.5" y="95.5" text-anchor="middle">1</text><line class="dg-line app-dxp" x1="371" y1="173.0" x2="254" y2="173.0" marker-end="url(#dg-a-dxp)"/><circle class="dg-badge app-dxp" cx="312.5" cy="173.0" r="13"/><text class="dg-badge-n" x="312.5" y="177.5" text-anchor="middle">2</text><line class="dg-line app-dxp" x1="254" y1="255.0" x2="371" y2="255.0" marker-start="url(#dg-a-dxp)" marker-end="url(#dg-a-dxp)"/><circle class="dg-badge app-ldp" cx="312.5" cy="255.0" r="13"/><text class="dg-badge-n" x="312.5" y="259.5" text-anchor="middle">3</text><line class="dg-line app-ldp" x1="699" y1="255.0" x2="886" y2="255.0" marker-start="url(#dg-a-ldp)" marker-end="url(#dg-a-ldp)"/><circle class="dg-badge app-ldp" cx="840.0" cy="255.0" r="13"/><text class="dg-badge-n" x="840.0" y="259.5" text-anchor="middle">3</text><line class="dg-line app-dxp" x1="254" y1="337.0" x2="371" y2="337.0" marker-start="url(#dg-a-dxp)" marker-end="url(#dg-a-dxp)"/><circle class="dg-badge app-dxp" cx="312.5" cy="337.0" r="13"/><text class="dg-badge-n" x="312.5" y="341.5" text-anchor="middle">4</text><line class="dg-line app-dxp" x1="254" y1="471.0" x2="371" y2="471.0" marker-start="url(#dg-a-dxp)" marker-end="url(#dg-a-dxp)"/><circle class="dg-badge app-hub" cx="312.5" cy="471.0" r="13"/><text class="dg-badge-n" x="312.5" y="475.5" text-anchor="middle">5</text><line class="dg-line app-hub" x1="699" y1="471.0" x2="886" y2="471.0" marker-start="url(#dg-a-hub)" marker-end="url(#dg-a-hub)"/><circle class="dg-badge app-hub" cx="840.0" cy="471.0" r="13"/><text class="dg-badge-n" x="840.0" y="475.5" text-anchor="middle">5</text><path class="dg-line app-hub" d="M140.0 506 V568 H1005.0 V506" marker-start="url(#dg-a-hub)" marker-end="url(#dg-a-hub)"/><circle class="dg-badge app-hub" cx="572.5" cy="568" r="13"/><text class="dg-badge-n" x="572.5" y="572.5" text-anchor="middle">6</text><text class="dg-route app-hub" x="572.5" y="600" text-anchor="middle">browser ⇄ AI Hub, cross-origin</text><line class="dg-line app-hub" x1="1005.0" y1="436" x2="1005.0" y2="366" marker-start="url(#dg-a-hub)" marker-end="url(#dg-a-hub)"/><circle class="dg-badge app-hub" cx="1033.0" cy="401.0" r="13"/><text class="dg-badge-n" x="1033.0" y="405.5" text-anchor="middle">6</text></svg></div>
+	<p class="dg-legend"><span class="app-dxp">DXP</span><span class="app-ldp">LDP</span><span class="app-hub">AI Hub</span></p>
+	<ol class="dg-steps"><li><span class="dg-step-n app-dxp">1</span><span>Client Extensions puts <code>&lt;ldp-demo-card&gt;</code> on the page, pointing to the card&rsquo;s JS URL.</span></li><li><span class="dg-step-n app-dxp">2</span><span>The browser loads the card code from Documents and Media.</span></li><li><span class="dg-step-n app-ldp">3</span><span>The card asks the Analytics proxy for its metric. DXP forwards the GraphQL query to LDP.</span></li><li><span class="dg-step-n app-dxp">4</span><span>The card loads and saves its metric in the Objects API, one entry per widget instance.</span></li><li><span class="dg-step-n app-hub">5</span><span>The card asks DXP for an AI Hub token. DXP signs in with the Client ID and Secret.</span></li><li><span class="dg-step-n app-hub">6</span><span>The card sends its numbers to the AI Hub agent. The LLM writes the insight shown under the chart.</span></li></ol>
+</section>
+	</dialog>
+
+	<dialog class="diagram-modal" id="walk-modal" aria-label="Animated Walkthrough">
+		<button class="close-diagram" id="close-walk" type="button" aria-label="Close">&times;</button>
+		
+<section class="diagram walk" id="walk" data-steps="8">
+	<h2 class="agenda-title">Animated Walkthrough</h2>
+	<div class="diagram-scroll"><svg role="img" aria-label="Step-by-step animation of how the demo card works." viewBox="0 0 1150 620" xmlns="http://www.w3.org/2000/svg"><defs><marker id="an-a-dxp" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="dg-head app-dxp" d="M0 0 L10 5 L0 10 z"/></marker><marker id="an-a-ldp" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="dg-head app-ldp" d="M0 0 L10 5 L0 10 z"/></marker><marker id="an-a-hub" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="dg-head app-hub" d="M0 0 L10 5 L0 10 z"/></marker></defs><g class="an-g" data-s="1"><rect class="dg-group app-dxp" x="350" y="16" width="440" height="506" rx="14"/><text class="dg-group-name app-dxp" x="375" y="46">DXP</text><rect class="dg-box dg-browser" x="30" y="40" width="220" height="462" rx="12"/><text class="dg-name" x="48" y="70">Browser</text><rect class="dg-box app-dxp" x="375" y="60" width="320" height="62" rx="10"/><text class="dg-name" x="391" y="86">Client Extensions</text><text class="dg-path" x="391" y="106">Custom Element · points to the JS URL</text><rect class="dg-box app-dxp" x="375" y="142" width="320" height="62" rx="10"/><text class="dg-name" x="391" y="168">Documents and Media</text><text class="dg-path" x="391" y="188">hosts ldp-demo-card.js, the card code</text><path class="dg-line app-dxp dg-dashed" d="M697 91.0 H719 V173.0 H699" marker-end="url(#an-a-dxp)"/><text class="dg-path" x="729" y="136.0">JS URL</text></g><g class="an-g" data-s="2"><text class="dg-path" x="48" y="92">Demo page · 2 instances</text><line class="dg-line app-dxp" x1="371" y1="91.0" x2="254" y2="91.0" marker-end="url(#an-a-dxp)"/><circle class="dg-badge app-dxp" cx="312.5" cy="91.0" r="13"/><text class="dg-badge-n" x="312.5" y="95.5" text-anchor="middle">1</text></g><g class="an-g" data-s="3"><rect class="dg-card" x="44" y="112" width="192" height="140" rx="8"/><text class="dg-card-label" x="58" y="136">Unique visitors</text><rect class="dg-card" x="44" y="272" width="192" height="210" rx="8"/><text class="dg-card-label" x="58" y="296">Sessions</text><line class="dg-line app-dxp" x1="371" y1="173.0" x2="254" y2="173.0" marker-end="url(#an-a-dxp)"/><circle class="dg-badge app-dxp" cx="312.5" cy="173.0" r="13"/><text class="dg-badge-n" x="312.5" y="177.5" text-anchor="middle">2</text></g><g class="an-g" data-s="4"><text class="dg-card-value" x="58" y="168">1,284</text><text class="dg-card-trend dg-up" x="58" y="188">▲ 12.4%</text><polyline class="dg-spark dg-up" points="58.0,224.0 85.3,230.0 112.7,218.0 140.0,222.5 167.3,209.0 194.7,213.5 222.0,200.0"/><circle class="dg-spark-dot dg-up" cx="222.0" cy="200.0" r="3"/><text class="dg-card-value" x="58" y="328">1,912</text><text class="dg-card-trend dg-down" x="58" y="348">▼ 3.1%</text><polyline class="dg-spark dg-down" points="58.0,360.0 85.3,370.9 112.7,365.5 140.0,381.8 167.3,376.4 194.7,390.0 222.0,384.5"/><circle class="dg-spark-dot dg-down" cx="222.0" cy="384.5" r="3"/><rect class="dg-box app-dxp" x="375" y="224" width="320" height="62" rx="10"/><text class="dg-name" x="391" y="250">Analytics proxy</text><text class="dg-path" x="391" y="270">/o/analytics-rest/v1.0/graphql</text><rect class="dg-box app-ldp" x="890" y="224" width="230" height="62" rx="10"/><text class="dg-name" x="906" y="250">LDP</text><text class="dg-path" x="906" y="270">GraphQL · property channel</text><line class="dg-line app-dxp" x1="254" y1="255.0" x2="371" y2="255.0" marker-start="url(#an-a-dxp)" marker-end="url(#an-a-dxp)"/><circle class="dg-badge app-ldp" cx="312.5" cy="255.0" r="13"/><text class="dg-badge-n" x="312.5" y="259.5" text-anchor="middle">3</text><line class="dg-line app-ldp" x1="699" y1="255.0" x2="886" y2="255.0" marker-start="url(#an-a-ldp)" marker-end="url(#an-a-ldp)"/><circle class="dg-badge app-ldp" cx="840.0" cy="255.0" r="13"/><text class="dg-badge-n" x="840.0" y="259.5" text-anchor="middle">3</text></g><g class="an-g" data-s="5"><text class="dg-card-saved" x="222" y="136" text-anchor="end">✓ saved</text><text class="dg-card-saved" x="222" y="296" text-anchor="end">✓ saved</text><rect class="dg-box app-dxp" x="375" y="306" width="320" height="62" rx="10"/><text class="dg-name" x="391" y="332">Objects API</text><text class="dg-path" x="391" y="352">/o/c/democardconfigs</text><line class="dg-line app-dxp" x1="254" y1="337.0" x2="371" y2="337.0" marker-start="url(#an-a-dxp)" marker-end="url(#an-a-dxp)"/><circle class="dg-badge app-dxp" cx="312.5" cy="337.0" r="13"/><text class="dg-badge-n" x="312.5" y="341.5" text-anchor="middle">4</text></g><g class="an-g" data-s="6"><rect class="dg-box app-dxp" x="375" y="440" width="320" height="62" rx="10"/><text class="dg-name" x="391" y="466">AI Hub connection</text><text class="dg-path" x="391" y="486">/o/ai-hub-cell/v1.0/…tokens</text><rect class="dg-box app-hub" x="890" y="440" width="230" height="62" rx="10"/><text class="dg-name" x="906" y="466">AI Hub</text><text class="dg-path" x="906" y="486">na1.hub.liferay.com · agent</text><line class="dg-line app-dxp" x1="254" y1="471.0" x2="371" y2="471.0" marker-start="url(#an-a-dxp)" marker-end="url(#an-a-dxp)"/><circle class="dg-badge app-hub" cx="312.5" cy="471.0" r="13"/><text class="dg-badge-n" x="312.5" y="475.5" text-anchor="middle">5</text><line class="dg-line app-hub" x1="699" y1="471.0" x2="886" y2="471.0" marker-start="url(#an-a-hub)" marker-end="url(#an-a-hub)"/><circle class="dg-badge app-hub" cx="840.0" cy="471.0" r="13"/><text class="dg-badge-n" x="840.0" y="475.5" text-anchor="middle">5</text></g><g class="an-g" data-s="7"><text class="dg-card-ai" x="58" y="422">✦ AI insight</text><rect class="dg-card-text" x="58" y="434" width="164" height="6" rx="3"/><rect class="dg-card-text" x="58" y="448" width="132" height="6" rx="3"/><rect class="dg-card-text" x="58" y="462" width="102" height="6" rx="3"/><rect class="dg-box app-hub dg-soft" x="890" y="300" width="230" height="62" rx="10"/><text class="dg-name" x="906" y="326">LLM</text><text class="dg-path" x="906" y="346">runs the prompt</text><path class="dg-line app-hub" d="M140.0 506 V568 H1005.0 V506" marker-start="url(#an-a-hub)" marker-end="url(#an-a-hub)"/><circle class="dg-badge app-hub" cx="572.5" cy="568" r="13"/><text class="dg-badge-n" x="572.5" y="572.5" text-anchor="middle">6</text><text class="dg-route app-hub" x="572.5" y="600" text-anchor="middle">browser ⇄ AI Hub, cross-origin</text><line class="dg-line app-hub" x1="1005.0" y1="436" x2="1005.0" y2="366" marker-start="url(#an-a-hub)" marker-end="url(#an-a-hub)"/><circle class="dg-badge app-hub" cx="1033.0" cy="401.0" r="13"/><text class="dg-badge-n" x="1033.0" y="405.5" text-anchor="middle">6</text></g></svg></div>
+	<div class="walk-bar">
+		<div class="walk-captions" aria-live="polite"><div class="walk-caption" data-step="1" hidden><span class="walk-n">1</span><div><h3>Setup</h3><p>Upload ldp-demo-card.js to Documents and Media, then register it in Client Extensions with its JS URL.</p></div></div><div class="walk-caption" data-step="2" hidden><span class="walk-n">2</span><div><h3>Page</h3><p>DXP renders the demo page with two ldp-demo-card widgets and a script tag for the JS URL.</p></div></div><div class="walk-caption" data-step="3" hidden><span class="walk-n">3</span><div><h3>Script</h3><p>The browser loads the card code from Documents and Media. Each widget becomes a live card.</p></div></div><div class="walk-caption" data-step="4" hidden><span class="walk-n">4</span><div><h3>Metric</h3><p>Each card asks the analytics proxy, with the user&#x27;s session. DXP forwards the GraphQL query to LDP and returns value, previous value and trend.</p></div></div><div class="walk-caption" data-step="5" hidden><span class="walk-n">5</span><div><h3>Config</h3><p>Each card saves its metric in Objects, keyed by its widget instance. After a reload, every card remembers its own setup.</p></div></div><div class="walk-caption" data-step="6" hidden><span class="walk-n">6</span><div><h3>Token</h3><p>DXP signs in to AI Hub with the Client ID and Secret, and hands the card a short-lived token.</p></div></div><div class="walk-caption" data-step="7" hidden><span class="walk-n">7</span><div><h3>Insight</h3><p>The card calls the AI Hub agent directly. The LLM runs the prompt, and the insight shows up under the chart.</p></div></div><div class="walk-caption" data-step="8" hidden><span class="walk-n">All</span><div><h3>The full picture</h3><p>One card, five building blocks, no new backend.</p></div></div></div>
+		<div class="walk-controls">
+			<button class="walk-btn" id="walk-prev" type="button" aria-label="Previous step">&lsaquo;</button>
+			<button class="walk-btn walk-play" id="walk-play" type="button">Pause</button>
+			<button class="walk-btn" id="walk-next" type="button" aria-label="Next step">&rsaquo;</button>
+			<div class="walk-dots"><button class="walk-dot" type="button" data-step="1" aria-label="Step 1: Setup">1</button><button class="walk-dot" type="button" data-step="2" aria-label="Step 2: Page">2</button><button class="walk-dot" type="button" data-step="3" aria-label="Step 3: Script">3</button><button class="walk-dot" type="button" data-step="4" aria-label="Step 4: Metric">4</button><button class="walk-dot" type="button" data-step="5" aria-label="Step 5: Config">5</button><button class="walk-dot" type="button" data-step="6" aria-label="Step 6: Token">6</button><button class="walk-dot" type="button" data-step="7" aria-label="Step 7: Insight">7</button><button class="walk-dot" type="button" data-step="8" aria-label="Step 8: The full picture">✓</button></div>
+		</div>
+	</div>
+</section>
+	</dialog>
+
+	<nav class="agenda" id="agenda" aria-label="Agenda">
+		<h2 class="agenda-title">Agenda</h2>
+		<ol><li><a href="#part-1"><span class="a-letter">1</span><span class="a-title">Connect to LDP and Fetch Real Data</span><span class="a-topic">Topic 04</span></a></li><li><a href="#part-2"><span class="a-letter">2</span><span class="a-title">Persist Card Settings with Liferay Objects</span><span class="a-topic">Topic 05</span></a></li><li><a href="#part-3"><span class="a-letter">3</span><span class="a-title">Get Data Insights with AI Hub</span><span class="a-topic">Topic 05</span></a></li><li><a href="#reset-demo"><span class="a-letter">&#8634;</span><span class="a-title">Reset the demo</span><span class="a-topic">Start over</span></a></li></ol>
+	</nav>
+	<a class="to-agenda" href="#agenda">Agenda &uarr;</a>
+
+	
+<section class="part" id="part-1">
+	<header class="part-head">
+		<span class="letter">1</span>
+		<div><h2>Connect to LDP and Fetch Real Data</h2><span class="topic">Topic 04</span></div>
+	</header>
+	<p class="part-intro">Ship a card as a Custom Element hosted in Documents and Media, then let it read real LDP metrics through DXP: no LDP token in the browser, no backend.</p>
+	<ol class="steps"><li class="sub"><h3>LDP connected to DXP</h3></li>
+<li class="step k-say">
+	
+	<div class="step-body">
+		<span class="kind">Say</span>
+		<p>The data lives in LDP, and this DXP is already connected to it. Our card will only ever talk to DXP; DXP talks to LDP.</p>
+	</div>
+</li>
+<li class="step k-ui">
+	<label class="done"><input id="done-13" type="checkbox" data-key="13"><span class="sr">Done</span></label>
+	<div class="step-body">
+		<span class="kind">In the UI</span>
+		<p class="step-title"><strong>Log in</strong></p>
+<ol>
+	<li>Open the link below and sign in.</li>
+</ol>
+<div class="table-scroll"><table class="values"><tbody><tr><th scope="row">Log in</th><td><a href="https://webserver-lctacdemodevcon-prd.lfr.cloud/web/devcon-demo/home?p_p_id=com_liferay_login_web_portlet_LoginPortlet&amp;p_p_state=maximized&amp;_com_liferay_login_web_portlet_LoginPortlet_redirect=%2Fweb%2Fdevcon-demo" target="_blank" rel="noopener">DEVCON Demo sign-in &nearr;</a></td><td><button class="copy" type="button" data-copy="c0">Copy</button></td></tr></tbody></table></div>
+	</div>
+</li>
+<li class="step k-ui">
+	<label class="done"><input id="done-14" type="checkbox" data-key="14"><span class="sr">Done</span></label>
+	<div class="step-body">
+		<span class="kind">In the UI</span>
+		<ol>
+	<li>Tab 2: Control Panel &rarr; Instance Settings &rarr; Platform &rarr; <b>Analytics Cloud</b>. Point at <b>Connected</b>.</li>
+	<li><b>Properties</b> tab: show <b>SWELL LAB DevCon 2026</b> and the synced Swell Lab site.</li>
+</ol>
+	</div>
+</li><li class="sub"><h3>The first client extension</h3></li>
+<li class="step k-code">
+	<label class="done"><input id="done-16" type="checkbox" data-key="16"><span class="sr">Done</span></label>
+	<div class="step-body">
+		<span class="kind">In the editor</span>
+		
+<figure class="code">
+	<figcaption>
+		<span class="file">ldp-demo-card.js</span>
+		<span class="legend">All new</span>
+		<button class="copy" type="button" data-copy="c1">Copy code</button>
+	</figcaption>
+	<div class="code-scroll"><pre><span class="ln">1</span><span class="lc"><span class="kw">class</span><span class="tx"> </span><span class="ty">LdpDemoCard</span><span class="tx"> </span><span class="kw">extends</span><span class="tx"> </span><span class="ty">HTMLElement</span><span class="tx"> {</span></span><span class="ln">2</span><span class="lc"><span class="tx">	</span><span class="fn">connectedCallback</span><span class="tx">() {</span></span><span class="ln">3</span><span class="lc"><span class="tx">		</span><span class="kw">this</span><span class="tx">.innerHTML = </span><span class="st">&#x27;&lt;p&gt;Hello, DEVCON 2026!&lt;/p&gt;&#x27;</span><span class="tx">;</span></span><span class="ln">4</span><span class="lc"><span class="tx">	}</span></span><span class="ln">5</span><span class="lc"><span class="tx">}</span></span><span class="ln">6</span><span class="lc"> </span><span class="ln">7</span><span class="lc"><span class="tx">customElements.</span><span class="fn">define</span><span class="tx">(</span><span class="st">&#x27;ldp-demo-card&#x27;</span><span class="tx">, </span><span class="ty">LdpDemoCard</span><span class="tx">);</span></span></pre></div>
+	<p class="code-note">A Custom Element is a plain web component: a class and a tag name.</p>
+</figure>
+	</div>
+</li>
+<li class="step k-ui">
+	<label class="done"><input id="done-17" type="checkbox" data-key="17"><span class="sr">Done</span></label>
+	<div class="step-body">
+		<span class="kind">In the UI</span>
+		<p class="step-title"><strong>Host it in Documents and Media</strong></p><ol><li>Tab 3: check the site is <b>DEVCON Demo</b> &rarr; Content &amp; Data &rarr; <b>Documents and Media</b>.</li><li><b>New</b> &rarr; <b>File Upload</b> &rarr; pick the file &rarr; <b>Publish</b>.</li></ol><div class="table-scroll"><table class="values"><tbody><tr><th scope="row">Title</th><td><code>ldp-demo-card.js</code></td><td><button class="copy" type="button" data-copy="c2">Copy</button></td></tr><tr><th scope="row">URL it gets</th><td><code>/documents/d/devcon-demo/ldp-demo-card-js</code></td><td></td></tr></tbody></table></div>
+	</div>
+</li>
+<li class="step k-ui">
+	<label class="done"><input id="done-18" type="checkbox" data-key="18"><span class="sr">Done</span></label>
+	<div class="step-body">
+		<span class="kind">In the UI</span>
+		<p class="step-title"><strong>Register the Custom Element</strong></p><ol><li>Tab 4: Applications &rarr; <b>Client Extensions</b> &rarr; <b>New</b> &rarr; <b>Add Custom Element</b>.</li><li>Fill in the fields below &rarr; <b>Publish</b>.</li></ol><div class="table-scroll"><table class="values"><tbody><tr><th scope="row">Name</th><td><code>LDP Demo Card</code></td><td><button class="copy" type="button" data-copy="c3">Copy</button></td></tr><tr><th scope="row">HTML Element Name</th><td><code>ldp-demo-card</code></td><td><button class="copy" type="button" data-copy="c4">Copy</button></td></tr><tr><th scope="row">JavaScript URL</th><td><code>/documents/d/devcon-demo/ldp-demo-card-js?v=1</code></td><td><button class="copy" type="button" data-copy="c5">Copy</button></td></tr><tr><th scope="row">Instanceable</th><td><span class="pill">checked</span></td><td></td></tr></tbody></table></div>
+	</div>
+</li>
+<li class="step k-say">
+	
+	<div class="step-body">
+		<span class="kind">Say</span>
+		<p>Instanceable means one card, many copies on a page, each with its own settings. That is the whole dashboard idea.</p>
+	</div>
+</li>
+<li class="step k-ui">
+	<label class="done"><input id="done-110" type="checkbox" data-key="110"><span class="sr">Done</span></label>
+	<div class="step-body">
+		<span class="kind">In the UI</span>
+		<p class="step-title"><strong>Put it on a page</strong></p><ol><li>Tab 5: DEVCON Demo &rarr; Site Builder &rarr; <b>Pages</b> &rarr; <b>New</b>.</li><li><b>Basic Templates</b> &rarr; <b>Blank</b> &rarr; name below &rarr; <b>Add</b>.</li><li><b>Components</b> panel &rarr; <b>Fragments</b> &rarr; Layout Elements &rarr; drag <b>Grid</b>. Set <b>Number of Modules</b> to 2.</li><li><b>Widgets</b> tab &rarr; search the name below &rarr; drag it into the <b>left</b> module &rarr; <b>Publish</b>.</li></ol><div class="table-scroll"><table class="values"><tbody><tr><th scope="row">Page name</th><td><code>Demo</code></td><td><button class="copy" type="button" data-copy="c6">Copy</button></td></tr><tr><th scope="row">Widget search</th><td><code>LDP Demo Card</code></td><td><button class="copy" type="button" data-copy="c7">Copy</button></td></tr></tbody></table></div>
+	</div>
+</li><li class="sub"><h3>Real LDP data</h3></li>
+<li class="step k-say">
+	
+	<div class="step-body">
+		<span class="kind">Say</span>
+		<p>The card posts a GraphQL query to DXP with the user&rsquo;s session. DXP signs it and forwards it to LDP, so no LDP credential ever reaches the browser.</p>
+	</div>
+</li>
+<li class="step k-ui">
+	<label class="done"><input id="done-113" type="checkbox" data-key="113"><span class="sr">Done</span></label>
+	<div class="step-body">
+		<span class="kind">In the UI</span>
+		<p class="step-title"><strong>Get the channel ID from LDP</strong></p><ol><li>Tab 1: open <code>ldp-internal.liferay.com</code> &rarr; workspace <b>Liferay Data Platform</b> &rarr; property <b>SWELL LAB DevCon 2026</b> &rarr; <b>Sites</b>.</li><li>The channel ID is the number in the URL, between the workspace and <code>/sites</code>. Copy it.</li><li>Leave the Sites dashboard on <b>Last 7 days</b>: the card must show the same numbers.</li></ol><div class="table-scroll"><table class="values"><tbody><tr><th scope="row">LDP Sites URL</th><td><code>https://ldp-internal.liferay.com/workspace/liferay-data-platform/845351493326064678/sites</code></td><td><button class="copy" type="button" data-copy="c8">Copy</button></td></tr><tr><th scope="row">Channel ID</th><td><code>845351493326064678</code></td><td><button class="copy" type="button" data-copy="c9">Copy</button></td></tr></tbody></table></div>
+	</div>
+</li>
+<li class="step k-say">
+	
+	<div class="step-body">
+		<span class="kind">Say</span>
+		<p>One LDP property is one channel. The channel ID is the only thing the card needs to know whose data to read.</p>
+	</div>
+</li>
+<li class="step k-code">
+	<label class="done"><input id="done-115" type="checkbox" data-key="115"><span class="sr">Done</span></label>
+	<div class="step-body">
+		<span class="kind">In the editor</span>
+		
+<figure class="code">
+	<figcaption>
+		<span class="file">ldp-demo-card.js</span>
+		<span class="legend"></span>
+		<button class="copy" type="button" data-copy="c10">Copy code</button>
+	</figcaption>
+	<div class="code-scroll"><pre><span class="ln">1</span><span class="lc"><span class="cm">// The LDP property (channel) of the Swell Lab site</span></span><span class="ln">2</span><span class="lc"><span class="kw">const</span><span class="tx"> </span><span class="ty">CHANNEL_ID</span><span class="tx"> = </span><span class="st">&#x27;845351493326064678&#x27;</span><span class="tx">;</span></span><span class="ln">3</span><span class="lc"> </span><span class="ln">4</span><span class="lc"><span class="cm">// 7 = last 7 days (LDP leaves today out)</span></span><span class="ln">5</span><span class="lc"><span class="kw">const</span><span class="tx"> </span><span class="ty">RANGE_KEY</span><span class="tx"> = </span><span class="nu">7</span><span class="tx">;</span></span><span class="ln">6</span><span class="lc"> </span><span class="ln">7</span><span class="lc"><span class="kw">async</span><span class="tx"> </span><span class="kw">function</span><span class="tx"> </span><span class="fn">getMetric</span><span class="tx">(metric) {</span></span><span class="ln">8</span><span class="lc"><span class="tx">	</span><span class="kw">const</span><span class="tx"> query = </span><span class="st">`</span></span><span class="ln">9</span><span class="lc"><span class="st">		query ($channelId: String!, $rangeKey: Int) {</span></span><span class="ln">10</span><span class="lc"><span class="st">			site(channelId: $channelId, interval: &quot;D&quot;, rangeKey: $rangeKey) {</span></span><span class="ln">11</span><span class="lc"><span class="st">				</span><span class="pu">${</span><span class="tx">metric</span><span class="pu">}</span><span class="st"> {</span></span><span class="ln">12</span><span class="lc"><span class="st">					previousValue</span></span><span class="ln">13</span><span class="lc"><span class="st">					trend {</span></span><span class="ln">14</span><span class="lc"><span class="st">						percentage</span></span><span class="ln">15</span><span class="lc"><span class="st">					}</span></span><span class="ln">16</span><span class="lc"><span class="st">					value</span></span><span class="ln">17</span><span class="lc"><span class="st">				}</span></span><span class="ln">18</span><span class="lc"><span class="st">			}</span></span><span class="ln">19</span><span class="lc"><span class="st">		}</span></span><span class="ln">20</span><span class="lc"><span class="st">	`</span><span class="tx">;</span></span><span class="ln">21</span><span class="lc"> </span><span class="ln">22</span><span class="lc"><span class="tx">	</span><span class="cm">// The DXP proxies the request to LDP with the user&#x27;s session: no LDP</span></span><span class="ln">23</span><span class="lc"><span class="tx">	</span><span class="cm">// token in the browser</span></span><span class="ln">24</span><span class="lc"><span class="tx">	</span><span class="kw">const</span><span class="tx"> response = </span><span class="kw">await</span><span class="tx"> </span><span class="fn">fetch</span><span class="tx">(</span><span class="st">&#x27;/o/analytics-rest/v1.0/graphql&#x27;</span><span class="tx">, {</span></span><span class="ln">25</span><span class="lc"><span class="tx">		body: </span><span class="ty">JSON</span><span class="tx">.</span><span class="fn">stringify</span><span class="tx">({</span></span><span class="ln">26</span><span class="lc"><span class="tx">			query,</span></span><span class="ln">27</span><span class="lc"><span class="tx">			variables: {channelId: </span><span class="ty">CHANNEL_ID</span><span class="tx">, rangeKey: </span><span class="ty">RANGE_KEY</span><span class="tx">},</span></span><span class="ln">28</span><span class="lc"><span class="tx">		}),</span></span><span class="ln">29</span><span class="lc"><span class="tx">		headers: {</span></span><span class="ln">30</span><span class="lc"><span class="tx">			</span><span class="st">&#x27;Content-Type&#x27;</span><span class="tx">: </span><span class="st">&#x27;application/json&#x27;</span><span class="tx">,</span></span><span class="ln">31</span><span class="lc"><span class="tx">			</span><span class="st">&#x27;x-csrf-token&#x27;</span><span class="tx">: </span><span class="ty">Liferay</span><span class="tx">.authToken,</span></span><span class="ln">32</span><span class="lc"><span class="tx">		},</span></span><span class="ln">33</span><span class="lc"><span class="tx">		method: </span><span class="st">&#x27;POST&#x27;</span><span class="tx">,</span></span><span class="ln">34</span><span class="lc"><span class="tx">	});</span></span><span class="ln">35</span><span class="lc"> </span><span class="ln">36</span><span class="lc"><span class="tx">	</span><span class="kw">const</span><span class="tx"> {data} = </span><span class="kw">await</span><span class="tx"> response.</span><span class="fn">json</span><span class="tx">();</span></span><span class="ln">37</span><span class="lc"> </span><span class="ln">38</span><span class="lc"><span class="tx">	</span><span class="kw">return</span><span class="tx"> data.site[metric];</span></span><span class="ln">39</span><span class="lc"><span class="tx">}</span></span><span class="ln">40</span><span class="lc"> </span><span class="ln">41</span><span class="lc"><span class="old">class LdpDemoCard extends HTMLElement {</span></span><span class="ln">42</span><span class="lc"><span class="old">	</span><span class="kw">async</span><span class="tx"> </span><span class="old">connectedCallback() {</span></span><span class="ln">43</span><span class="lc"><span class="old">		this.innerHTML = &#x27;&lt;p&gt;</span><span class="st">L</span><span class="old">o</span><span class="st">ading...</span><span class="old">&lt;/p&gt;&#x27;;</span></span><span class="ln">44</span><span class="lc"> </span><span class="ln">45</span><span class="lc"><span class="tx">		</span><span class="kw">const</span><span class="tx"> result = </span><span class="kw">await</span><span class="tx"> </span><span class="fn">getMetric</span><span class="tx">(</span><span class="st">&#x27;visitorsMetric&#x27;</span><span class="tx">);</span></span><span class="ln">46</span><span class="lc"> </span><span class="ln">47</span><span class="lc"><span class="tx">		</span><span class="kw">this</span><span class="tx">.innerHTML = </span><span class="st">`&lt;p&gt;Unique visitors: &lt;strong&gt;</span><span class="pu">${</span><span class="tx">result.value</span><span class="pu">}</span><span class="st">&lt;/strong&gt;&lt;/p&gt;`</span><span class="tx">;</span></span><span class="ln">48</span><span class="lc"><span class="old">	}</span></span><span class="ln">49</span><span class="lc"><span class="old">}</span></span><span class="ln">50</span><span class="lc"> </span><span class="ln">51</span><span class="lc"><span class="old">customElements.define(&#x27;ldp-demo-card&#x27;, LdpDemoCard);</span></span></pre></div>
+	<p class="code-note">Point at <code>CHANNEL_ID</code>, <code>RANGE_KEY = 7</code>, the <code>site</code> query and the <code>x-csrf-token</code> header.</p>
+</figure>
+	</div>
+</li>
+<li class="step k-ui">
+	<label class="done"><input id="done-116" type="checkbox" data-key="116"><span class="sr">Done</span></label>
+	<div class="step-body">
+		<span class="kind">In the UI</span>
+		<p class="step-title"><strong>Ship version 2</strong></p>
+<ol>
+	<li>Save <code>ldp-demo-card.js</code>.</li>
+	<li>Documents and Media &rarr; <code>ldp-demo-card.js</code> &rarr; &#8942; &rarr; <b>Edit</b> &rarr; <b>Select File</b> &rarr; pick the file &rarr; <b>Publish</b>.</li>
+	<li>Client Extensions &rarr; <b>LDP Demo Card</b> &rarr; set <b>JavaScript URL</b> to the value below &rarr; <b>Publish</b>.</li>
+	<li>Demo page &rarr; hard reload (Ctrl + Shift + R).</li>
+</ol>
+<div class="table-scroll"><table class="values"><tbody><tr><th scope="row">JavaScript URL</th><td><code>/documents/d/devcon-demo/ldp-demo-card-js?v=2</code></td><td><button class="copy" type="button" data-copy="c11">Copy</button></td></tr></tbody></table></div>
+	</div>
+</li><li class="sub"><h3>Two instances, one card</h3></li>
+<li class="step k-say">
+	
+	<div class="step-body">
+		<span class="kind">Say</span>
+		<p>Now it looks like a real card: pick a metric, see its value and the trend against the previous period. LDP computes the trend for us.</p>
+	</div>
+</li>
+<li class="step k-code">
+	<label class="done"><input id="done-119" type="checkbox" data-key="119"><span class="sr">Done</span></label>
+	<div class="step-body">
+		<span class="kind">In the editor</span>
+		
+<figure class="code">
+	<figcaption>
+		<span class="file">ldp-demo-card.js</span>
+		<span class="legend"></span>
+		<button class="copy" type="button" data-copy="c12">Copy code</button>
+	</figcaption>
+	<div class="code-scroll"><pre><span class="ln">1</span><span class="lc"><span class="old">// The LDP property (channel) of the Swell Lab site</span></span><span class="ln">2</span><span class="lc"><span class="old">const CHANNEL_ID = &#x27;845351493326064678&#x27;;</span></span><span class="ln">3</span><span class="lc"> </span><span class="ln">4</span><span class="lc"><span class="old">// 7 = last 7 days (LDP leaves today out)</span></span><span class="ln">5</span><span class="lc"><span class="old">const RANGE_KEY = 7;</span></span><span class="ln">6</span><span class="lc"> </span><span class="ln">7</span><span class="lc"><span class="kw">const</span><span class="tx"> </span><span class="ty">METRICS</span><span class="tx"> = {</span></span><span class="ln">8</span><span class="lc"><span class="tx">	sessionsMetric: </span><span class="st">&#x27;Sessions&#x27;</span><span class="tx">,</span></span><span class="ln">9</span><span class="lc"><span class="tx">	visitorsMetric: </span><span class="st">&#x27;Unique visitors&#x27;</span><span class="tx">,</span></span><span class="ln">10</span><span class="lc"><span class="tx">};</span></span><span class="ln">11</span><span class="lc"> </span><span class="ln">12</span><span class="lc"><span class="kw">const</span><span class="tx"> </span><span class="ty">STYLE</span><span class="tx"> = </span><span class="st">`</span></span><span class="ln">13</span><span class="lc"><span class="st">	&lt;style&gt;</span></span><span class="ln">14</span><span class="lc"><span class="st">		.ldp-demo-card {</span></span><span class="ln">15</span><span class="lc"><span class="st">			background: var(--white);</span></span><span class="ln">16</span><span class="lc"><span class="st">			border: 1px solid var(--gray-300);</span></span><span class="ln">17</span><span class="lc"><span class="st">			border-radius: var(--border-radius-lg);</span></span><span class="ln">18</span><span class="lc"><span class="st">			box-shadow: var(--box-shadow-sm);</span></span><span class="ln">19</span><span class="lc"><span class="st">			color: var(--body-color);</span></span><span class="ln">20</span><span class="lc"><span class="st">			display: block;</span></span><span class="ln">21</span><span class="lc"><span class="st">			font-family: var(--font-family-base);</span></span><span class="ln">22</span><span class="lc"><span class="st">			padding: var(--spacer-4);</span></span><span class="ln">23</span><span class="lc"><span class="st">		}</span></span><span class="ln">24</span><span class="lc"> </span><span class="ln">25</span><span class="lc"><span class="st">		.ldp-demo-card select {</span></span><span class="ln">26</span><span class="lc"><span class="st">			background: var(--white);</span></span><span class="ln">27</span><span class="lc"><span class="st">			border: 1px solid var(--gray-400);</span></span><span class="ln">28</span><span class="lc"><span class="st">			border-radius: var(--border-radius);</span></span><span class="ln">29</span><span class="lc"><span class="st">			color: var(--body-color);</span></span><span class="ln">30</span><span class="lc"><span class="st">			font: inherit;</span></span><span class="ln">31</span><span class="lc"><span class="st">			font-size: var(--font-size-sm);</span></span><span class="ln">32</span><span class="lc"><span class="st">			padding: var(--spacer-1) var(--spacer-2);</span></span><span class="ln">33</span><span class="lc"><span class="st">		}</span></span><span class="ln">34</span><span class="lc"> </span><span class="ln">35</span><span class="lc"><span class="st">		.ldp-demo-card .value {</span></span><span class="ln">36</span><span class="lc"><span class="st">			color: var(--dark);</span></span><span class="ln">37</span><span class="lc"><span class="st">			font-size: 2.5rem;</span></span><span class="ln">38</span><span class="lc"><span class="st">			font-weight: 600;</span></span><span class="ln">39</span><span class="lc"><span class="st">			margin: var(--spacer-3) 0 var(--spacer-1);</span></span><span class="ln">40</span><span class="lc"><span class="st">		}</span></span><span class="ln">41</span><span class="lc"> </span><span class="ln">42</span><span class="lc"><span class="st">		.ldp-demo-card .trend {</span></span><span class="ln">43</span><span class="lc"><span class="st">			color: var(--secondary);</span></span><span class="ln">44</span><span class="lc"><span class="st">			font-size: var(--font-size-sm);</span></span><span class="ln">45</span><span class="lc"><span class="st">		}</span></span><span class="ln">46</span><span class="lc"><span class="st">	&lt;/style&gt;</span></span><span class="ln">47</span><span class="lc"><span class="st">`</span><span class="tx">;</span></span><span class="ln">48</span><span class="lc"> </span><span class="ln">49</span><span class="lc"><span class="old">async function getMetric(metric) {</span></span><span class="ln">50</span><span class="lc"><span class="old">	const query = `</span></span><span class="ln">51</span><span class="lc"><span class="old">		query ($channelId: String!, $rangeKey: Int) {</span></span><span class="ln">52</span><span class="lc"><span class="old">			site(channelId: $channelId, interval: &quot;D&quot;, rangeKey: $rangeKey) {</span></span><span class="ln">53</span><span class="lc"><span class="old">				${metric} {</span></span><span class="ln">54</span><span class="lc"><span class="old">					previousValue</span></span><span class="ln">55</span><span class="lc"><span class="old">					trend {</span></span><span class="ln">56</span><span class="lc"><span class="old">						percentage</span></span><span class="ln">57</span><span class="lc"><span class="old">					}</span></span><span class="ln">58</span><span class="lc"><span class="old">					value</span></span><span class="ln">59</span><span class="lc"><span class="old">				}</span></span><span class="ln">60</span><span class="lc"><span class="old">			}</span></span><span class="ln">61</span><span class="lc"><span class="old">		}</span></span><span class="ln">62</span><span class="lc"><span class="old">	`;</span></span><span class="ln">63</span><span class="lc"> </span><span class="ln">64</span><span class="lc"><span class="old">	// The DXP proxies the request to LDP with the user&#x27;s session: no LDP</span></span><span class="ln">65</span><span class="lc"><span class="old">	// token in the browser</span></span><span class="ln">66</span><span class="lc"><span class="old">	const response = await fetch(&#x27;/o/analytics-rest/v1.0/graphql&#x27;, {</span></span><span class="ln">67</span><span class="lc"><span class="old">		body: JSON.stringify({</span></span><span class="ln">68</span><span class="lc"><span class="old">			query,</span></span><span class="ln">69</span><span class="lc"><span class="old">			variables: {channelId: CHANNEL_ID, rangeKey: RANGE_KEY},</span></span><span class="ln">70</span><span class="lc"><span class="old">		}),</span></span><span class="ln">71</span><span class="lc"><span class="old">		headers: {</span></span><span class="ln">72</span><span class="lc"><span class="old">			&#x27;Content-Type&#x27;: &#x27;application/json&#x27;,</span></span><span class="ln">73</span><span class="lc"><span class="old">			&#x27;x-csrf-token&#x27;: Liferay.authToken,</span></span><span class="ln">74</span><span class="lc"><span class="old">		},</span></span><span class="ln">75</span><span class="lc"><span class="old">		method: &#x27;POST&#x27;,</span></span><span class="ln">76</span><span class="lc"><span class="old">	});</span></span><span class="ln">77</span><span class="lc"> </span><span class="ln">78</span><span class="lc"><span class="old">	const {data} = await response.json();</span></span><span class="ln">79</span><span class="lc"> </span><span class="ln">80</span><span class="lc"><span class="old">	return data.site[metric];</span></span><span class="ln">81</span><span class="lc"><span class="old">}</span></span><span class="ln">82</span><span class="lc"> </span><span class="ln">83</span><span class="lc"><span class="kw">function</span><span class="tx"> </span><span class="fn">formatTrend</span><span class="tx">(result) {</span></span><span class="ln">84</span><span class="lc"><span class="tx">	</span><span class="kw">const</span><span class="tx"> percentage = result.trend?.percentage;</span></span><span class="ln">85</span><span class="lc"> </span><span class="ln">86</span><span class="lc"><span class="tx">	</span><span class="kw">if</span><span class="tx"> (percentage === </span><span class="kw">null</span><span class="tx"> || percentage === </span><span class="kw">undefined</span><span class="tx">) {</span></span><span class="ln">87</span><span class="lc"><span class="tx">		</span><span class="kw">return</span><span class="tx"> </span><span class="st">`Previous period: </span><span class="pu">${</span><span class="tx">result.previousValue</span><span class="pu">}</span><span class="st">`</span><span class="tx">;</span></span><span class="ln">88</span><span class="lc"><span class="tx">	}</span></span><span class="ln">89</span><span class="lc"> </span><span class="ln">90</span><span class="lc"><span class="tx">	</span><span class="kw">const</span><span class="tx"> arrow = percentage &gt; </span><span class="nu">0</span><span class="tx"> ? </span><span class="st">&#x27;▲&#x27;</span><span class="tx"> : percentage &lt; </span><span class="nu">0</span><span class="tx"> ? </span><span class="st">&#x27;▼&#x27;</span><span class="tx"> : </span><span class="st">&#x27;&#x27;</span><span class="tx">;</span></span><span class="ln">91</span><span class="lc"> </span><span class="ln">92</span><span class="lc"><span class="tx">	</span><span class="kw">return</span><span class="tx"> </span><span class="st">`</span><span class="pu">${</span><span class="tx">arrow</span><span class="pu">}</span><span class="st"> </span><span class="pu">${</span><span class="ty">Math</span><span class="tx">.</span><span class="fn">abs</span><span class="tx">(percentage).</span><span class="fn">toFixed</span><span class="tx">(</span><span class="nu">1</span><span class="tx">)</span><span class="pu">}</span><span class="st">% vs previous period (</span><span class="pu">${</span><span class="tx">result.previousValue</span><span class="pu">}</span><span class="st">)`</span><span class="tx">;</span></span><span class="ln">93</span><span class="lc"><span class="tx">}</span></span><span class="ln">94</span><span class="lc"> </span><span class="ln">95</span><span class="lc"><span class="old">class LdpDemoCard extends HTMLElement {</span></span><span class="ln">96</span><span class="lc"><span class="tx">	config = {metric: </span><span class="st">&#x27;visitorsMetric&#x27;</span><span class="tx">};</span></span><span class="ln">97</span><span class="lc"> </span><span class="ln">98</span><span class="lc"><span class="tx">	</span><span class="fn">connectedCallback</span><span class="tx">() {</span></span><span class="ln">99</span><span class="lc"><span class="tx">		</span><span class="kw">this</span><span class="tx">.classList.</span><span class="fn">add</span><span class="tx">(</span><span class="st">&#x27;ldp-demo-card&#x27;</span><span class="tx">);</span></span><span class="ln">100</span><span class="lc"> </span><span class="ln">101</span><span class="lc"><span class="tx">		</span><span class="kw">this</span><span class="tx">.</span><span class="fn">render</span><span class="tx">();</span></span><span class="ln">102</span><span class="lc"><span class="tx">	}</span></span><span class="ln">103</span><span class="lc"> </span><span class="ln">104</span><span class="lc"><span class="tx">	</span><span class="kw">async</span><span class="tx"> </span><span class="fn">render</span><span class="tx">() {</span></span><span class="ln">105</span><span class="lc"><span class="tx">		</span><span class="kw">const</span><span class="tx"> options = </span><span class="ty">Object</span><span class="tx">.</span><span class="fn">entries</span><span class="tx">(</span><span class="ty">METRICS</span><span class="tx">)</span></span><span class="ln">106</span><span class="lc"><span class="tx">			.</span><span class="fn">map</span><span class="tx">(</span></span><span class="ln">107</span><span class="lc"><span class="tx">				([value, label]) =&gt;</span></span><span class="ln">108</span><span class="lc"><span class="tx">					</span><span class="st">`&lt;option </span><span class="pu">${</span><span class="tx">value === </span><span class="kw">this</span><span class="tx">.config.metric ? </span><span class="st">&#x27;selected&#x27;</span><span class="tx"> : </span><span class="st">&#x27;&#x27;</span><span class="pu">}</span><span class="st"> value=&quot;</span><span class="pu">${</span><span class="tx">value</span><span class="pu">}</span><span class="st">&quot;&gt;</span><span class="pu">${</span><span class="tx">label</span><span class="pu">}</span><span class="st">&lt;/option&gt;`</span></span><span class="ln">109</span><span class="lc"><span class="tx">			)</span></span><span class="ln">110</span><span class="lc"><span class="tx">			.</span><span class="fn">join</span><span class="tx">(</span><span class="st">&#x27;&#x27;</span><span class="tx">);</span></span><span class="ln">111</span><span class="lc"> </span><span class="ln">112</span><span class="lc"><span class="tx">		</span><span class="kw">this</span><span class="tx">.innerHTML = </span><span class="st">`</span></span><span class="ln">113</span><span class="lc"><span class="st">			</span><span class="pu">${</span><span class="ty">STYLE</span><span class="pu">}</span></span><span class="ln">114</span><span class="lc"><span class="st">			&lt;select&gt;</span><span class="pu">${</span><span class="tx">options</span><span class="pu">}</span><span class="st">&lt;/select&gt;</span></span><span class="ln">115</span><span class="lc"><span class="st">			&lt;div class=&quot;value&quot;&gt;...&lt;/div&gt;</span></span><span class="ln">116</span><span class="lc"><span class="st">			&lt;div class=&quot;trend&quot;&gt;Last 7 days&lt;/div&gt;</span></span><span class="ln">117</span><span class="lc"><span class="st">		`</span><span class="tx">;</span></span><span class="ln">118</span><span class="lc"> </span><span class="ln">119</span><span class="lc"><span class="tx">		</span><span class="kw">this</span><span class="tx">.</span><span class="fn">querySelector</span><span class="tx">(</span><span class="st">&#x27;select&#x27;</span><span class="tx">).</span><span class="fn">addEventListener</span><span class="tx">(</span><span class="st">&#x27;change&#x27;</span><span class="tx">, (event) =&gt; {</span></span><span class="ln">120</span><span class="lc"><span class="tx">			</span><span class="kw">this</span><span class="tx">.config = {metric: event.target.value};</span></span><span class="ln">121</span><span class="lc"> </span><span class="ln">122</span><span class="lc"><span class="tx">			</span><span class="kw">this</span><span class="tx">.</span><span class="fn">render</span><span class="tx">();</span></span><span class="ln">123</span><span class="lc"><span class="tx">		});</span></span><span class="ln">124</span><span class="lc"> </span><span class="ln">125</span><span class="lc"><span class="tx">		</span><span class="kw">const</span><span class="tx"> result = </span><span class="kw">await</span><span class="tx"> </span><span class="fn">getMetric</span><span class="tx">(</span><span class="kw">this</span><span class="tx">.config.metric);</span></span><span class="ln">126</span><span class="lc"> </span><span class="ln">127</span><span class="lc"><span class="tx">		</span><span class="kw">this</span><span class="tx">.</span><span class="fn">querySelector</span><span class="tx">(</span><span class="st">&#x27;.value&#x27;</span><span class="tx">).textContent = result.value.</span><span class="fn">toLocaleString</span><span class="tx">();</span></span><span class="ln">128</span><span class="lc"><span class="tx">		</span><span class="kw">this</span><span class="tx">.</span><span class="fn">querySelector</span><span class="tx">(</span><span class="st">&#x27;.trend&#x27;</span><span class="tx">).textContent = </span><span class="fn">formatTrend</span><span class="tx">(result);</span></span><span class="ln">129</span><span class="lc"><span class="old">	}</span></span><span class="ln">130</span><span class="lc"><span class="old">}</span></span><span class="ln">131</span><span class="lc"> </span><span class="ln">132</span><span class="lc"><span class="old">customElements.define(&#x27;ldp-demo-card&#x27;, LdpDemoCard);</span></span></pre></div>
+	<p class="code-note">Point at <code>METRICS</code> and <code>formatTrend</code>. The config lives only in memory.</p>
+</figure>
+	</div>
+</li>
+<li class="step k-ui">
+	<label class="done"><input id="done-120" type="checkbox" data-key="120"><span class="sr">Done</span></label>
+	<div class="step-body">
+		<span class="kind">In the UI</span>
+		<p class="step-title"><strong>Ship version 3</strong></p>
+<ol>
+	<li>Save <code>ldp-demo-card.js</code>.</li>
+	<li>Documents and Media &rarr; <code>ldp-demo-card.js</code> &rarr; &#8942; &rarr; <b>Edit</b> &rarr; <b>Select File</b> &rarr; pick the file &rarr; <b>Publish</b>.</li>
+	<li>Client Extensions &rarr; <b>LDP Demo Card</b> &rarr; set <b>JavaScript URL</b> to the value below &rarr; <b>Publish</b>.</li>
+	<li>Demo page &rarr; hard reload (Ctrl + Shift + R).</li>
+</ol>
+<div class="table-scroll"><table class="values"><tbody><tr><th scope="row">JavaScript URL</th><td><code>/documents/d/devcon-demo/ldp-demo-card-js?v=3</code></td><td><button class="copy" type="button" data-copy="c13">Copy</button></td></tr></tbody></table></div>
+	</div>
+</li>
+<li class="step k-ui">
+	<label class="done"><input id="done-121" type="checkbox" data-key="121"><span class="sr">Done</span></label>
+	<div class="step-body">
+		<span class="kind">In the UI</span>
+		<ol><li>Edit the Demo page &rarr; drag a second <b>LDP Demo Card</b> into the <b>right</b> module &rarr; <b>Publish</b>.</li><li>Right card &rarr; select <b>Sessions</b>.</li><li>Reload the page.</li></ol>
+	</div>
+</li>
+<li class="step k-say">
+	
+	<div class="step-body">
+		<span class="kind">Say</span>
+		<p>The choice was only in memory, so the reload wiped it. A dashboard has to remember every card on its own, and we don&rsquo;t want to build a backend for that.</p>
+	</div>
+</li></ol>
+</section>
+<section class="part" id="part-2">
+	<header class="part-head">
+		<span class="letter">2</span>
+		<div><h2>Persist Card Settings with Liferay Objects</h2><span class="topic">Topic 05</span></div>
+	</header>
+	<p class="part-intro">Each card must remember its own metric. One Object gives us storage and a REST API, with zero backend code.</p>
+	<ol class="steps">
+<li class="step k-ui">
+	<label class="done"><input id="done-21" type="checkbox" data-key="21"><span class="sr">Done</span></label>
+	<div class="step-body">
+		<span class="kind">In the UI</span>
+		<p class="step-title"><strong>Create the Object</strong></p><ol><li>Control Panel &rarr; Object &rarr; <b>Objects</b> &rarr; folder <b>DEVCON Demo</b> &rarr; <b>Create New Object</b> &rarr; fill in &rarr; <b>Save</b>.</li></ol><div class="table-scroll"><table class="values"><tbody><tr><th scope="row">Label</th><td><code>Demo Card Config</code></td><td><button class="copy" type="button" data-copy="c14">Copy</button></td></tr><tr><th scope="row">Plural Label</th><td><code>Demo Card Configs</code></td><td><button class="copy" type="button" data-copy="c15">Copy</button></td></tr><tr><th scope="row">Object Name</th><td><code>DemoCardConfig</code></td><td><button class="copy" type="button" data-copy="c16">Copy</button></td></tr></tbody></table></div><ol start="2"><li><b>Fields</b> &rarr; <b>Add Field</b> &rarr; fill in &rarr; <b>Save</b>.</li></ol><div class="table-scroll"><table class="values"><tbody><tr><th scope="row">Label</th><td><code>Metric</code></td><td><button class="copy" type="button" data-copy="c17">Copy</button></td></tr><tr><th scope="row">Field Name</th><td><code>metric</code></td><td><button class="copy" type="button" data-copy="c18">Copy</button></td></tr><tr><th scope="row">Type</th><td><span class="pill">Text</span></td><td></td></tr></tbody></table></div><ol start="3"><li><b>Details</b> &rarr; Scope <b>Company</b> &rarr; <b>Publish</b>.</li></ol>
+	</div>
+</li>
+<li class="step k-say">
+	
+	<div class="step-body">
+		<span class="kind">Say</span>
+		<p>Publishing the Object gives us a REST API for free at <code>/o/c/democardconfigs</code>. Each card saves under its widget instance ID, which DXP already generates, so no extra key to manage.</p>
+	</div>
+</li>
+<li class="step k-code">
+	<label class="done"><input id="done-23" type="checkbox" data-key="23"><span class="sr">Done</span></label>
+	<div class="step-body">
+		<span class="kind">In the editor</span>
+		
+<figure class="code">
+	<figcaption>
+		<span class="file">ldp-demo-card.js</span>
+		<span class="legend"></span>
+		<button class="copy" type="button" data-copy="c19">Copy code</button>
+	</figcaption>
+	<div class="code-scroll"><pre><span class="ln">1</span><span class="lc"><span class="old">// The LDP property (channel) of the Swell Lab site</span></span><span class="ln">2</span><span class="lc"><span class="old">const CHANNEL_ID = &#x27;845351493326064678&#x27;;</span></span><span class="ln">3</span><span class="lc"> </span><span class="ln">4</span><span class="lc"><span class="old">// 7 = last 7 days (LDP leaves today out)</span></span><span class="ln">5</span><span class="lc"><span class="old">const RANGE_KEY = 7;</span></span><span class="ln">6</span><span class="lc"> </span><span class="ln">7</span><span class="lc"><span class="cm">// The Liferay Object that keeps each card&#x27;s configuration</span></span><span class="ln">8</span><span class="lc"><span class="kw">const</span><span class="tx"> </span><span class="ty">OBJECT_URL</span><span class="tx"> = </span><span class="st">&#x27;/o/c/democardconfigs&#x27;</span><span class="tx">;</span></span><span class="ln">9</span><span class="lc"> </span><span class="ln">10</span><span class="lc"><span class="old">const METRICS = {</span></span><span class="ln">11</span><span class="lc"><span class="old">	sessionsMetric: &#x27;Sessions&#x27;,</span></span><span class="ln">12</span><span class="lc"><span class="old">	visitorsMetric: &#x27;Unique visitors&#x27;,</span></span><span class="ln">13</span><span class="lc"><span class="old">};</span></span><span class="ln">14</span><span class="lc"> </span><span class="ln">15</span><span class="lc"><span class="old">const STYLE = `</span></span><span class="ln">16</span><span class="lc"><span class="old">	&lt;style&gt;</span></span><span class="ln">17</span><span class="lc"><span class="old">		.ldp-demo-card {</span></span><span class="ln">18</span><span class="lc"><span class="old">			background: var(--white);</span></span><span class="ln">19</span><span class="lc"><span class="old">			border: 1px solid var(--gray-300);</span></span><span class="ln">20</span><span class="lc"><span class="old">			border-radius: var(--border-radius-lg);</span></span><span class="ln">21</span><span class="lc"><span class="old">			box-shadow: var(--box-shadow-sm);</span></span><span class="ln">22</span><span class="lc"><span class="old">			color: var(--body-color);</span></span><span class="ln">23</span><span class="lc"><span class="old">			display: block;</span></span><span class="ln">24</span><span class="lc"><span class="old">			font-family: var(--font-family-base);</span></span><span class="ln">25</span><span class="lc"><span class="old">			padding: var(--spacer-4);</span></span><span class="ln">26</span><span class="lc"><span class="old">		}</span></span><span class="ln">27</span><span class="lc"> </span><span class="ln">28</span><span class="lc"><span class="old">		.ldp-demo-card select {</span></span><span class="ln">29</span><span class="lc"><span class="old">			background: var(--white);</span></span><span class="ln">30</span><span class="lc"><span class="old">			border: 1px solid var(--gray-400);</span></span><span class="ln">31</span><span class="lc"><span class="old">			border-radius: var(--border-radius);</span></span><span class="ln">32</span><span class="lc"><span class="old">			color: var(--body-color);</span></span><span class="ln">33</span><span class="lc"><span class="old">			font: inherit;</span></span><span class="ln">34</span><span class="lc"><span class="old">			font-size: var(--font-size-sm);</span></span><span class="ln">35</span><span class="lc"><span class="old">			padding: var(--spacer-1) var(--spacer-2);</span></span><span class="ln">36</span><span class="lc"><span class="old">		}</span></span><span class="ln">37</span><span class="lc"> </span><span class="ln">38</span><span class="lc"><span class="old">		.ldp-demo-card .value {</span></span><span class="ln">39</span><span class="lc"><span class="old">			color: var(--dark);</span></span><span class="ln">40</span><span class="lc"><span class="old">			font-size: 2.5rem;</span></span><span class="ln">41</span><span class="lc"><span class="old">			font-weight: 600;</span></span><span class="ln">42</span><span class="lc"><span class="old">			margin: var(--spacer-3) 0 var(--spacer-1);</span></span><span class="ln">43</span><span class="lc"><span class="old">		}</span></span><span class="ln">44</span><span class="lc"> </span><span class="ln">45</span><span class="lc"><span class="old">		.ldp-demo-card .trend {</span></span><span class="ln">46</span><span class="lc"><span class="old">			color: var(--secondary);</span></span><span class="ln">47</span><span class="lc"><span class="old">			font-size: var(--font-size-sm);</span></span><span class="ln">48</span><span class="lc"><span class="old">		}</span></span><span class="ln">49</span><span class="lc"><span class="old">	&lt;/style&gt;</span></span><span class="ln">50</span><span class="lc"><span class="old">`;</span></span><span class="ln">51</span><span class="lc"> </span><span class="ln">52</span><span class="lc"><span class="kw">async</span><span class="tx"> </span><span class="kw">function</span><span class="tx"> </span><span class="fn">api</span><span class="tx">(url, options = {}) {</span></span><span class="ln">53</span><span class="lc"><span class="tx">	</span><span class="kw">const</span><span class="tx"> response = </span><span class="kw">await</span><span class="tx"> </span><span class="fn">fetch</span><span class="tx">(url, {</span></span><span class="ln">54</span><span class="lc"><span class="tx">		...options,</span></span><span class="ln">55</span><span class="lc"><span class="tx">		headers: {</span></span><span class="ln">56</span><span class="lc"><span class="tx">			</span><span class="st">&#x27;Content-Type&#x27;</span><span class="tx">: </span><span class="st">&#x27;application/json&#x27;</span><span class="tx">,</span></span><span class="ln">57</span><span class="lc"><span class="tx">			</span><span class="st">&#x27;x-csrf-token&#x27;</span><span class="tx">: </span><span class="ty">Liferay</span><span class="tx">.authToken,</span></span><span class="ln">58</span><span class="lc"><span class="tx">		},</span></span><span class="ln">59</span><span class="lc"><span class="tx">	});</span></span><span class="ln">60</span><span class="lc"> </span><span class="ln">61</span><span class="lc"><span class="tx">	</span><span class="kw">if</span><span class="tx"> (!response.ok) {</span></span><span class="ln">62</span><span class="lc"><span class="tx">		</span><span class="kw">throw</span><span class="tx"> </span><span class="kw">new</span><span class="tx"> </span><span class="fn">Error</span><span class="tx">(</span><span class="st">`</span><span class="pu">${</span><span class="tx">url</span><span class="pu">}</span><span class="st"> returned </span><span class="pu">${</span><span class="tx">response.status</span><span class="pu">}</span><span class="st">`</span><span class="tx">);</span></span><span class="ln">63</span><span class="lc"><span class="tx">	}</span></span><span class="ln">64</span><span class="lc"> </span><span class="ln">65</span><span class="lc"><span class="tx">	</span><span class="kw">return</span><span class="tx"> response.</span><span class="fn">json</span><span class="tx">();</span></span><span class="ln">66</span><span class="lc"><span class="tx">}</span></span><span class="ln">67</span><span class="lc"> </span><span class="ln">68</span><span class="lc"><span class="old">async function getMetric(metric) {</span></span><span class="ln">69</span><span class="lc"><span class="old">	const query = `</span></span><span class="ln">70</span><span class="lc"><span class="old">		query ($channelId: String!, $rangeKey: Int) {</span></span><span class="ln">71</span><span class="lc"><span class="old">			site(channelId: $channelId, interval: &quot;D&quot;, rangeKey: $rangeKey) {</span></span><span class="ln">72</span><span class="lc"><span class="old">				${metric} {</span></span><span class="ln">73</span><span class="lc"><span class="old">					previousValue</span></span><span class="ln">74</span><span class="lc"><span class="old">					trend {</span></span><span class="ln">75</span><span class="lc"><span class="old">						percentage</span></span><span class="ln">76</span><span class="lc"><span class="old">					}</span></span><span class="ln">77</span><span class="lc"><span class="old">					value</span></span><span class="ln">78</span><span class="lc"><span class="old">				}</span></span><span class="ln">79</span><span class="lc"><span class="old">			}</span></span><span class="ln">80</span><span class="lc"><span class="old">		}</span></span><span class="ln">81</span><span class="lc"><span class="old">	`;</span></span><span class="ln">82</span><span class="lc"> </span><span class="ln">83</span><span class="lc"><span class="old">	// The DXP proxies the request to LDP with the user&#x27;s session: no LDP</span></span><span class="ln">84</span><span class="lc"><span class="old">	// token in the browser</span></span><span class="ln">85</span><span class="lc"><span class="old">	const </span><span class="tx">{data}</span><span class="old"> = await </span><span class="fn">api</span><span class="old">(&#x27;/o/analytics-rest/v1.0/graphql&#x27;, {</span></span><span class="ln">86</span><span class="lc"><span class="old">		body: JSON.stringify({</span></span><span class="ln">87</span><span class="lc"><span class="old">			query,</span></span><span class="ln">88</span><span class="lc"><span class="old">			variables: {channelId: CHANNEL_ID, rangeKey: RANGE_KEY},</span></span><span class="ln">89</span><span class="lc"><span class="old">		}),</span></span><span class="ln">90</span><span class="lc"><span class="old">		method: &#x27;POST&#x27;,</span></span><span class="ln">91</span><span class="lc"><span class="old">	});</span></span><span class="ln">92</span><span class="lc"> </span><span class="ln">93</span><span class="lc"><span class="tx">	</span><span class="kw">return</span><span class="tx"> data.site[metric];</span></span><span class="ln">94</span><span class="lc"><span class="tx">}</span></span><span class="ln">95</span><span class="lc"> </span><span class="ln">96</span><span class="lc"><span class="cm">// Each widget instance has its own portlet id, the same on the draft and the</span></span><span class="ln">97</span><span class="lc"><span class="cm">// published page: it is the key of the card&#x27;s entry in the Object</span></span><span class="ln">98</span><span class="lc"><span class="kw">function</span><span class="tx"> </span><span class="fn">getKey</span><span class="tx">(element) {</span></span><span class="ln">99</span><span class="lc"><span class="tx">	</span><span class="kw">const</span><span class="tx"> wrapper = element.</span><span class="fn">closest</span><span class="tx">(</span><span class="st">&#x27;[id^=&quot;p_p_id_&quot;]&#x27;</span><span class="tx">);</span></span><span class="ln">100</span><span class="lc"> </span><span class="ln">101</span><span class="lc"><span class="tx">	</span><span class="kw">return</span><span class="tx"> wrapper.id.</span><span class="fn">replace</span><span class="tx">(/^p_p_id_/, </span><span class="st">&#x27;&#x27;</span><span class="tx">).</span><span class="fn">replace</span><span class="tx">(/_$/, </span><span class="st">&#x27;&#x27;</span><span class="tx">);</span></span><span class="ln">102</span><span class="lc"><span class="tx">}</span></span><span class="ln">103</span><span class="lc"> </span><span class="ln">104</span><span class="lc"><span class="kw">async</span><span class="tx"> </span><span class="kw">function</span><span class="tx"> </span><span class="fn">loadConfig</span><span class="tx">(key) {</span></span><span class="ln">105</span><span class="lc"><span class="tx">	</span><span class="kw">try</span><span class="tx"> {</span></span><span class="ln">106</span><span class="lc"><span class="tx">		</span><span class="kw">const</span><span class="tx"> entry = </span><span class="kw">await</span><span class="tx"> </span><span class="fn">api</span><span class="tx">(</span><span class="st">`</span><span class="pu">${</span><span class="ty">OBJECT_URL</span><span class="pu">}</span><span class="st">/by-external-reference-code/</span><span class="pu">${</span><span class="tx">key</span><span class="pu">}</span><span class="st">`</span><span class="tx">);</span></span><span class="ln">107</span><span class="lc"> </span><span class="ln">108</span><span class="lc"><span class="tx">		</span><span class="kw">return</span><span class="tx"> {metric: entry.metric};</span></span><span class="ln">109</span><span class="lc"><span class="tx">	}</span></span><span class="ln">110</span><span class="lc"><span class="tx">	</span><span class="kw">catch</span><span class="tx"> {</span></span><span class="ln">111</span><span class="lc"> </span><span class="ln">112</span><span class="lc"><span class="tx">		</span><span class="cm">// 404: this card was never configured</span></span><span class="ln">113</span><span class="lc"> </span><span class="ln">114</span><span class="lc"><span class="tx">		</span><span class="kw">return</span><span class="tx"> </span><span class="kw">null</span><span class="tx">;</span></span><span class="ln">115</span><span class="lc"><span class="tx">	}</span></span><span class="ln">116</span><span class="lc"><span class="tx">}</span></span><span class="ln">117</span><span class="lc"> </span><span class="ln">118</span><span class="lc"><span class="kw">function</span><span class="tx"> </span><span class="fn">saveConfig</span><span class="tx">(key, config) {</span></span><span class="ln">119</span><span class="lc"> </span><span class="ln">120</span><span class="lc"><span class="tx">	</span><span class="cm">// PUT by external reference code creates the entry the first time and</span></span><span class="ln">121</span><span class="lc"><span class="tx">	</span><span class="cm">// replaces it afterwards</span></span><span class="ln">122</span><span class="lc"> </span><span class="ln">123</span><span class="lc"><span class="tx">	</span><span class="kw">return</span><span class="tx"> </span><span class="fn">api</span><span class="tx">(</span><span class="st">`</span><span class="pu">${</span><span class="ty">OBJECT_URL</span><span class="pu">}</span><span class="st">/by-external-reference-code/</span><span class="pu">${</span><span class="tx">key</span><span class="pu">}</span><span class="st">`</span><span class="tx">, {</span></span><span class="ln">124</span><span class="lc"><span class="tx">		body: </span><span class="ty">JSON</span><span class="tx">.</span><span class="fn">stringify</span><span class="tx">(config),</span></span><span class="ln">125</span><span class="lc"><span class="tx">		method: </span><span class="st">&#x27;PUT&#x27;</span><span class="tx">,</span></span><span class="ln">126</span><span class="lc"><span class="tx">	});</span></span><span class="ln">127</span><span class="lc"><span class="old">}</span></span><span class="ln">128</span><span class="lc"> </span><span class="ln">129</span><span class="lc"><span class="old">function formatTrend(result) {</span></span><span class="ln">130</span><span class="lc"><span class="old">	const percentage = result.trend?.percentage;</span></span><span class="ln">131</span><span class="lc"> </span><span class="ln">132</span><span class="lc"><span class="old">	if (percentage === null || percentage === undefined) {</span></span><span class="ln">133</span><span class="lc"><span class="old">		return `Previous period: ${result.previousValue}`;</span></span><span class="ln">134</span><span class="lc"><span class="old">	}</span></span><span class="ln">135</span><span class="lc"> </span><span class="ln">136</span><span class="lc"><span class="old">	const arrow = percentage &gt; 0 ? &#x27;▲&#x27; : percentage &lt; 0 ? &#x27;▼&#x27; : &#x27;&#x27;;</span></span><span class="ln">137</span><span class="lc"> </span><span class="ln">138</span><span class="lc"><span class="old">	return `${arrow} ${Math.abs(percentage).toFixed(1)}% vs previous period (${result.previousValue})`;</span></span><span class="ln">139</span><span class="lc"><span class="old">}</span></span><span class="ln">140</span><span class="lc"> </span><span class="ln">141</span><span class="lc"><span class="old">class LdpDemoCard extends HTMLElement {</span></span><span class="ln">142</span><span class="lc"><span class="old">	config = {metric: &#x27;visitorsMetric&#x27;};</span></span><span class="ln">143</span><span class="lc"> </span><span class="ln">144</span><span class="lc"><span class="old">	</span><span class="kw">async</span><span class="tx"> </span><span class="old">connectedCallback() {</span></span><span class="ln">145</span><span class="lc"><span class="old">		this.classList.add(&#x27;ldp-demo-card&#x27;);</span></span><span class="ln">146</span><span class="lc"> </span><span class="ln">147</span><span class="lc"><span class="tx">		</span><span class="kw">this</span><span class="tx">.key = </span><span class="fn">getKey</span><span class="tx">(</span><span class="kw">this</span><span class="tx">);</span></span><span class="ln">148</span><span class="lc"><span class="tx">		</span><span class="kw">this</span><span class="tx">.config = (</span><span class="kw">await</span><span class="tx"> </span><span class="fn">loadConfig</span><span class="tx">(</span><span class="kw">this</span><span class="tx">.key)) || </span><span class="kw">this</span><span class="tx">.config;</span></span><span class="ln">149</span><span class="lc"> </span><span class="ln">150</span><span class="lc"><span class="old">		this.render();</span></span><span class="ln">151</span><span class="lc"><span class="old">	}</span></span><span class="ln">152</span><span class="lc"> </span><span class="ln">153</span><span class="lc"><span class="old">	async render() {</span></span><span class="ln">154</span><span class="lc"><span class="old">		const options = Object.entries(METRICS)</span></span><span class="ln">155</span><span class="lc"><span class="old">			.map(</span></span><span class="ln">156</span><span class="lc"><span class="old">				([value, label]) =&gt;</span></span><span class="ln">157</span><span class="lc"><span class="old">					`&lt;option ${value === this.config.metric ? &#x27;selected&#x27; : &#x27;&#x27;} value=&quot;${value}&quot;&gt;${label}&lt;/option&gt;`</span></span><span class="ln">158</span><span class="lc"><span class="old">			)</span></span><span class="ln">159</span><span class="lc"><span class="old">			.join(&#x27;&#x27;);</span></span><span class="ln">160</span><span class="lc"> </span><span class="ln">161</span><span class="lc"><span class="old">		this.innerHTML = `</span></span><span class="ln">162</span><span class="lc"><span class="old">			${STYLE}</span></span><span class="ln">163</span><span class="lc"><span class="old">			&lt;select&gt;${options}&lt;/select&gt;</span></span><span class="ln">164</span><span class="lc"><span class="old">			&lt;div class=&quot;value&quot;&gt;...&lt;/div&gt;</span></span><span class="ln">165</span><span class="lc"><span class="old">			&lt;div class=&quot;trend&quot;&gt;Last 7 days&lt;/div&gt;</span></span><span class="ln">166</span><span class="lc"><span class="old">		`;</span></span><span class="ln">167</span><span class="lc"> </span><span class="ln">168</span><span class="lc"><span class="old">		this.querySelector(&#x27;select&#x27;).addEventListener(&#x27;change&#x27;, (event) =&gt; {</span></span><span class="ln">169</span><span class="lc"><span class="old">			this.config = {metric: event.target.value};</span></span><span class="ln">170</span><span class="lc"> </span><span class="ln">171</span><span class="lc"><span class="tx">			</span><span class="fn">saveConfig</span><span class="tx">(</span><span class="kw">this</span><span class="tx">.key, </span><span class="kw">this</span><span class="tx">.config);</span></span><span class="ln">172</span><span class="lc"> </span><span class="ln">173</span><span class="lc"><span class="old">			this.render();</span></span><span class="ln">174</span><span class="lc"><span class="old">		});</span></span><span class="ln">175</span><span class="lc"> </span><span class="ln">176</span><span class="lc"><span class="old">		const result = await getMetric(this.config.metric);</span></span><span class="ln">177</span><span class="lc"> </span><span class="ln">178</span><span class="lc"><span class="old">		this.querySelector(&#x27;.value&#x27;).textContent = result.value.toLocaleString();</span></span><span class="ln">179</span><span class="lc"><span class="old">		this.querySelector(&#x27;.trend&#x27;).textContent = formatTrend(result);</span></span><span class="ln">180</span><span class="lc"><span class="old">	}</span></span><span class="ln">181</span><span class="lc"><span class="old">}</span></span><span class="ln">182</span><span class="lc"> </span><span class="ln">183</span><span class="lc"><span class="old">customElements.define(&#x27;ldp-demo-card&#x27;, LdpDemoCard);</span></span></pre></div>
+	
+</figure>
+	</div>
+</li>
+<li class="step k-ui">
+	<label class="done"><input id="done-24" type="checkbox" data-key="24"><span class="sr">Done</span></label>
+	<div class="step-body">
+		<span class="kind">In the UI</span>
+		<p class="step-title"><strong>Ship version 4</strong></p>
+<ol>
+	<li>Save <code>ldp-demo-card.js</code>.</li>
+	<li>Documents and Media &rarr; <code>ldp-demo-card.js</code> &rarr; &#8942; &rarr; <b>Edit</b> &rarr; <b>Select File</b> &rarr; pick the file &rarr; <b>Publish</b>.</li>
+	<li>Client Extensions &rarr; <b>LDP Demo Card</b> &rarr; set <b>JavaScript URL</b> to the value below &rarr; <b>Publish</b>.</li>
+	<li>Demo page &rarr; hard reload (Ctrl + Shift + R).</li>
+</ol>
+<div class="table-scroll"><table class="values"><tbody><tr><th scope="row">JavaScript URL</th><td><code>/documents/d/devcon-demo/ldp-demo-card-js?v=4</code></td><td><button class="copy" type="button" data-copy="c20">Copy</button></td></tr></tbody></table></div>
+	</div>
+</li>
+<li class="step k-ui">
+	<label class="done"><input id="done-25" type="checkbox" data-key="25"><span class="sr">Done</span></label>
+	<div class="step-body">
+		<span class="kind">In the UI</span>
+		<ol><li>Right card &rarr; select <b>Sessions</b>.</li><li>Reload the page.</li></ol>
+	</div>
+</li></ol>
+</section>
+<section class="part" id="part-3">
+	<header class="part-head">
+		<span class="letter">3</span>
+		<div><h2>Get Data Insights with AI Hub</h2><span class="topic">Topic 05</span></div>
+	</header>
+	<p class="part-intro">The card already has the numbers. An AI Hub agent turns them into a short insight, while DXP keeps the credentials.</p>
+	<ol class="steps">
+<li class="step k-ui">
+	<label class="done"><input id="done-31" type="checkbox" data-key="31"><span class="sr">Done</span></label>
+	<div class="step-body">
+		<span class="kind">In the UI</span>
+		<p class="step-title"><strong>Connect DXP to AI Hub</strong></p><ol><li>Tab 6: AI Hub &rarr; the account configuration &rarr; copy the <b>Client ID</b> and the <b>Client Secret</b>.</li><li>In the same configuration, check the <b>Environment URL</b>: the DXP address below, with no slash at the end.</li><li>Tab 2: Control Panel &rarr; Instance Settings &rarr; Platform &rarr; <b>AI Hub</b> &rarr; paste the values &rarr; <b>Save</b>.</li></ol><div class="table-scroll"><table class="values"><tbody><tr><th scope="row">Client ID</th><td>Copied from AI Hub</td><td></td></tr><tr><th scope="row">Client Secret</th><td>Copied from AI Hub</td><td></td></tr><tr><th scope="row">Service URL</th><td><code>https://na1.hub.liferay.com</code></td><td><button class="copy" type="button" data-copy="c21">Copy</button></td></tr><tr><th scope="row">Environment URL (in AI Hub)</th><td><code>https://webserver-lctacdemodevcon-prd.lfr.cloud</code></td><td><button class="copy" type="button" data-copy="c22">Copy</button></td></tr></tbody></table></div>
+	</div>
+</li>
+<li class="step k-say">
+	
+	<div class="step-body">
+		<span class="kind">Say</span>
+		<p>The secret stays on the DXP server. The browser only gets a short-lived token, and AI Hub acts on behalf of the signed-in user.</p>
+	</div>
+</li>
+<li class="step k-say">
+	
+	<div class="step-body">
+		<span class="kind">Say</span>
+		<p>An agent is a definition plus a workflow with an LLM node. The card sends the numbers it already shows; AI Hub never reads LDP on its own.</p>
+	</div>
+</li>
+<li class="step k-ui">
+	<label class="done"><input id="done-34" type="checkbox" data-key="34"><span class="sr">Done</span></label>
+	<div class="step-body">
+		<span class="kind">In the UI</span>
+		<p class="step-title"><strong>Create the agent</strong></p><ol><li>Tab 6: AI Hub &rarr; <b>Agent Builder</b>.</li><li><b>Make Shorter</b> &rarr; &#8942; &rarr; <b>Duplicate</b>.</li><li>On the copy: &#8942; &rarr; <b>View</b> &rarr; fill in the fields below &rarr; <b>Save</b>.</li></ol><div class="table-scroll"><table class="values"><tbody><tr><th scope="row">Title</th><td><code>DevCon 2026 Demo LDP Metric Insight</code></td><td><button class="copy" type="button" data-copy="c23">Copy</button></td></tr><tr><th scope="row">Description</th><td><code>Turns one LDP metric from the DEVCON demo card into a short insight.</code></td><td><button class="copy" type="button" data-copy="c24">Copy</button></td></tr><tr><th scope="row">External reference code</th><td><code>DEVCON_2026_DEMO_LDP_METRIC_INSIGHT</code></td><td><button class="copy" type="button" data-copy="c25">Copy</button></td></tr><tr><th scope="row">Input variables</th><td><code>metrics</code></td><td><button class="copy" type="button" data-copy="c26">Copy</button></td></tr><tr><th scope="row">Output variable</th><td><code>insight</code></td><td><button class="copy" type="button" data-copy="c27">Copy</button></td></tr></tbody></table></div>
+	</div>
+</li>
+<li class="step k-say">
+	
+	<div class="step-body">
+		<span class="kind">Say</span>
+		<p>The external reference code is the agent&rsquo;s address: the only thing the card needs to know to call it.</p>
+	</div>
+</li>
+<li class="step k-ui">
+	<label class="done"><input id="done-36" type="checkbox" data-key="36"><span class="sr">Done</span></label>
+	<div class="step-body">
+		<span class="kind">In the UI</span>
+		<p class="step-title"><strong>Write its workflow</strong></p><ol><li><b>View Workflow</b> &rarr; click the LLM node in the middle.</li><li>In the panel on the right, fill in the fields below &rarr; <b>Update</b>.</li></ol><div class="table-scroll"><table class="values"><tbody><tr><th scope="row">Node Name</th><td><code>ldpMetricInsight</code></td><td><button class="copy" type="button" data-copy="c28">Copy</button></td></tr><tr><th scope="row">Input variables</th><td><code>[{&quot;name&quot;:&quot;metrics&quot;,&quot;type&quot;:&quot;string&quot;}]</code></td><td><button class="copy" type="button" data-copy="c29">Copy</button></td></tr><tr><th scope="row">Output variables</th><td><code>[{&quot;name&quot;:&quot;insight&quot;,&quot;type&quot;:&quot;string&quot;}]</code></td><td><button class="copy" type="button" data-copy="c30">Copy</button></td></tr><tr><th scope="row">Prompt</th><td><code>You are an analytics assistant. You receive one website metric from Liferay Data Platform: its name, the period, the value, the previous period&#x27;s value, and the change.
+
+Write at most three short sentences for a marketing manager: what the number says, how it compares with the previous period, and one concrete action. Plain text only. Never invent numbers. If there is too little data, say so in one sentence.</code></td><td><button class="copy" type="button" data-copy="c31">Copy</button></td></tr><tr><th scope="row">User message</th><td><code>Metric summary:
+{{metrics}}</code></td><td><button class="copy" type="button" data-copy="c32">Copy</button></td></tr><tr><th scope="row">Tools</th><td><code>[]</code></td><td><button class="copy" type="button" data-copy="c33">Copy</button></td></tr><tr><th scope="row">RAG</th><td><code>{}</code></td><td><button class="copy" type="button" data-copy="c34">Copy</button></td></tr></tbody></table></div>
+	</div>
+</li>
+<li class="step k-say">
+	
+	<div class="step-body">
+		<span class="kind">Say</span>
+		<p>At run time <code>{{metrics}}</code> becomes the text the card sends. Only variables listed as node inputs get filled in.</p>
+	</div>
+</li>
+<li class="step k-code">
+	<label class="done"><input id="done-38" type="checkbox" data-key="38"><span class="sr">Done</span></label>
+	<div class="step-body">
+		<span class="kind">In the editor</span>
+		
+<figure class="code">
+	<figcaption>
+		<span class="file">ldp-demo-card.js</span>
+		<span class="legend"></span>
+		<button class="copy" type="button" data-copy="c35">Copy code</button>
+	</figcaption>
+	<div class="code-scroll"><pre><span class="ln">1</span><span class="lc"><span class="old">// The LDP property (channel) of the Swell Lab site</span></span><span class="ln">2</span><span class="lc"><span class="old">const CHANNEL_ID = &#x27;845351493326064678&#x27;;</span></span><span class="ln">3</span><span class="lc"> </span><span class="ln">4</span><span class="lc"><span class="old">// 7 = last 7 days (LDP leaves today out)</span></span><span class="ln">5</span><span class="lc"><span class="old">const RANGE_KEY = 7;</span></span><span class="ln">6</span><span class="lc"> </span><span class="ln">7</span><span class="lc"><span class="old">// The Liferay Object that keeps each card&#x27;s configuration</span></span><span class="ln">8</span><span class="lc"><span class="old">const OBJECT_URL = &#x27;/o/c/democardconfigs&#x27;;</span></span><span class="ln">9</span><span class="lc"> </span><span class="ln">10</span><span class="lc"><span class="cm">// The AI Hub agent that writes the insight</span></span><span class="ln">11</span><span class="lc"><span class="kw">const</span><span class="tx"> </span><span class="ty">AGENT_ERC</span><span class="tx"> = </span><span class="st">&#x27;DEVCON_2026_DEMO_LDP_METRIC_INSIGHT&#x27;</span><span class="tx">;</span></span><span class="ln">12</span><span class="lc"> </span><span class="ln">13</span><span class="lc"><span class="old">const METRICS = {</span></span><span class="ln">14</span><span class="lc"><span class="old">	sessionsMetric: &#x27;Sessions&#x27;,</span></span><span class="ln">15</span><span class="lc"><span class="old">	visitorsMetric: &#x27;Unique visitors&#x27;,</span></span><span class="ln">16</span><span class="lc"><span class="old">};</span></span><span class="ln">17</span><span class="lc"> </span><span class="ln">18</span><span class="lc"><span class="old">const STYLE = `</span></span><span class="ln">19</span><span class="lc"><span class="old">	&lt;style&gt;</span></span><span class="ln">20</span><span class="lc"><span class="old">		.ldp-demo-card {</span></span><span class="ln">21</span><span class="lc"><span class="old">			background: var(--white);</span></span><span class="ln">22</span><span class="lc"><span class="old">			border: 1px solid var(--gray-300);</span></span><span class="ln">23</span><span class="lc"><span class="old">			border-radius: var(--border-radius-lg);</span></span><span class="ln">24</span><span class="lc"><span class="old">			box-shadow: var(--box-shadow-sm);</span></span><span class="ln">25</span><span class="lc"><span class="old">			color: var(--body-color);</span></span><span class="ln">26</span><span class="lc"><span class="old">			display: block;</span></span><span class="ln">27</span><span class="lc"><span class="old">			font-family: var(--font-family-base);</span></span><span class="ln">28</span><span class="lc"><span class="old">			padding: var(--spacer-4);</span></span><span class="ln">29</span><span class="lc"><span class="old">		}</span></span><span class="ln">30</span><span class="lc"> </span><span class="ln">31</span><span class="lc"><span class="old">		.ldp-demo-card select {</span></span><span class="ln">32</span><span class="lc"><span class="old">			background: var(--white);</span></span><span class="ln">33</span><span class="lc"><span class="old">			border: 1px solid var(--gray-400);</span></span><span class="ln">34</span><span class="lc"><span class="old">			border-radius: var(--border-radius);</span></span><span class="ln">35</span><span class="lc"><span class="old">			color: var(--body-color);</span></span><span class="ln">36</span><span class="lc"><span class="old">			font: inherit;</span></span><span class="ln">37</span><span class="lc"><span class="old">			font-size: var(--font-size-sm);</span></span><span class="ln">38</span><span class="lc"><span class="old">			padding: var(--spacer-1) var(--spacer-2);</span></span><span class="ln">39</span><span class="lc"><span class="old">		}</span></span><span class="ln">40</span><span class="lc"> </span><span class="ln">41</span><span class="lc"><span class="old">		.ldp-demo-card .value {</span></span><span class="ln">42</span><span class="lc"><span class="old">			color: var(--dark);</span></span><span class="ln">43</span><span class="lc"><span class="old">			font-size: 2.5rem;</span></span><span class="ln">44</span><span class="lc"><span class="old">			font-weight: 600;</span></span><span class="ln">45</span><span class="lc"><span class="old">			margin: var(--spacer-3) 0 var(--spacer-1);</span></span><span class="ln">46</span><span class="lc"><span class="old">		}</span></span><span class="ln">47</span><span class="lc"> </span><span class="ln">48</span><span class="lc"><span class="old">		.ldp-demo-card .trend {</span></span><span class="ln">49</span><span class="lc"><span class="old">			color: var(--secondary);</span></span><span class="ln">50</span><span class="lc"><span class="old">			font-size: var(--font-size-sm);</span></span><span class="ln">51</span><span class="lc"><span class="st">		}</span></span><span class="ln">52</span><span class="lc"> </span><span class="ln">53</span><span class="lc"><span class="st">		.ldp-demo-card .ai {</span></span><span class="ln">54</span><span class="lc"><span class="st">			background: var(--primary);</span></span><span class="ln">55</span><span class="lc"><span class="st">			border: 0;</span></span><span class="ln">56</span><span class="lc"><span class="st">			border-radius: var(--border-radius);</span></span><span class="ln">57</span><span class="lc"><span class="st">			color: var(--white);</span></span><span class="ln">58</span><span class="lc"><span class="st">			cursor: pointer;</span></span><span class="ln">59</span><span class="lc"><span class="st">			font: inherit;</span></span><span class="ln">60</span><span class="lc"><span class="st">			font-size: var(--font-size-sm);</span></span><span class="ln">61</span><span class="lc"><span class="st">			margin-top: var(--spacer-3);</span></span><span class="ln">62</span><span class="lc"><span class="st">			padding: var(--spacer-1) var(--spacer-3);</span></span><span class="ln">63</span><span class="lc"><span class="st">		}</span></span><span class="ln">64</span><span class="lc"> </span><span class="ln">65</span><span class="lc"><span class="st">		.ldp-demo-card .ai:hover {</span></span><span class="ln">66</span><span class="lc"><span class="st">			background: var(--primary-d1);</span></span><span class="ln">67</span><span class="lc"><span class="st">		}</span></span><span class="ln">68</span><span class="lc"> </span><span class="ln">69</span><span class="lc"><span class="st">		.ldp-demo-card .insight {</span></span><span class="ln">70</span><span class="lc"><span class="st">			background: var(--primary-l3);</span></span><span class="ln">71</span><span class="lc"><span class="st">			border-left: 3px solid var(--primary);</span></span><span class="ln">72</span><span class="lc"><span class="st">			border-radius: var(--border-radius);</span></span><span class="ln">73</span><span class="lc"><span class="st">			color: var(--body-color);</span></span><span class="ln">74</span><span class="lc"><span class="st">			font-size: var(--font-size-sm);</span></span><span class="ln">75</span><span class="lc"><span class="st">			line-height: 1.5;</span></span><span class="ln">76</span><span class="lc"><span class="st">			margin: var(--spacer-3) 0 0;</span></span><span class="ln">77</span><span class="lc"><span class="st">			padding: var(--spacer-2) var(--spacer-3);</span></span><span class="ln">78</span><span class="lc"><span class="st">		}</span></span><span class="ln">79</span><span class="lc"> </span><span class="ln">80</span><span class="lc"><span class="st">		.ldp-demo-card .insight:empty {</span></span><span class="ln">81</span><span class="lc"><span class="st">			display: none;</span></span><span class="ln">82</span><span class="lc"><span class="old">		}</span></span><span class="ln">83</span><span class="lc"><span class="old">	&lt;/style&gt;</span></span><span class="ln">84</span><span class="lc"><span class="old">`;</span></span><span class="ln">85</span><span class="lc"> </span><span class="ln">86</span><span class="lc"><span class="old">async function api(url, options = {}) {</span></span><span class="ln">87</span><span class="lc"><span class="old">	const response = await fetch(url, {</span></span><span class="ln">88</span><span class="lc"><span class="old">		...options,</span></span><span class="ln">89</span><span class="lc"><span class="old">		headers: {</span></span><span class="ln">90</span><span class="lc"><span class="old">			&#x27;Content-Type&#x27;: &#x27;application/json&#x27;,</span></span><span class="ln">91</span><span class="lc"><span class="old">			&#x27;x-csrf-token&#x27;: Liferay.authToken,</span></span><span class="ln">92</span><span class="lc"><span class="old">		},</span></span><span class="ln">93</span><span class="lc"><span class="old">	});</span></span><span class="ln">94</span><span class="lc"> </span><span class="ln">95</span><span class="lc"><span class="old">	if (!response.ok) {</span></span><span class="ln">96</span><span class="lc"><span class="old">		throw new Error(`${url} returned ${response.status}`);</span></span><span class="ln">97</span><span class="lc"><span class="old">	}</span></span><span class="ln">98</span><span class="lc"> </span><span class="ln">99</span><span class="lc"><span class="old">	return response.json();</span></span><span class="ln">100</span><span class="lc"><span class="old">}</span></span><span class="ln">101</span><span class="lc"> </span><span class="ln">102</span><span class="lc"><span class="old">async function getMetric(metric) {</span></span><span class="ln">103</span><span class="lc"><span class="old">	const query = `</span></span><span class="ln">104</span><span class="lc"><span class="old">		query ($channelId: String!, $rangeKey: Int) {</span></span><span class="ln">105</span><span class="lc"><span class="old">			site(channelId: $channelId, interval: &quot;D&quot;, rangeKey: $rangeKey) {</span></span><span class="ln">106</span><span class="lc"><span class="old">				${metric} {</span></span><span class="ln">107</span><span class="lc"><span class="old">					previousValue</span></span><span class="ln">108</span><span class="lc"><span class="old">					trend {</span></span><span class="ln">109</span><span class="lc"><span class="old">						percentage</span></span><span class="ln">110</span><span class="lc"><span class="old">					}</span></span><span class="ln">111</span><span class="lc"><span class="old">					value</span></span><span class="ln">112</span><span class="lc"><span class="old">				}</span></span><span class="ln">113</span><span class="lc"><span class="old">			}</span></span><span class="ln">114</span><span class="lc"><span class="old">		}</span></span><span class="ln">115</span><span class="lc"><span class="old">	`;</span></span><span class="ln">116</span><span class="lc"> </span><span class="ln">117</span><span class="lc"><span class="old">	// The DXP proxies the request to LDP with the user&#x27;s session: no LDP</span></span><span class="ln">118</span><span class="lc"><span class="old">	// token in the browser</span></span><span class="ln">119</span><span class="lc"><span class="old">	const {data} = await api(&#x27;/o/analytics-rest/v1.0/graphql&#x27;, {</span></span><span class="ln">120</span><span class="lc"><span class="old">		body: JSON.stringify({</span></span><span class="ln">121</span><span class="lc"><span class="old">			query,</span></span><span class="ln">122</span><span class="lc"><span class="old">			variables: {channelId: CHANNEL_ID, rangeKey: RANGE_KEY},</span></span><span class="ln">123</span><span class="lc"><span class="old">		}),</span></span><span class="ln">124</span><span class="lc"><span class="old">		method: &#x27;POST&#x27;,</span></span><span class="ln">125</span><span class="lc"><span class="old">	});</span></span><span class="ln">126</span><span class="lc"> </span><span class="ln">127</span><span class="lc"><span class="old">	return data.site[metric];</span></span><span class="ln">128</span><span class="lc"><span class="old">}</span></span><span class="ln">129</span><span class="lc"> </span><span class="ln">130</span><span class="lc"><span class="old">// Each widget instance has its own portlet id, the same on the draft and the</span></span><span class="ln">131</span><span class="lc"><span class="old">// published page: it is the key of the card&#x27;s entry in the Object</span></span><span class="ln">132</span><span class="lc"><span class="old">function getKey(element) {</span></span><span class="ln">133</span><span class="lc"><span class="old">	const wrapper = element.closest(&#x27;[id^=&quot;p_p_id_&quot;]&#x27;);</span></span><span class="ln">134</span><span class="lc"> </span><span class="ln">135</span><span class="lc"><span class="old">	return wrapper.id.replace(/^p_p_id_/, &#x27;&#x27;).replace(/_$/, &#x27;&#x27;);</span></span><span class="ln">136</span><span class="lc"><span class="old">}</span></span><span class="ln">137</span><span class="lc"> </span><span class="ln">138</span><span class="lc"><span class="old">async function loadConfig(key) {</span></span><span class="ln">139</span><span class="lc"><span class="old">	try {</span></span><span class="ln">140</span><span class="lc"><span class="old">		const entry = await api(`${OBJECT_URL}/by-external-reference-code/${key}`);</span></span><span class="ln">141</span><span class="lc"> </span><span class="ln">142</span><span class="lc"><span class="old">		return {metric: entry.metric};</span></span><span class="ln">143</span><span class="lc"><span class="old">	}</span></span><span class="ln">144</span><span class="lc"><span class="old">	catch {</span></span><span class="ln">145</span><span class="lc"> </span><span class="ln">146</span><span class="lc"><span class="old">		// 404: this card was never configured</span></span><span class="ln">147</span><span class="lc"> </span><span class="ln">148</span><span class="lc"><span class="old">		return null;</span></span><span class="ln">149</span><span class="lc"><span class="old">	}</span></span><span class="ln">150</span><span class="lc"><span class="old">}</span></span><span class="ln">151</span><span class="lc"> </span><span class="ln">152</span><span class="lc"><span class="old">function saveConfig(key, config) {</span></span><span class="ln">153</span><span class="lc"> </span><span class="ln">154</span><span class="lc"><span class="old">	// PUT by external reference code creates the entry the first time and</span></span><span class="ln">155</span><span class="lc"><span class="old">	// replaces it afterwards</span></span><span class="ln">156</span><span class="lc"> </span><span class="ln">157</span><span class="lc"><span class="old">	return api(`${OBJECT_URL}/by-external-reference-code/${key}`, {</span></span><span class="ln">158</span><span class="lc"><span class="old">		body: JSON.stringify(config),</span></span><span class="ln">159</span><span class="lc"><span class="old">		method: &#x27;PUT&#x27;,</span></span><span class="ln">160</span><span class="lc"><span class="old">	});</span></span><span class="ln">161</span><span class="lc"><span class="old">}</span></span><span class="ln">162</span><span class="lc"> </span><span class="ln">163</span><span class="lc"><span class="cm">// AI Hub: the DXP issues a token, the browser subscribes to AI Hub&#x27;s event</span></span><span class="ln">164</span><span class="lc"><span class="cm">// stream, starts the agent with the stream key, and reads the answer from the</span></span><span class="ln">165</span><span class="lc"><span class="cm">// event named after the agent</span></span><span class="ln">166</span><span class="lc"><span class="kw">async</span><span class="tx"> </span><span class="kw">function</span><span class="tx"> </span><span class="fn">askAgent</span><span class="tx">(text) {</span></span><span class="ln">167</span><span class="lc"><span class="tx">	</span><span class="kw">const</span><span class="tx"> token = </span><span class="kw">await</span><span class="tx"> </span><span class="fn">api</span><span class="tx">(</span><span class="st">&#x27;/o/ai-hub-cell/v1.0/authorization-tokens&#x27;</span><span class="tx">, {</span></span><span class="ln">168</span><span class="lc"><span class="tx">		method: </span><span class="st">&#x27;POST&#x27;</span><span class="tx">,</span></span><span class="ln">169</span><span class="lc"><span class="tx">	});</span></span><span class="ln">170</span><span class="lc"> </span><span class="ln">171</span><span class="lc"><span class="tx">	</span><span class="kw">const</span><span class="tx"> stream = </span><span class="kw">await</span><span class="tx"> </span><span class="fn">fetch</span><span class="tx">(</span></span><span class="ln">172</span><span class="lc"><span class="tx">		</span><span class="st">`</span><span class="pu">${</span><span class="tx">token.serviceURL</span><span class="pu">}</span><span class="st">/o/ai-hub/v1.0/agent-instances/subscribe`</span><span class="tx">,</span></span><span class="ln">173</span><span class="lc"><span class="tx">		{</span></span><span class="ln">174</span><span class="lc"><span class="tx">			headers: {</span></span><span class="ln">175</span><span class="lc"><span class="tx">				</span><span class="ty">Accept</span><span class="tx">: </span><span class="st">&#x27;text/event-stream&#x27;</span><span class="tx">,</span></span><span class="ln">176</span><span class="lc"><span class="tx">				</span><span class="ty">Authorization</span><span class="tx">: </span><span class="st">`Bearer </span><span class="pu">${</span><span class="tx">token.accessToken</span><span class="pu">}</span><span class="st">`</span><span class="tx">,</span></span><span class="ln">177</span><span class="lc"><span class="tx">			},</span></span><span class="ln">178</span><span class="lc"><span class="tx">		}</span></span><span class="ln">179</span><span class="lc"><span class="tx">	);</span></span><span class="ln">180</span><span class="lc"> </span><span class="ln">181</span><span class="lc"><span class="tx">	</span><span class="kw">const</span><span class="tx"> reader = stream.body.</span><span class="fn">getReader</span><span class="tx">();</span></span><span class="ln">182</span><span class="lc"><span class="tx">	</span><span class="kw">const</span><span class="tx"> decoder = </span><span class="kw">new</span><span class="tx"> </span><span class="fn">TextDecoder</span><span class="tx">();</span></span><span class="ln">183</span><span class="lc"> </span><span class="ln">184</span><span class="lc"><span class="tx">	</span><span class="kw">let</span><span class="tx"> buffer = </span><span class="st">&#x27;&#x27;</span><span class="tx">;</span></span><span class="ln">185</span><span class="lc"> </span><span class="ln">186</span><span class="lc"><span class="tx">	</span><span class="kw">while</span><span class="tx"> (</span><span class="kw">true</span><span class="tx">) {</span></span><span class="ln">187</span><span class="lc"><span class="tx">		</span><span class="kw">const</span><span class="tx"> {done, value} = </span><span class="kw">await</span><span class="tx"> reader.</span><span class="fn">read</span><span class="tx">();</span></span><span class="ln">188</span><span class="lc"> </span><span class="ln">189</span><span class="lc"><span class="tx">		</span><span class="kw">if</span><span class="tx"> (done) {</span></span><span class="ln">190</span><span class="lc"><span class="tx">			</span><span class="kw">throw</span><span class="tx"> </span><span class="kw">new</span><span class="tx"> </span><span class="fn">Error</span><span class="tx">(</span><span class="st">&#x27;AI Hub closed the stream.&#x27;</span><span class="tx">);</span></span><span class="ln">191</span><span class="lc"><span class="tx">		}</span></span><span class="ln">192</span><span class="lc"> </span><span class="ln">193</span><span class="lc"><span class="tx">		buffer += decoder.</span><span class="fn">decode</span><span class="tx">(value, {stream: </span><span class="kw">true</span><span class="tx">});</span></span><span class="ln">194</span><span class="lc"> </span><span class="ln">195</span><span class="lc"><span class="tx">		</span><span class="kw">let</span><span class="tx"> end;</span></span><span class="ln">196</span><span class="lc"> </span><span class="ln">197</span><span class="lc"><span class="tx">		</span><span class="kw">while</span><span class="tx"> ((end = buffer.</span><span class="fn">indexOf</span><span class="tx">(</span><span class="st">&#x27;\n\n&#x27;</span><span class="tx">)) &gt;= </span><span class="nu">0</span><span class="tx">) {</span></span><span class="ln">198</span><span class="lc"><span class="tx">			</span><span class="kw">const</span><span class="tx"> block = buffer.</span><span class="fn">slice</span><span class="tx">(</span><span class="nu">0</span><span class="tx">, end);</span></span><span class="ln">199</span><span class="lc"> </span><span class="ln">200</span><span class="lc"><span class="tx">			buffer = buffer.</span><span class="fn">slice</span><span class="tx">(end + </span><span class="nu">2</span><span class="tx">);</span></span><span class="ln">201</span><span class="lc"> </span><span class="ln">202</span><span class="lc"><span class="tx">			</span><span class="kw">const</span><span class="tx"> name = block.</span><span class="fn">match</span><span class="tx">(/^event: ?(.*)$/m)?.[</span><span class="nu">1</span><span class="tx">];</span></span><span class="ln">203</span><span class="lc"><span class="tx">			</span><span class="kw">const</span><span class="tx"> data = block.</span><span class="fn">match</span><span class="tx">(/^data: ?(.*)$/m)?.[</span><span class="nu">1</span><span class="tx">];</span></span><span class="ln">204</span><span class="lc"> </span><span class="ln">205</span><span class="lc"><span class="tx">			</span><span class="kw">if</span><span class="tx"> (name === </span><span class="st">&#x27;Subscribe&#x27;</span><span class="tx">) {</span></span><span class="ln">206</span><span class="lc"><span class="tx">				</span><span class="kw">await</span><span class="tx"> </span><span class="fn">fetch</span><span class="tx">(</span><span class="st">`</span><span class="pu">${</span><span class="tx">token.serviceURL</span><span class="pu">}</span><span class="st">/o/ai-hub/v1.0/agent-instances`</span><span class="tx">, {</span></span><span class="ln">207</span><span class="lc"><span class="tx">					body: </span><span class="ty">JSON</span><span class="tx">.</span><span class="fn">stringify</span><span class="tx">({</span></span><span class="ln">208</span><span class="lc"><span class="tx">						agentDefinitionExternalReferenceCode: </span><span class="ty">AGENT_ERC</span><span class="tx">,</span></span><span class="ln">209</span><span class="lc"><span class="tx">						context: {metrics: text},</span></span><span class="ln">210</span><span class="lc"><span class="tx">						sseEventSinkKey: data,</span></span><span class="ln">211</span><span class="lc"><span class="tx">					}),</span></span><span class="ln">212</span><span class="lc"><span class="tx">					headers: {</span></span><span class="ln">213</span><span class="lc"><span class="tx">						</span><span class="st">&#x27;Authorization&#x27;</span><span class="tx">: </span><span class="st">`Bearer </span><span class="pu">${</span><span class="tx">token.accessToken</span><span class="pu">}</span><span class="st">`</span><span class="tx">,</span></span><span class="ln">214</span><span class="lc"><span class="tx">						</span><span class="st">&#x27;Content-Type&#x27;</span><span class="tx">: </span><span class="st">&#x27;application/json&#x27;</span><span class="tx">,</span></span><span class="ln">215</span><span class="lc"><span class="tx">						</span><span class="st">&#x27;Liferay-AI-Hub-Cell-On-Behalf-Of&#x27;</span><span class="tx">: token.userToken,</span></span><span class="ln">216</span><span class="lc"><span class="tx">					},</span></span><span class="ln">217</span><span class="lc"><span class="tx">					method: </span><span class="st">&#x27;POST&#x27;</span><span class="tx">,</span></span><span class="ln">218</span><span class="lc"><span class="tx">				});</span></span><span class="ln">219</span><span class="lc"><span class="tx">			}</span></span><span class="ln">220</span><span class="lc"><span class="tx">			</span><span class="kw">else</span><span class="tx"> </span><span class="kw">if</span><span class="tx"> (name === </span><span class="ty">AGENT_ERC</span><span class="tx">) {</span></span><span class="ln">221</span><span class="lc"><span class="tx">				reader.</span><span class="fn">cancel</span><span class="tx">();</span></span><span class="ln">222</span><span class="lc"> </span><span class="ln">223</span><span class="lc"><span class="tx">				</span><span class="kw">return</span><span class="tx"> </span><span class="ty">JSON</span><span class="tx">.</span><span class="fn">parse</span><span class="tx">(data).data;</span></span><span class="ln">224</span><span class="lc"><span class="tx">			}</span></span><span class="ln">225</span><span class="lc"><span class="tx">		}</span></span><span class="ln">226</span><span class="lc"><span class="tx">	}</span></span><span class="ln">227</span><span class="lc"><span class="tx">}</span></span><span class="ln">228</span><span class="lc"> </span><span class="ln">229</span><span class="lc"><span class="cm">// Plain text lines: the firewall in front of AI Hub rejects nested JSON</span></span><span class="ln">230</span><span class="lc"><span class="kw">function</span><span class="tx"> </span><span class="fn">describe</span><span class="tx">(label, result) {</span></span><span class="ln">231</span><span class="lc"><span class="tx">	</span><span class="kw">return</span><span class="tx"> [</span></span><span class="ln">232</span><span class="lc"><span class="tx">		</span><span class="st">`metric: </span><span class="pu">${</span><span class="tx">label</span><span class="pu">}</span><span class="st">`</span><span class="tx">,</span></span><span class="ln">233</span><span class="lc"><span class="tx">		</span><span class="st">&#x27;period: last 7 days&#x27;</span><span class="tx">,</span></span><span class="ln">234</span><span class="lc"><span class="tx">		</span><span class="st">`value: </span><span class="pu">${</span><span class="tx">result.value</span><span class="pu">}</span><span class="st">`</span><span class="tx">,</span></span><span class="ln">235</span><span class="lc"><span class="tx">		</span><span class="st">`previous period value: </span><span class="pu">${</span><span class="tx">result.previousValue</span><span class="pu">}</span><span class="st">`</span><span class="tx">,</span></span><span class="ln">236</span><span class="lc"><span class="tx">		</span><span class="st">`change: </span><span class="pu">${</span><span class="tx">result.trend?.percentage ?? </span><span class="st">&#x27;n/a&#x27;</span><span class="pu">}</span><span class="st">%`</span><span class="tx">,</span></span><span class="ln">237</span><span class="lc"><span class="tx">	].</span><span class="fn">join</span><span class="tx">(</span><span class="st">&#x27;\n&#x27;</span><span class="tx">);</span></span><span class="ln">238</span><span class="lc"><span class="tx">}</span></span><span class="ln">239</span><span class="lc"> </span><span class="ln">240</span><span class="lc"><span class="old">function formatTrend(result) {</span></span><span class="ln">241</span><span class="lc"><span class="old">	const percentage = result.trend?.percentage;</span></span><span class="ln">242</span><span class="lc"> </span><span class="ln">243</span><span class="lc"><span class="old">	if (percentage === null || percentage === undefined) {</span></span><span class="ln">244</span><span class="lc"><span class="old">		return `Previous period: ${result.previousValue}`;</span></span><span class="ln">245</span><span class="lc"><span class="old">	}</span></span><span class="ln">246</span><span class="lc"> </span><span class="ln">247</span><span class="lc"><span class="old">	const arrow = percentage &gt; 0 ? &#x27;▲&#x27; : percentage &lt; 0 ? &#x27;▼&#x27; : &#x27;&#x27;;</span></span><span class="ln">248</span><span class="lc"> </span><span class="ln">249</span><span class="lc"><span class="old">	return `${arrow} ${Math.abs(percentage).toFixed(1)}% vs previous period (${result.previousValue})`;</span></span><span class="ln">250</span><span class="lc"><span class="old">}</span></span><span class="ln">251</span><span class="lc"> </span><span class="ln">252</span><span class="lc"><span class="old">class LdpDemoCard extends HTMLElement {</span></span><span class="ln">253</span><span class="lc"><span class="old">	config = {metric: &#x27;visitorsMetric&#x27;};</span></span><span class="ln">254</span><span class="lc"> </span><span class="ln">255</span><span class="lc"><span class="old">	async connectedCallback() {</span></span><span class="ln">256</span><span class="lc"><span class="old">		this.classList.add(&#x27;ldp-demo-card&#x27;);</span></span><span class="ln">257</span><span class="lc"> </span><span class="ln">258</span><span class="lc"><span class="old">		this.key = getKey(this);</span></span><span class="ln">259</span><span class="lc"><span class="old">		this.config = (await loadConfig(this.key)) || this.config;</span></span><span class="ln">260</span><span class="lc"> </span><span class="ln">261</span><span class="lc"><span class="old">		this.render();</span></span><span class="ln">262</span><span class="lc"><span class="old">	}</span></span><span class="ln">263</span><span class="lc"> </span><span class="ln">264</span><span class="lc"><span class="old">	async render() {</span></span><span class="ln">265</span><span class="lc"><span class="old">		const options = Object.entries(METRICS)</span></span><span class="ln">266</span><span class="lc"><span class="old">			.map(</span></span><span class="ln">267</span><span class="lc"><span class="old">				([value, label]) =&gt;</span></span><span class="ln">268</span><span class="lc"><span class="old">					`&lt;option ${value === this.config.metric ? &#x27;selected&#x27; : &#x27;&#x27;} value=&quot;${value}&quot;&gt;${label}&lt;/option&gt;`</span></span><span class="ln">269</span><span class="lc"><span class="old">			)</span></span><span class="ln">270</span><span class="lc"><span class="old">			.join(&#x27;&#x27;);</span></span><span class="ln">271</span><span class="lc"> </span><span class="ln">272</span><span class="lc"><span class="old">		this.innerHTML = `</span></span><span class="ln">273</span><span class="lc"><span class="old">			${STYLE}</span></span><span class="ln">274</span><span class="lc"><span class="old">			&lt;select&gt;${options}&lt;/select&gt;</span></span><span class="ln">275</span><span class="lc"><span class="old">			&lt;div class=&quot;value&quot;&gt;...&lt;/div&gt;</span></span><span class="ln">276</span><span class="lc"><span class="old">			&lt;div class=&quot;trend&quot;&gt;Last 7 days&lt;/div&gt;</span></span><span class="ln">277</span><span class="lc"><span class="st">			&lt;button class=&quot;ai&quot; type=&quot;button&quot;&gt;✦ AI insight&lt;/button&gt;</span></span><span class="ln">278</span><span class="lc"><span class="st">			&lt;p class=&quot;insight&quot;&gt;&lt;/p&gt;</span></span><span class="ln">279</span><span class="lc"><span class="old">		`;</span></span><span class="ln">280</span><span class="lc"> </span><span class="ln">281</span><span class="lc"><span class="old">		this.querySelector(&#x27;select&#x27;).addEventListener(&#x27;change&#x27;, (event) =&gt; {</span></span><span class="ln">282</span><span class="lc"><span class="old">			this.config = {metric: event.target.value};</span></span><span class="ln">283</span><span class="lc"> </span><span class="ln">284</span><span class="lc"><span class="old">			saveConfig(this.key, this.config);</span></span><span class="ln">285</span><span class="lc"> </span><span class="ln">286</span><span class="lc"><span class="old">			this.render();</span></span><span class="ln">287</span><span class="lc"><span class="old">		});</span></span><span class="ln">288</span><span class="lc"> </span><span class="ln">289</span><span class="lc"><span class="old">		const result = await getMetric(this.config.metric);</span></span><span class="ln">290</span><span class="lc"> </span><span class="ln">291</span><span class="lc"><span class="old">		this.querySelector(&#x27;.value&#x27;).textContent = result.value.toLocaleString();</span></span><span class="ln">292</span><span class="lc"><span class="old">		this.querySelector(&#x27;.trend&#x27;).textContent = formatTrend(result);</span></span><span class="ln">293</span><span class="lc"> </span><span class="ln">294</span><span class="lc"><span class="tx">		</span><span class="kw">this</span><span class="tx">.</span><span class="fn">querySelector</span><span class="tx">(</span><span class="st">&#x27;.ai&#x27;</span><span class="tx">).</span><span class="fn">addEventListener</span><span class="tx">(</span><span class="st">&#x27;click&#x27;</span><span class="tx">, </span><span class="kw">async</span><span class="tx"> () =&gt; {</span></span><span class="ln">295</span><span class="lc"><span class="tx">			</span><span class="kw">const</span><span class="tx"> insight = </span><span class="kw">this</span><span class="tx">.</span><span class="fn">querySelector</span><span class="tx">(</span><span class="st">&#x27;.insight&#x27;</span><span class="tx">);</span></span><span class="ln">296</span><span class="lc"> </span><span class="ln">297</span><span class="lc"><span class="tx">			insight.textContent = </span><span class="st">&#x27;Asking AI Hub...&#x27;</span><span class="tx">;</span></span><span class="ln">298</span><span class="lc"> </span><span class="ln">299</span><span class="lc"><span class="tx">			</span><span class="kw">try</span><span class="tx"> {</span></span><span class="ln">300</span><span class="lc"><span class="tx">				insight.textContent = </span><span class="kw">await</span><span class="tx"> </span><span class="fn">askAgent</span><span class="tx">(</span></span><span class="ln">301</span><span class="lc"><span class="tx">					</span><span class="fn">describe</span><span class="tx">(</span><span class="ty">METRICS</span><span class="tx">[</span><span class="kw">this</span><span class="tx">.config.metric], result)</span></span><span class="ln">302</span><span class="lc"><span class="tx">				);</span></span><span class="ln">303</span><span class="lc"><span class="tx">			}</span></span><span class="ln">304</span><span class="lc"><span class="tx">			</span><span class="kw">catch</span><span class="tx"> (error) {</span></span><span class="ln">305</span><span class="lc"><span class="tx">				insight.textContent = </span><span class="st">`AI Hub is not available: </span><span class="pu">${</span><span class="tx">error.message</span><span class="pu">}</span><span class="st">`</span><span class="tx">;</span></span><span class="ln">306</span><span class="lc"><span class="tx">			}</span></span><span class="ln">307</span><span class="lc"><span class="tx">		});</span></span><span class="ln">308</span><span class="lc"><span class="old">	}</span></span><span class="ln">309</span><span class="lc"><span class="old">}</span></span><span class="ln">310</span><span class="lc"> </span><span class="ln">311</span><span class="lc"><span class="old">customElements.define(&#x27;ldp-demo-card&#x27;, LdpDemoCard);</span></span></pre></div>
+	
+</figure>
+	</div>
+</li>
+<li class="step k-ui">
+	<label class="done"><input id="done-39" type="checkbox" data-key="39"><span class="sr">Done</span></label>
+	<div class="step-body">
+		<span class="kind">In the UI</span>
+		<p class="step-title"><strong>Ship version 5</strong></p>
+<ol>
+	<li>Save <code>ldp-demo-card.js</code>.</li>
+	<li>Documents and Media &rarr; <code>ldp-demo-card.js</code> &rarr; &#8942; &rarr; <b>Edit</b> &rarr; <b>Select File</b> &rarr; pick the file &rarr; <b>Publish</b>.</li>
+	<li>Client Extensions &rarr; <b>LDP Demo Card</b> &rarr; set <b>JavaScript URL</b> to the value below &rarr; <b>Publish</b>.</li>
+	<li>Demo page &rarr; hard reload (Ctrl + Shift + R).</li>
+</ol>
+<div class="table-scroll"><table class="values"><tbody><tr><th scope="row">JavaScript URL</th><td><code>/documents/d/devcon-demo/ldp-demo-card-js?v=5</code></td><td><button class="copy" type="button" data-copy="c36">Copy</button></td></tr></tbody></table></div>
+	</div>
+</li>
+<li class="step k-ui">
+	<label class="done"><input id="done-310" type="checkbox" data-key="310"><span class="sr">Done</span></label>
+	<div class="step-body">
+		<span class="kind">In the UI</span>
+		<ol><li>Right card &rarr; <b>&#10022; AI insight</b>.</li></ol>
+	</div>
+</li>
+<li class="step k-say">
+	
+	<div class="step-body">
+		<span class="kind">Say</span>
+		<p>We send plain labeled lines, not JSON: easier for the model to read, and the AI Hub firewall rejects nested JSON anyway.</p>
+	</div>
+</li></ol>
+</section>
+
+	<section class="part" id="reset-demo">
+		<header class="part-head"><span class="letter">&#8634;</span><div><h2>Reset the demo</h2><span class="topic">Start over</span></div></header>
+		<div class="reset-card">
+			<ol>
+				<li><b>DEVCON Demo</b> &rarr; Site Builder &rarr; <b>Pages</b> &rarr; <b>Demo</b> &rarr; &#8942; &rarr; <b>Delete</b>. Keep <b>Home</b>.</li>
+				<li>Applications &rarr; <b>Client Extensions</b> &rarr; <b>LDP Demo Card</b> &rarr; &#8942; &rarr; <b>Delete</b>.</li>
+				<li><b>DEVCON Demo</b> &rarr; Documents and Media &rarr; <code>ldp-demo-card.js</code> &rarr; &#8942; &rarr; <b>Move to Recycle Bin</b>.</li>
+				<li><b>DEVCON Demo</b> &rarr; <b>Recycle Bin</b> &rarr; <b>Empty the Recycle Bin</b>. Otherwise the next upload gets a different URL.</li>
+				<li>Control Panel &rarr; <b>Objects</b> &rarr; folder <b>DEVCON Demo</b> &rarr; <b>Demo Card Config</b> &rarr; &#8942; &rarr; <b>Delete</b>. Its entries go with it.</li>
+				<li>AI Hub &rarr; <b>Agent Builder</b> &rarr; <b>DevCon 2026 Demo LDP Metric Insight</b> &rarr; &#8942; &rarr; <b>Delete</b>, so its external reference code is free again.</li>
+				<li>In the editor, empty <code>ldp-demo-card.js</code>.</li>
+			</ol>
+			<button class="reset" id="reset" type="button">Clear all checkmarks</button>
+		</div>
+	</section>
+
+	<footer class="foot">
+		<span>Code from <code>interaminense/devcon-2026-stuff</code>, folder <code>demo/</code>.</span>
+	</footer>
+</div>
+
+<script id="copy-data" type="application/json">{"c0": "https://webserver-lctacdemodevcon-prd.lfr.cloud/web/devcon-demo/home?p_p_id=com_liferay_login_web_portlet_LoginPortlet&p_p_state=maximized&_com_liferay_login_web_portlet_LoginPortlet_redirect=%2Fweb%2Fdevcon-demo", "c1": "class LdpDemoCard extends HTMLElement {\n\tconnectedCallback() {\n\t\tthis.innerHTML = '<p>Hello, DEVCON 2026!<\/p>';\n\t}\n}\n\ncustomElements.define('ldp-demo-card', LdpDemoCard);", "c2": "ldp-demo-card.js", "c3": "LDP Demo Card", "c4": "ldp-demo-card", "c5": "/documents/d/devcon-demo/ldp-demo-card-js?v=1", "c6": "Demo", "c7": "LDP Demo Card", "c8": "https://ldp-internal.liferay.com/workspace/liferay-data-platform/845351493326064678/sites", "c9": "845351493326064678", "c10": "// The LDP property (channel) of the Swell Lab site\nconst CHANNEL_ID = '845351493326064678';\n\n// 7 = last 7 days (LDP leaves today out)\nconst RANGE_KEY = 7;\n\nasync function getMetric(metric) {\n\tconst query = `\n\t\tquery ($channelId: String!, $rangeKey: Int) {\n\t\t\tsite(channelId: $channelId, interval: \"D\", rangeKey: $rangeKey) {\n\t\t\t\t${metric} {\n\t\t\t\t\tpreviousValue\n\t\t\t\t\ttrend {\n\t\t\t\t\t\tpercentage\n\t\t\t\t\t}\n\t\t\t\t\tvalue\n\t\t\t\t}\n\t\t\t}\n\t\t}\n\t`;\n\n\t// The DXP proxies the request to LDP with the user's session: no LDP\n\t// token in the browser\n\tconst response = await fetch('/o/analytics-rest/v1.0/graphql', {\n\t\tbody: JSON.stringify({\n\t\t\tquery,\n\t\t\tvariables: {channelId: CHANNEL_ID, rangeKey: RANGE_KEY},\n\t\t}),\n\t\theaders: {\n\t\t\t'Content-Type': 'application/json',\n\t\t\t'x-csrf-token': Liferay.authToken,\n\t\t},\n\t\tmethod: 'POST',\n\t});\n\n\tconst {data} = await response.json();\n\n\treturn data.site[metric];\n}\n\nclass LdpDemoCard extends HTMLElement {\n\tasync connectedCallback() {\n\t\tthis.innerHTML = '<p>Loading...<\/p>';\n\n\t\tconst result = await getMetric('visitorsMetric');\n\n\t\tthis.innerHTML = `<p>Unique visitors: <strong>${result.value}<\/strong><\/p>`;\n\t}\n}\n\ncustomElements.define('ldp-demo-card', LdpDemoCard);", "c11": "/documents/d/devcon-demo/ldp-demo-card-js?v=2", "c12": "// The LDP property (channel) of the Swell Lab site\nconst CHANNEL_ID = '845351493326064678';\n\n// 7 = last 7 days (LDP leaves today out)\nconst RANGE_KEY = 7;\n\nconst METRICS = {\n\tsessionsMetric: 'Sessions',\n\tvisitorsMetric: 'Unique visitors',\n};\n\nconst STYLE = `\n\t<style>\n\t\t.ldp-demo-card {\n\t\t\tbackground: var(--white);\n\t\t\tborder: 1px solid var(--gray-300);\n\t\t\tborder-radius: var(--border-radius-lg);\n\t\t\tbox-shadow: var(--box-shadow-sm);\n\t\t\tcolor: var(--body-color);\n\t\t\tdisplay: block;\n\t\t\tfont-family: var(--font-family-base);\n\t\t\tpadding: var(--spacer-4);\n\t\t}\n\n\t\t.ldp-demo-card select {\n\t\t\tbackground: var(--white);\n\t\t\tborder: 1px solid var(--gray-400);\n\t\t\tborder-radius: var(--border-radius);\n\t\t\tcolor: var(--body-color);\n\t\t\tfont: inherit;\n\t\t\tfont-size: var(--font-size-sm);\n\t\t\tpadding: var(--spacer-1) var(--spacer-2);\n\t\t}\n\n\t\t.ldp-demo-card .value {\n\t\t\tcolor: var(--dark);\n\t\t\tfont-size: 2.5rem;\n\t\t\tfont-weight: 600;\n\t\t\tmargin: var(--spacer-3) 0 var(--spacer-1);\n\t\t}\n\n\t\t.ldp-demo-card .trend {\n\t\t\tcolor: var(--secondary);\n\t\t\tfont-size: var(--font-size-sm);\n\t\t}\n\t<\/style>\n`;\n\nasync function getMetric(metric) {\n\tconst query = `\n\t\tquery ($channelId: String!, $rangeKey: Int) {\n\t\t\tsite(channelId: $channelId, interval: \"D\", rangeKey: $rangeKey) {\n\t\t\t\t${metric} {\n\t\t\t\t\tpreviousValue\n\t\t\t\t\ttrend {\n\t\t\t\t\t\tpercentage\n\t\t\t\t\t}\n\t\t\t\t\tvalue\n\t\t\t\t}\n\t\t\t}\n\t\t}\n\t`;\n\n\t// The DXP proxies the request to LDP with the user's session: no LDP\n\t// token in the browser\n\tconst response = await fetch('/o/analytics-rest/v1.0/graphql', {\n\t\tbody: JSON.stringify({\n\t\t\tquery,\n\t\t\tvariables: {channelId: CHANNEL_ID, rangeKey: RANGE_KEY},\n\t\t}),\n\t\theaders: {\n\t\t\t'Content-Type': 'application/json',\n\t\t\t'x-csrf-token': Liferay.authToken,\n\t\t},\n\t\tmethod: 'POST',\n\t});\n\n\tconst {data} = await response.json();\n\n\treturn data.site[metric];\n}\n\nfunction formatTrend(result) {\n\tconst percentage = result.trend?.percentage;\n\n\tif (percentage === null || percentage === undefined) {\n\t\treturn `Previous period: ${result.previousValue}`;\n\t}\n\n\tconst arrow = percentage > 0 ? '\u25b2' : percentage < 0 ? '\u25bc' : '';\n\n\treturn `${arrow} ${Math.abs(percentage).toFixed(1)}% vs previous period (${result.previousValue})`;\n}\n\nclass LdpDemoCard extends HTMLElement {\n\tconfig = {metric: 'visitorsMetric'};\n\n\tconnectedCallback() {\n\t\tthis.classList.add('ldp-demo-card');\n\n\t\tthis.render();\n\t}\n\n\tasync render() {\n\t\tconst options = Object.entries(METRICS)\n\t\t\t.map(\n\t\t\t\t([value, label]) =>\n\t\t\t\t\t`<option ${value === this.config.metric ? 'selected' : ''} value=\"${value}\">${label}<\/option>`\n\t\t\t)\n\t\t\t.join('');\n\n\t\tthis.innerHTML = `\n\t\t\t${STYLE}\n\t\t\t<select>${options}<\/select>\n\t\t\t<div class=\"value\">...<\/div>\n\t\t\t<div class=\"trend\">Last 7 days<\/div>\n\t\t`;\n\n\t\tthis.querySelector('select').addEventListener('change', (event) => {\n\t\t\tthis.config = {metric: event.target.value};\n\n\t\t\tthis.render();\n\t\t});\n\n\t\tconst result = await getMetric(this.config.metric);\n\n\t\tthis.querySelector('.value').textContent = result.value.toLocaleString();\n\t\tthis.querySelector('.trend').textContent = formatTrend(result);\n\t}\n}\n\ncustomElements.define('ldp-demo-card', LdpDemoCard);", "c13": "/documents/d/devcon-demo/ldp-demo-card-js?v=3", "c14": "Demo Card Config", "c15": "Demo Card Configs", "c16": "DemoCardConfig", "c17": "Metric", "c18": "metric", "c19": "// The LDP property (channel) of the Swell Lab site\nconst CHANNEL_ID = '845351493326064678';\n\n// 7 = last 7 days (LDP leaves today out)\nconst RANGE_KEY = 7;\n\n// The Liferay Object that keeps each card's configuration\nconst OBJECT_URL = '/o/c/democardconfigs';\n\nconst METRICS = {\n\tsessionsMetric: 'Sessions',\n\tvisitorsMetric: 'Unique visitors',\n};\n\nconst STYLE = `\n\t<style>\n\t\t.ldp-demo-card {\n\t\t\tbackground: var(--white);\n\t\t\tborder: 1px solid var(--gray-300);\n\t\t\tborder-radius: var(--border-radius-lg);\n\t\t\tbox-shadow: var(--box-shadow-sm);\n\t\t\tcolor: var(--body-color);\n\t\t\tdisplay: block;\n\t\t\tfont-family: var(--font-family-base);\n\t\t\tpadding: var(--spacer-4);\n\t\t}\n\n\t\t.ldp-demo-card select {\n\t\t\tbackground: var(--white);\n\t\t\tborder: 1px solid var(--gray-400);\n\t\t\tborder-radius: var(--border-radius);\n\t\t\tcolor: var(--body-color);\n\t\t\tfont: inherit;\n\t\t\tfont-size: var(--font-size-sm);\n\t\t\tpadding: var(--spacer-1) var(--spacer-2);\n\t\t}\n\n\t\t.ldp-demo-card .value {\n\t\t\tcolor: var(--dark);\n\t\t\tfont-size: 2.5rem;\n\t\t\tfont-weight: 600;\n\t\t\tmargin: var(--spacer-3) 0 var(--spacer-1);\n\t\t}\n\n\t\t.ldp-demo-card .trend {\n\t\t\tcolor: var(--secondary);\n\t\t\tfont-size: var(--font-size-sm);\n\t\t}\n\t<\/style>\n`;\n\nasync function api(url, options = {}) {\n\tconst response = await fetch(url, {\n\t\t...options,\n\t\theaders: {\n\t\t\t'Content-Type': 'application/json',\n\t\t\t'x-csrf-token': Liferay.authToken,\n\t\t},\n\t});\n\n\tif (!response.ok) {\n\t\tthrow new Error(`${url} returned ${response.status}`);\n\t}\n\n\treturn response.json();\n}\n\nasync function getMetric(metric) {\n\tconst query = `\n\t\tquery ($channelId: String!, $rangeKey: Int) {\n\t\t\tsite(channelId: $channelId, interval: \"D\", rangeKey: $rangeKey) {\n\t\t\t\t${metric} {\n\t\t\t\t\tpreviousValue\n\t\t\t\t\ttrend {\n\t\t\t\t\t\tpercentage\n\t\t\t\t\t}\n\t\t\t\t\tvalue\n\t\t\t\t}\n\t\t\t}\n\t\t}\n\t`;\n\n\t// The DXP proxies the request to LDP with the user's session: no LDP\n\t// token in the browser\n\tconst {data} = await api('/o/analytics-rest/v1.0/graphql', {\n\t\tbody: JSON.stringify({\n\t\t\tquery,\n\t\t\tvariables: {channelId: CHANNEL_ID, rangeKey: RANGE_KEY},\n\t\t}),\n\t\tmethod: 'POST',\n\t});\n\n\treturn data.site[metric];\n}\n\n// Each widget instance has its own portlet id, the same on the draft and the\n// published page: it is the key of the card's entry in the Object\nfunction getKey(element) {\n\tconst wrapper = element.closest('[id^=\"p_p_id_\"]');\n\n\treturn wrapper.id.replace(/^p_p_id_/, '').replace(/_$/, '');\n}\n\nasync function loadConfig(key) {\n\ttry {\n\t\tconst entry = await api(`${OBJECT_URL}/by-external-reference-code/${key}`);\n\n\t\treturn {metric: entry.metric};\n\t}\n\tcatch {\n\n\t\t// 404: this card was never configured\n\n\t\treturn null;\n\t}\n}\n\nfunction saveConfig(key, config) {\n\n\t// PUT by external reference code creates the entry the first time and\n\t// replaces it afterwards\n\n\treturn api(`${OBJECT_URL}/by-external-reference-code/${key}`, {\n\t\tbody: JSON.stringify(config),\n\t\tmethod: 'PUT',\n\t});\n}\n\nfunction formatTrend(result) {\n\tconst percentage = result.trend?.percentage;\n\n\tif (percentage === null || percentage === undefined) {\n\t\treturn `Previous period: ${result.previousValue}`;\n\t}\n\n\tconst arrow = percentage > 0 ? '\u25b2' : percentage < 0 ? '\u25bc' : '';\n\n\treturn `${arrow} ${Math.abs(percentage).toFixed(1)}% vs previous period (${result.previousValue})`;\n}\n\nclass LdpDemoCard extends HTMLElement {\n\tconfig = {metric: 'visitorsMetric'};\n\n\tasync connectedCallback() {\n\t\tthis.classList.add('ldp-demo-card');\n\n\t\tthis.key = getKey(this);\n\t\tthis.config = (await loadConfig(this.key)) || this.config;\n\n\t\tthis.render();\n\t}\n\n\tasync render() {\n\t\tconst options = Object.entries(METRICS)\n\t\t\t.map(\n\t\t\t\t([value, label]) =>\n\t\t\t\t\t`<option ${value === this.config.metric ? 'selected' : ''} value=\"${value}\">${label}<\/option>`\n\t\t\t)\n\t\t\t.join('');\n\n\t\tthis.innerHTML = `\n\t\t\t${STYLE}\n\t\t\t<select>${options}<\/select>\n\t\t\t<div class=\"value\">...<\/div>\n\t\t\t<div class=\"trend\">Last 7 days<\/div>\n\t\t`;\n\n\t\tthis.querySelector('select').addEventListener('change', (event) => {\n\t\t\tthis.config = {metric: event.target.value};\n\n\t\t\tsaveConfig(this.key, this.config);\n\n\t\t\tthis.render();\n\t\t});\n\n\t\tconst result = await getMetric(this.config.metric);\n\n\t\tthis.querySelector('.value').textContent = result.value.toLocaleString();\n\t\tthis.querySelector('.trend').textContent = formatTrend(result);\n\t}\n}\n\ncustomElements.define('ldp-demo-card', LdpDemoCard);", "c20": "/documents/d/devcon-demo/ldp-demo-card-js?v=4", "c21": "https://na1.hub.liferay.com", "c22": "https://webserver-lctacdemodevcon-prd.lfr.cloud", "c23": "DevCon 2026 Demo LDP Metric Insight", "c24": "Turns one LDP metric from the DEVCON demo card into a short insight.", "c25": "DEVCON_2026_DEMO_LDP_METRIC_INSIGHT", "c26": "metrics", "c27": "insight", "c28": "ldpMetricInsight", "c29": "[{\"name\":\"metrics\",\"type\":\"string\"}]", "c30": "[{\"name\":\"insight\",\"type\":\"string\"}]", "c31": "You are an analytics assistant. You receive one website metric from Liferay Data Platform: its name, the period, the value, the previous period's value, and the change.\n\nWrite at most three short sentences for a marketing manager: what the number says, how it compares with the previous period, and one concrete action. Plain text only. Never invent numbers. If there is too little data, say so in one sentence.", "c32": "Metric summary:\n{{metrics}}", "c33": "[]", "c34": "{}", "c35": "// The LDP property (channel) of the Swell Lab site\nconst CHANNEL_ID = '845351493326064678';\n\n// 7 = last 7 days (LDP leaves today out)\nconst RANGE_KEY = 7;\n\n// The Liferay Object that keeps each card's configuration\nconst OBJECT_URL = '/o/c/democardconfigs';\n\n// The AI Hub agent that writes the insight\nconst AGENT_ERC = 'DEVCON_2026_DEMO_LDP_METRIC_INSIGHT';\n\nconst METRICS = {\n\tsessionsMetric: 'Sessions',\n\tvisitorsMetric: 'Unique visitors',\n};\n\nconst STYLE = `\n\t<style>\n\t\t.ldp-demo-card {\n\t\t\tbackground: var(--white);\n\t\t\tborder: 1px solid var(--gray-300);\n\t\t\tborder-radius: var(--border-radius-lg);\n\t\t\tbox-shadow: var(--box-shadow-sm);\n\t\t\tcolor: var(--body-color);\n\t\t\tdisplay: block;\n\t\t\tfont-family: var(--font-family-base);\n\t\t\tpadding: var(--spacer-4);\n\t\t}\n\n\t\t.ldp-demo-card select {\n\t\t\tbackground: var(--white);\n\t\t\tborder: 1px solid var(--gray-400);\n\t\t\tborder-radius: var(--border-radius);\n\t\t\tcolor: var(--body-color);\n\t\t\tfont: inherit;\n\t\t\tfont-size: var(--font-size-sm);\n\t\t\tpadding: var(--spacer-1) var(--spacer-2);\n\t\t}\n\n\t\t.ldp-demo-card .value {\n\t\t\tcolor: var(--dark);\n\t\t\tfont-size: 2.5rem;\n\t\t\tfont-weight: 600;\n\t\t\tmargin: var(--spacer-3) 0 var(--spacer-1);\n\t\t}\n\n\t\t.ldp-demo-card .trend {\n\t\t\tcolor: var(--secondary);\n\t\t\tfont-size: var(--font-size-sm);\n\t\t}\n\n\t\t.ldp-demo-card .ai {\n\t\t\tbackground: var(--primary);\n\t\t\tborder: 0;\n\t\t\tborder-radius: var(--border-radius);\n\t\t\tcolor: var(--white);\n\t\t\tcursor: pointer;\n\t\t\tfont: inherit;\n\t\t\tfont-size: var(--font-size-sm);\n\t\t\tmargin-top: var(--spacer-3);\n\t\t\tpadding: var(--spacer-1) var(--spacer-3);\n\t\t}\n\n\t\t.ldp-demo-card .ai:hover {\n\t\t\tbackground: var(--primary-d1);\n\t\t}\n\n\t\t.ldp-demo-card .insight {\n\t\t\tbackground: var(--primary-l3);\n\t\t\tborder-left: 3px solid var(--primary);\n\t\t\tborder-radius: var(--border-radius);\n\t\t\tcolor: var(--body-color);\n\t\t\tfont-size: var(--font-size-sm);\n\t\t\tline-height: 1.5;\n\t\t\tmargin: var(--spacer-3) 0 0;\n\t\t\tpadding: var(--spacer-2) var(--spacer-3);\n\t\t}\n\n\t\t.ldp-demo-card .insight:empty {\n\t\t\tdisplay: none;\n\t\t}\n\t<\/style>\n`;\n\nasync function api(url, options = {}) {\n\tconst response = await fetch(url, {\n\t\t...options,\n\t\theaders: {\n\t\t\t'Content-Type': 'application/json',\n\t\t\t'x-csrf-token': Liferay.authToken,\n\t\t},\n\t});\n\n\tif (!response.ok) {\n\t\tthrow new Error(`${url} returned ${response.status}`);\n\t}\n\n\treturn response.json();\n}\n\nasync function getMetric(metric) {\n\tconst query = `\n\t\tquery ($channelId: String!, $rangeKey: Int) {\n\t\t\tsite(channelId: $channelId, interval: \"D\", rangeKey: $rangeKey) {\n\t\t\t\t${metric} {\n\t\t\t\t\tpreviousValue\n\t\t\t\t\ttrend {\n\t\t\t\t\t\tpercentage\n\t\t\t\t\t}\n\t\t\t\t\tvalue\n\t\t\t\t}\n\t\t\t}\n\t\t}\n\t`;\n\n\t// The DXP proxies the request to LDP with the user's session: no LDP\n\t// token in the browser\n\tconst {data} = await api('/o/analytics-rest/v1.0/graphql', {\n\t\tbody: JSON.stringify({\n\t\t\tquery,\n\t\t\tvariables: {channelId: CHANNEL_ID, rangeKey: RANGE_KEY},\n\t\t}),\n\t\tmethod: 'POST',\n\t});\n\n\treturn data.site[metric];\n}\n\n// Each widget instance has its own portlet id, the same on the draft and the\n// published page: it is the key of the card's entry in the Object\nfunction getKey(element) {\n\tconst wrapper = element.closest('[id^=\"p_p_id_\"]');\n\n\treturn wrapper.id.replace(/^p_p_id_/, '').replace(/_$/, '');\n}\n\nasync function loadConfig(key) {\n\ttry {\n\t\tconst entry = await api(`${OBJECT_URL}/by-external-reference-code/${key}`);\n\n\t\treturn {metric: entry.metric};\n\t}\n\tcatch {\n\n\t\t// 404: this card was never configured\n\n\t\treturn null;\n\t}\n}\n\nfunction saveConfig(key, config) {\n\n\t// PUT by external reference code creates the entry the first time and\n\t// replaces it afterwards\n\n\treturn api(`${OBJECT_URL}/by-external-reference-code/${key}`, {\n\t\tbody: JSON.stringify(config),\n\t\tmethod: 'PUT',\n\t});\n}\n\n// AI Hub: the DXP issues a token, the browser subscribes to AI Hub's event\n// stream, starts the agent with the stream key, and reads the answer from the\n// event named after the agent\nasync function askAgent(text) {\n\tconst token = await api('/o/ai-hub-cell/v1.0/authorization-tokens', {\n\t\tmethod: 'POST',\n\t});\n\n\tconst stream = await fetch(\n\t\t`${token.serviceURL}/o/ai-hub/v1.0/agent-instances/subscribe`,\n\t\t{\n\t\t\theaders: {\n\t\t\t\tAccept: 'text/event-stream',\n\t\t\t\tAuthorization: `Bearer ${token.accessToken}`,\n\t\t\t},\n\t\t}\n\t);\n\n\tconst reader = stream.body.getReader();\n\tconst decoder = new TextDecoder();\n\n\tlet buffer = '';\n\n\twhile (true) {\n\t\tconst {done, value} = await reader.read();\n\n\t\tif (done) {\n\t\t\tthrow new Error('AI Hub closed the stream.');\n\t\t}\n\n\t\tbuffer += decoder.decode(value, {stream: true});\n\n\t\tlet end;\n\n\t\twhile ((end = buffer.indexOf('\\n\\n')) >= 0) {\n\t\t\tconst block = buffer.slice(0, end);\n\n\t\t\tbuffer = buffer.slice(end + 2);\n\n\t\t\tconst name = block.match(/^event: ?(.*)$/m)?.[1];\n\t\t\tconst data = block.match(/^data: ?(.*)$/m)?.[1];\n\n\t\t\tif (name === 'Subscribe') {\n\t\t\t\tawait fetch(`${token.serviceURL}/o/ai-hub/v1.0/agent-instances`, {\n\t\t\t\t\tbody: JSON.stringify({\n\t\t\t\t\t\tagentDefinitionExternalReferenceCode: AGENT_ERC,\n\t\t\t\t\t\tcontext: {metrics: text},\n\t\t\t\t\t\tsseEventSinkKey: data,\n\t\t\t\t\t}),\n\t\t\t\t\theaders: {\n\t\t\t\t\t\t'Authorization': `Bearer ${token.accessToken}`,\n\t\t\t\t\t\t'Content-Type': 'application/json',\n\t\t\t\t\t\t'Liferay-AI-Hub-Cell-On-Behalf-Of': token.userToken,\n\t\t\t\t\t},\n\t\t\t\t\tmethod: 'POST',\n\t\t\t\t});\n\t\t\t}\n\t\t\telse if (name === AGENT_ERC) {\n\t\t\t\treader.cancel();\n\n\t\t\t\treturn JSON.parse(data).data;\n\t\t\t}\n\t\t}\n\t}\n}\n\n// Plain text lines: the firewall in front of AI Hub rejects nested JSON\nfunction describe(label, result) {\n\treturn [\n\t\t`metric: ${label}`,\n\t\t'period: last 7 days',\n\t\t`value: ${result.value}`,\n\t\t`previous period value: ${result.previousValue}`,\n\t\t`change: ${result.trend?.percentage ?? 'n/a'}%`,\n\t].join('\\n');\n}\n\nfunction formatTrend(result) {\n\tconst percentage = result.trend?.percentage;\n\n\tif (percentage === null || percentage === undefined) {\n\t\treturn `Previous period: ${result.previousValue}`;\n\t}\n\n\tconst arrow = percentage > 0 ? '\u25b2' : percentage < 0 ? '\u25bc' : '';\n\n\treturn `${arrow} ${Math.abs(percentage).toFixed(1)}% vs previous period (${result.previousValue})`;\n}\n\nclass LdpDemoCard extends HTMLElement {\n\tconfig = {metric: 'visitorsMetric'};\n\n\tasync connectedCallback() {\n\t\tthis.classList.add('ldp-demo-card');\n\n\t\tthis.key = getKey(this);\n\t\tthis.config = (await loadConfig(this.key)) || this.config;\n\n\t\tthis.render();\n\t}\n\n\tasync render() {\n\t\tconst options = Object.entries(METRICS)\n\t\t\t.map(\n\t\t\t\t([value, label]) =>\n\t\t\t\t\t`<option ${value === this.config.metric ? 'selected' : ''} value=\"${value}\">${label}<\/option>`\n\t\t\t)\n\t\t\t.join('');\n\n\t\tthis.innerHTML = `\n\t\t\t${STYLE}\n\t\t\t<select>${options}<\/select>\n\t\t\t<div class=\"value\">...<\/div>\n\t\t\t<div class=\"trend\">Last 7 days<\/div>\n\t\t\t<button class=\"ai\" type=\"button\">\u2726 AI insight<\/button>\n\t\t\t<p class=\"insight\"><\/p>\n\t\t`;\n\n\t\tthis.querySelector('select').addEventListener('change', (event) => {\n\t\t\tthis.config = {metric: event.target.value};\n\n\t\t\tsaveConfig(this.key, this.config);\n\n\t\t\tthis.render();\n\t\t});\n\n\t\tconst result = await getMetric(this.config.metric);\n\n\t\tthis.querySelector('.value').textContent = result.value.toLocaleString();\n\t\tthis.querySelector('.trend').textContent = formatTrend(result);\n\n\t\tthis.querySelector('.ai').addEventListener('click', async () => {\n\t\t\tconst insight = this.querySelector('.insight');\n\n\t\t\tinsight.textContent = 'Asking AI Hub...';\n\n\t\t\ttry {\n\t\t\t\tinsight.textContent = await askAgent(\n\t\t\t\t\tdescribe(METRICS[this.config.metric], result)\n\t\t\t\t);\n\t\t\t}\n\t\t\tcatch (error) {\n\t\t\t\tinsight.textContent = `AI Hub is not available: ${error.message}`;\n\t\t\t}\n\t\t});\n\t}\n}\n\ncustomElements.define('ldp-demo-card', LdpDemoCard);", "c36": "/documents/d/devcon-demo/ldp-demo-card-js?v=5"}</script>
+<script>
+(() => {
+	const texts = JSON.parse(document.getElementById('copy-data').textContent);
+	const store = {
+		get(key) { try { return localStorage.getItem(key); } catch { return null; } },
+		set(key, value) { try { value === null ? localStorage.removeItem(key) : localStorage.setItem(key, value); } catch {} },
+	};
+
+	document.addEventListener('click', async (event) => {
+		const button = event.target.closest('.copy');
+
+		if (!button) {
+			return;
+		}
+
+		const text = texts[button.dataset.copy];
+		const label = button.textContent;
+
+		try {
+			await navigator.clipboard.writeText(text);
+			button.textContent = 'Copied';
+		}
+		catch {
+			const area = document.createElement('textarea');
+
+			area.value = text;
+			document.body.appendChild(area);
+			area.select();
+			const ok = document.execCommand && document.execCommand('copy');
+			area.remove();
+			button.textContent = ok ? 'Copied' : 'Select and copy';
+		}
+
+		button.classList.add('ok');
+
+		setTimeout(() => {
+			button.textContent = label;
+			button.classList.remove('ok');
+		}, 1400);
+	});
+
+	const boxes = [...document.querySelectorAll('.done input')];
+
+	const paint = (box) => box.closest('.step').classList.toggle('is-done', box.checked);
+
+	for (const box of boxes) {
+		box.checked = store.get('done-' + box.dataset.key) === '1';
+		paint(box);
+
+		box.addEventListener('change', () => {
+			store.set('done-' + box.dataset.key, box.checked ? '1' : null);
+			paint(box);
+		});
+	}
+
+	const modal = document.getElementById('diagram-modal');
+
+	document.getElementById('open-diagram').addEventListener('click', () => modal.showModal());
+	document.getElementById('close-diagram').addEventListener('click', () => modal.close());
+	modal.addEventListener('click', (event) => {
+		if (event.target === modal) {
+			modal.close();
+		}
+	});
+
+	const walkModal = document.getElementById('walk-modal');
+	const walk = document.getElementById('walk');
+	const walkSteps = Number(walk.dataset.steps);
+	const walkGroups = [...walk.querySelectorAll('.an-g')];
+	const walkCaptions = [...walk.querySelectorAll('.walk-caption')];
+	const walkDots = [...walk.querySelectorAll('.walk-dot')];
+	const walkPlay = document.getElementById('walk-play');
+	const WALK_DELAY = 5000;
+	let walkStep = 1;
+	let walkTimer = null;
+
+	const showWalkStep = (step) => {
+		walkStep = Math.min(Math.max(step, 1), walkSteps);
+		const last = walkStep === walkSteps;
+
+		for (const group of walkGroups) {
+			const s = Number(group.dataset.s);
+
+			group.classList.toggle('is-hidden', s > walkStep);
+			group.classList.toggle('is-now', !last && s === walkStep);
+			group.classList.toggle('is-past', !last && s < walkStep);
+		}
+
+		for (const caption of walkCaptions) {
+			caption.hidden = Number(caption.dataset.step) !== walkStep;
+		}
+
+		for (const dot of walkDots) {
+			const s = Number(dot.dataset.step);
+
+			dot.classList.toggle('is-now', s === walkStep);
+			dot.classList.toggle('is-done', s < walkStep);
+		}
+	};
+
+	const stopWalk = () => {
+		clearInterval(walkTimer);
+		walkTimer = null;
+		walkPlay.textContent = 'Play';
+	};
+
+	const playWalk = () => {
+		if (walkStep === walkSteps) {
+			showWalkStep(1);
+		}
+
+		clearInterval(walkTimer);
+		walkPlay.textContent = 'Pause';
+		walkTimer = setInterval(() => {
+			showWalkStep(walkStep + 1);
+
+			if (walkStep === walkSteps) {
+				stopWalk();
+			}
+		}, WALK_DELAY);
+	};
+
+	document.getElementById('open-walk').addEventListener('click', () => {
+		walkModal.showModal();
+		showWalkStep(1);
+		playWalk();
+	});
+	document.getElementById('close-walk').addEventListener('click', () => walkModal.close());
+	walkModal.addEventListener('click', (event) => {
+		if (event.target === walkModal) {
+			walkModal.close();
+		}
+	});
+	walkModal.addEventListener('close', stopWalk);
+	walkPlay.addEventListener('click', () => (walkTimer ? stopWalk() : playWalk()));
+	document.getElementById('walk-prev').addEventListener('click', () => {
+		stopWalk();
+		showWalkStep(walkStep - 1);
+	});
+	document.getElementById('walk-next').addEventListener('click', () => {
+		stopWalk();
+		showWalkStep(walkStep + 1);
+	});
+
+	for (const dot of walkDots) {
+		dot.addEventListener('click', () => {
+			stopWalk();
+			showWalkStep(Number(dot.dataset.step));
+		});
+	}
+
+	showWalkStep(1);
+
+	document.getElementById('reset').addEventListener('click', () => {
+		for (const box of boxes) {
+			box.checked = false;
+			store.set('done-' + box.dataset.key, null);
+			paint(box);
+		}
+	});
+
+	const optionsTab = document.getElementById('options-tab');
+	const optionsPanel = document.getElementById('options-panel');
+
+	optionsTab.addEventListener('click', () => {
+		const open = optionsPanel.hidden;
+
+		optionsPanel.hidden = !open;
+		optionsTab.setAttribute('aria-expanded', String(open));
+		optionsTab.setAttribute('aria-label', open ? 'Hide options' : 'Show options');
+		optionsTab.innerHTML = open ? '&rsaquo;' : '&lsaquo;';
+	});
+
+	for (const id of ['no-say']) {
+		const toggle = document.getElementById(id);
+
+		toggle.checked = store.get(id) === '1';
+		document.body.classList.toggle(id, toggle.checked);
+
+		toggle.addEventListener('change', () => {
+			document.body.classList.toggle(id, toggle.checked);
+			store.set(id, toggle.checked ? '1' : null);
+		});
+	}
+})();
+</script>

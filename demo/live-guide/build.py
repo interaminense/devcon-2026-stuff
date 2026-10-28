@@ -10,7 +10,8 @@ sys.path.insert(0, str(pathlib.Path(__file__).parent))
 from diagram import render as render_diagram, render_walkthrough
 
 DEMO = pathlib.Path.home() / 'dev/projects/devcon-2026/devcon-2026-stuff/demo'
-OUT = pathlib.Path(__file__).parent / 'devcon-live-guide.html'
+SHORT = 'short' in sys.argv[1:]
+OUT = pathlib.Path(__file__).parent / ('devcon-live-guide-short.html' if SHORT else 'devcon-live-guide.html')
 
 SITE = 'https://webserver-lctacdemodevcon-prd.lfr.cloud'
 LOGIN = SITE + '/web/devcon-demo/home?p_p_id=com_liferay_login_web_portlet_LoginPortlet&p_p_state=maximized&_com_liferay_login_web_portlet_LoginPortlet_redirect=%2Fweb%2Fdevcon-demo'
@@ -260,8 +261,8 @@ def plain(field, value, purpose=None):
 
 class Part:
 
-	def __init__(self, letter, title, topic):
-		self.letter, self.title, self.topic = letter, title, topic
+	def __init__(self, letter, title, topic, intro=''):
+		self.letter, self.title, self.topic, self.intro = letter, title, topic, intro
 		self.items = []
 
 	def step(self, kind, body):
@@ -373,12 +374,70 @@ p.step('ui', '<ol><li>Right card &rarr; <b>&#10022; AI insight</b>.</li></ol>')
 p.step('say', 'We format the text before sending it: plain labeled lines. Easier for the model, and the firewall in front of AI Hub rejects nested JSON.')
 parts.append(p)
 
+# The short guide keeps every step, but groups the six parts into three
+# topics and tightens what the presenter says
+SHORT_SAY = {
+	'Before any code: the data lives in LDP, and DXP is already connected to it. The card asks DXP, and DXP asks LDP.':
+		'The data lives in LDP, and this DXP is already connected to it. Our card will only ever talk to DXP; DXP talks to LDP.',
+	'Instanceable lets the same card go on a page twice, each with its own configuration. That is the whole dashboard idea.':
+		'Instanceable means one card, many copies on a page, each with its own settings. That is the whole dashboard idea.',
+	'The card calls DXP on the same origin, with the user&rsquo;s session and the CSRF token. DXP forwards the GraphQL query to LDP. No LDP token in the browser.':
+		'The card posts a GraphQL query to DXP with the user&rsquo;s session. DXP signs it and forwards it to LDP, so no LDP credential ever reaches the browser.',
+	'One property is one channel. The channel ID is all the card needs to know whose data to ask for.':
+		'One LDP property is one channel. The channel ID is the only thing the card needs to know whose data to read.',
+	'Now a real card: a metric picker, the value, and the trend against the previous period, which LDP computes for us.':
+		'Now it looks like a real card: pick a metric, see its value and the trend against the previous period. LDP computes the trend for us.',
+	'The setting was in memory, so it is gone. A dashboard has to remember each card, separately, and we do not want a backend for that.':
+		'The choice was only in memory, so the reload wiped it. A dashboard has to remember every card on its own, and we don&rsquo;t want to build a backend for that.',
+	'Publishing the Object gives us a REST API for free, at /o/c/democardconfigs. Each entry is keyed by the widget instance id, which DXP already generates.':
+		'Publishing the Object gives us a REST API for free at <code>/o/c/democardconfigs</code>. Each card saves under its widget instance ID, which DXP already generates, so no extra key to manage.',
+	'DXP keeps the secret. The browser only gets a short-lived token from DXP, and AI Hub acts on behalf of the signed-in user.':
+		'The secret stays on the DXP server. The browser only gets a short-lived token, and AI Hub acts on behalf of the signed-in user.',
+	'An AI Hub agent is an agent definition plus a workflow with an LLM node. The card sends what it shows; AI Hub never reads LDP itself.':
+		'An agent is a definition plus a workflow with an LLM node. The card sends the numbers it already shows; AI Hub never reads LDP on its own.',
+	'The external reference code is the agent&rsquo;s address. It is the only thing the card needs to know about it.':
+		'The external reference code is the agent&rsquo;s address: the only thing the card needs to know to call it.',
+	'<code>{{metrics}}</code> is replaced by the text the card sends. Only the node&rsquo;s input variables are replaced.':
+		'At run time <code>{{metrics}}</code> becomes the text the card sends. Only variables listed as node inputs get filled in.',
+	'We format the text before sending it: plain labeled lines. Easier for the model, and the firewall in front of AI Hub rejects nested JSON.':
+		'We send plain labeled lines, not JSON: easier for the model to read, and the AI Hub firewall rejects nested JSON anyway.',
+}
+
+if SHORT:
+	topics = [
+		('1', 'Connect to LDP and Fetch Real Data', 'Topic 04', [0, 1, 2, 3],
+			'Ship a card as a Custom Element hosted in Documents and Media, then let it read real LDP metrics through DXP: no LDP token in the browser, no backend.'),
+		('2', 'Persist Card Settings with Liferay Objects', 'Topic 05', [4],
+			'Each card must remember its own metric. One Object gives us storage and a REST API, with zero backend code.'),
+		('3', 'Get Data Insights with AI Hub', 'Topic 05', [5],
+			'The card already has the numbers. An AI Hub agent turns them into a short insight, while DXP keeps the credentials.'),
+	]
+	short_parts = []
+
+	for letter, title, topic, indexes, intro in topics:
+		merged = Part(letter, title, topic, intro)
+
+		for index in indexes:
+			if len(indexes) > 1:
+				merged.step('sub', parts[index].title)
+
+			for kind, body in parts[index].items:
+				merged.step(kind, SHORT_SAY.get(body, body) if kind == 'say' else body)
+
+		short_parts.append(merged)
+
+	parts = short_parts
 
 
 def render_part(part):
 	steps = []
 
 	for index, (kind, body) in enumerate(part.items, 1):
+		if kind == 'sub':
+			steps.append(f'<li class="sub"><h3>{body}</h3></li>')
+
+			continue
+
 		key = f'{part.letter}{index}'
 		steps.append(f'''
 <li class="step k-{kind}">
@@ -395,15 +454,22 @@ def render_part(part):
 		<span class="letter">{part.letter}</span>
 		<div><h2>{part.title}</h2><span class="topic">{part.topic}</span></div>
 	</header>
+	{f'<p class="part-intro">{part.intro}</p>' if part.intro else ''}
 	<ol class="steps">{''.join(steps)}</ol>
 </section>'''
 
+
+LEDE = (
+	"Today we're going to build a custom dashboard card right inside DXP, in three moves: read real LDP data, remember each card's settings with Objects, and ask AI Hub what the numbers mean."
+	if SHORT else
+	"Today we're going to build a custom dashboard right inside DXP, using the Liferay tools you already have. We keep the flow simple on purpose: easy to follow, and easy to build yourself."
+)
 
 nav = ''.join(f'<li><a href="#part-{p.letter.lower()}"><span class="a-letter">{p.letter}</span><span class="a-title">{p.title}</span><span class="a-topic">{p.topic}</span></a></li>' for p in parts)
 nav += '<li><a href="#reset-demo"><span class="a-letter">&#8634;</span><span class="a-title">Reset the demo</span><span class="a-topic">Start over</span></a></li>'
 
 
-page = f'''<title>Live Demo Guide</title>
+page = f'''<title>{'Live Demo Short Guide' if SHORT else 'Live Demo Guide'}</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;500;600;700;800&amp;family=JetBrains+Mono:wght@400;600&amp;display=swap">
 <style>
@@ -569,7 +635,11 @@ body.no-say .k-say {{ display: none; }}
 h2 {{ font: 700 33px/1.15 var(--display); margin: 0; text-wrap: balance; }}
 .topic {{ color: var(--muted); font: 500 14px/1 var(--mono); letter-spacing: 0.08em; text-transform: uppercase; }}
 
+.part-intro {{ color: rgba(255, 255, 255, 0.86); font-size: 22px; line-height: 1.5; margin: -8px 0 32px; max-width: 62ch; }}
 .steps {{ display: grid; gap: 20px; list-style: none; margin: 0; padding: 0; }}
+.steps .sub {{ border-bottom: 1px solid var(--line); margin-top: 28px; padding-bottom: 10px; }}
+.steps .sub:first-child {{ margin-top: 0; }}
+.steps .sub h3 {{ color: var(--accent); font: 700 24px/1.2 var(--display); margin: 0; }}
 .step {{ background: var(--surface); border: 1px solid var(--line); border-radius: 12px; display: grid; gap: 12px; grid-template-columns: auto minmax(0, 1fr); padding: 26px 24px; transition: opacity 0.3s ease, filter 0.3s ease, border-color 0.3s ease; }}
 .step.is-done {{ opacity: 0.45; }}
 .wrap:has(.step:hover, .step:focus-within) .step:not(:hover, :focus-within) {{ filter: saturate(0.5); opacity: 0.3; }}
@@ -649,7 +719,7 @@ html {{ scroll-behavior: smooth; }}
 	<header class="hero">
 		<span class="eyebrow">DEVCON 2026 &middot; Live demo</span>
 		<h1>Live Demo Guide</h1>
-		<p class="lede">Today we're going to build a custom dashboard right inside DXP, using the Liferay tools you already have. We keep the flow simple on purpose: easy to follow, and easy to build yourself.</p>
+		<p class="lede">{LEDE}</p>
 	</header>
 
 	<div class="below-hero">
