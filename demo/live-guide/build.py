@@ -405,12 +405,9 @@ SHORT_SAY = {
 
 if SHORT:
 	topics = [
-		('1', 'Connect to LDP and Fetch Real Data', 'Topic 04', [0, 1, 2, 3],
-			'Ship a card as a Custom Element hosted in Documents and Media, then let it read real LDP metrics through DXP: no LDP token in the browser, no backend.'),
-		('2', 'Persist Card Settings with Liferay Objects', 'Topic 05', [4],
-			'Each card must remember its own metric. One Object gives us storage and a REST API, with zero backend code.'),
-		('3', 'Get Data Insights with AI Hub', 'Topic 05', [5],
-			'The card already has the numbers. An AI Hub agent turns them into a short insight, while DXP keeps the credentials.'),
+		('1', 'Connect to LDP and Fetch Real Data', 'Topic 01', [0, 1, 2, 3], ''),
+		('2', 'Persist Card Settings with Liferay Objects', 'Topic 02', [4], ''),
+		('3', 'Get Data Insights with AI Hub', 'Topic 03', [5], ''),
 	]
 	short_parts = []
 
@@ -441,7 +438,7 @@ def render_part(part):
 		key = f'{part.letter}{index}'
 		steps.append(f'''
 <li class="step k-{kind}">
-	{'' if kind == 'say' else f'<label class="done"><input id="done-{key}" type="checkbox" data-key="{key}"><span class="sr">Done</span></label>'}
+	{'' if kind == 'say' or SHORT else f'<label class="done"><input id="done-{key}" type="checkbox" data-key="{key}"><span class="sr">Done</span></label>'}
 	<div class="step-body">
 		<span class="kind">{KIND[kind]}</span>
 		{body if body.lstrip().startswith('<') else f'<p>{body}</p>'}
@@ -464,6 +461,31 @@ DIAGRAM_MODAL = f'''<dialog class="diagram-modal" id="diagram-modal" aria-label=
 		{render_diagram()}
 	</dialog>'''
 
+OPTIONS = '''	<aside class="options" id="options">
+		<button class="options-tab" id="options-tab" type="button" aria-controls="options-panel" aria-expanded="false" aria-label="Show options">&lsaquo;</button>
+		<div class="options-panel" id="options-panel" hidden>
+			<label class="toggle"><input id="no-say" type="checkbox"> Hide the &ldquo;Say&rdquo; boxes</label>
+		</div>
+	</aside>
+'''
+
+RESET = '''	<section class="part" id="reset-demo">
+		<header class="part-head"><span class="letter">&#8634;</span><div><h2>Reset the demo</h2><span class="topic">Start over</span></div></header>
+		<div class="reset-card">
+			<ol>
+				<li><b>DEVCON Demo</b> &rarr; Site Builder &rarr; <b>Pages</b> &rarr; <b>Demo</b> &rarr; &#8942; &rarr; <b>Delete</b>. Keep <b>Home</b>.</li>
+				<li>Applications &rarr; <b>Client Extensions</b> &rarr; <b>LDP Demo Card</b> &rarr; &#8942; &rarr; <b>Delete</b>.</li>
+				<li><b>DEVCON Demo</b> &rarr; Documents and Media &rarr; <code>ldp-demo-card.js</code> &rarr; &#8942; &rarr; <b>Move to Recycle Bin</b>.</li>
+				<li><b>DEVCON Demo</b> &rarr; <b>Recycle Bin</b> &rarr; <b>Empty the Recycle Bin</b>. Otherwise the next upload gets a different URL.</li>
+				<li>Control Panel &rarr; <b>Objects</b> &rarr; folder <b>DEVCON Demo</b> &rarr; <b>Demo Card Config</b> &rarr; &#8942; &rarr; <b>Delete</b>. Its entries go with it.</li>
+				<li>AI Hub &rarr; <b>Agent Builder</b> &rarr; <b>DevCon 2026 Demo LDP Metric Insight</b> &rarr; &#8942; &rarr; <b>Delete</b>, so its external reference code is free again.</li>
+				<li>In the editor, empty <code>ldp-demo-card.js</code>.</li>
+			</ol>
+			<button class="reset" id="reset" type="button">Clear all checkmarks</button>
+		</div>
+	</section>
+'''
+
 LEDE = (
 	"Today we're going to build a custom dashboard card right inside DXP, in three moves: read real LDP data, remember each card's settings with Objects, and ask AI Hub what the numbers mean."
 	if SHORT else
@@ -471,7 +493,7 @@ LEDE = (
 )
 
 nav = ''.join(f'<li><a href="#part-{p.letter.lower()}"><span class="a-letter">{p.letter}</span><span class="a-title">{p.title}</span><span class="a-topic">{p.topic}</span></a></li>' for p in parts)
-nav += '<li><a href="#reset-demo"><span class="a-letter">&#8634;</span><span class="a-title">Reset the demo</span><span class="a-topic">Start over</span></a></li>'
+nav += '' if SHORT else '<li><a href="#reset-demo"><span class="a-letter">&#8634;</span><span class="a-title">Reset the demo</span><span class="a-topic">Start over</span></a></li>'
 
 
 page = f'''<title>{'Live Demo Short Guide' if SHORT else 'Live Demo Guide'}</title>
@@ -724,7 +746,7 @@ html {{ scroll-behavior: smooth; }}
 	<header class="hero">
 		<span class="eyebrow">DEVCON 2026 &middot; Live demo</span>
 		<h1>Live Demo Guide</h1>
-		<p class="lede">{LEDE}</p>
+		{'' if SHORT else f'<p class="lede">{LEDE}</p>'}
 	</header>
 
 	<div class="below-hero">
@@ -732,12 +754,7 @@ html {{ scroll-behavior: smooth; }}
 		<button class="show-diagram" id="open-walk" type="button">{'Diagram Flow' if SHORT else 'Animated Walkthrough'}</button>
 	</div>
 
-	<aside class="options" id="options">
-		<button class="options-tab" id="options-tab" type="button" aria-controls="options-panel" aria-expanded="false" aria-label="Show options">&lsaquo;</button>
-		<div class="options-panel" id="options-panel" hidden>
-			<label class="toggle"><input id="no-say" type="checkbox"> Hide the &ldquo;Say&rdquo; boxes</label>
-		</div>
-	</aside>
+	{'' if SHORT else OPTIONS}
 
 	{'' if SHORT else DIAGRAM_MODAL}
 
@@ -754,21 +771,7 @@ html {{ scroll-behavior: smooth; }}
 
 	{''.join(render_part(p) for p in parts)}
 
-	<section class="part" id="reset-demo">
-		<header class="part-head"><span class="letter">&#8634;</span><div><h2>Reset the demo</h2><span class="topic">Start over</span></div></header>
-		<div class="reset-card">
-			<ol>
-				<li><b>DEVCON Demo</b> &rarr; Site Builder &rarr; <b>Pages</b> &rarr; <b>Demo</b> &rarr; &#8942; &rarr; <b>Delete</b>. Keep <b>Home</b>.</li>
-				<li>Applications &rarr; <b>Client Extensions</b> &rarr; <b>LDP Demo Card</b> &rarr; &#8942; &rarr; <b>Delete</b>.</li>
-				<li><b>DEVCON Demo</b> &rarr; Documents and Media &rarr; <code>ldp-demo-card.js</code> &rarr; &#8942; &rarr; <b>Move to Recycle Bin</b>.</li>
-				<li><b>DEVCON Demo</b> &rarr; <b>Recycle Bin</b> &rarr; <b>Empty the Recycle Bin</b>. Otherwise the next upload gets a different URL.</li>
-				<li>Control Panel &rarr; <b>Objects</b> &rarr; folder <b>DEVCON Demo</b> &rarr; <b>Demo Card Config</b> &rarr; &#8942; &rarr; <b>Delete</b>. Its entries go with it.</li>
-				<li>AI Hub &rarr; <b>Agent Builder</b> &rarr; <b>DevCon 2026 Demo LDP Metric Insight</b> &rarr; &#8942; &rarr; <b>Delete</b>, so its external reference code is free again.</li>
-				<li>In the editor, empty <code>ldp-demo-card.js</code>.</li>
-			</ol>
-			<button class="reset" id="reset" type="button">Clear all checkmarks</button>
-		</div>
-	</section>
+	{'' if SHORT else RESET}
 
 	<footer class="foot">
 		<span>Code from <code>interaminense/devcon-2026-stuff</code>, folder <code>demo/</code>.</span>
@@ -942,7 +945,7 @@ html {{ scroll-behavior: smooth; }}
 
 	showWalkStep(1);
 
-	document.getElementById('reset').addEventListener('click', () => {{
+	document.getElementById('reset')?.addEventListener('click', () => {{
 		for (const box of boxes) {{
 			box.checked = false;
 			store.set('done-' + box.dataset.key, null);
@@ -953,7 +956,7 @@ html {{ scroll-behavior: smooth; }}
 	const optionsTab = document.getElementById('options-tab');
 	const optionsPanel = document.getElementById('options-panel');
 
-	optionsTab.addEventListener('click', () => {{
+	optionsTab?.addEventListener('click', () => {{
 		const open = optionsPanel.hidden;
 
 		optionsPanel.hidden = !open;
@@ -964,6 +967,10 @@ html {{ scroll-behavior: smooth; }}
 
 	for (const id of ['no-say']) {{
 		const toggle = document.getElementById(id);
+
+		if (!toggle) {{
+			continue;
+		}}
 
 		toggle.checked = store.get(id) === '1';
 		document.body.classList.toggle(id, toggle.checked);

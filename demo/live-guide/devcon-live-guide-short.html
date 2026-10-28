@@ -248,7 +248,7 @@ html { scroll-behavior: smooth; }
 	<header class="hero">
 		<span class="eyebrow">DEVCON 2026 &middot; Live demo</span>
 		<h1>Live Demo Guide</h1>
-		<p class="lede">Today we're going to build a custom dashboard card right inside DXP, in three moves: read real LDP data, remember each card's settings with Objects, and ask AI Hub what the numbers mean.</p>
+		
 	</header>
 
 	<div class="below-hero">
@@ -256,12 +256,7 @@ html { scroll-behavior: smooth; }
 		<button class="show-diagram" id="open-walk" type="button">Diagram Flow</button>
 	</div>
 
-	<aside class="options" id="options">
-		<button class="options-tab" id="options-tab" type="button" aria-controls="options-panel" aria-expanded="false" aria-label="Show options">&lsaquo;</button>
-		<div class="options-panel" id="options-panel" hidden>
-			<label class="toggle"><input id="no-say" type="checkbox"> Hide the &ldquo;Say&rdquo; boxes</label>
-		</div>
-	</aside>
+	
 
 	
 
@@ -285,7 +280,7 @@ html { scroll-behavior: smooth; }
 
 	<nav class="agenda" id="agenda" aria-label="Agenda">
 		<h2 class="agenda-title">Agenda</h2>
-		<ol><li><a href="#part-1"><span class="a-letter">1</span><span class="a-title">Connect to LDP and Fetch Real Data</span><span class="a-topic">Topic 04</span></a></li><li><a href="#part-2"><span class="a-letter">2</span><span class="a-title">Persist Card Settings with Liferay Objects</span><span class="a-topic">Topic 05</span></a></li><li><a href="#part-3"><span class="a-letter">3</span><span class="a-title">Get Data Insights with AI Hub</span><span class="a-topic">Topic 05</span></a></li><li><a href="#reset-demo"><span class="a-letter">&#8634;</span><span class="a-title">Reset the demo</span><span class="a-topic">Start over</span></a></li></ol>
+		<ol><li><a href="#part-1"><span class="a-letter">1</span><span class="a-title">Connect to LDP and Fetch Real Data</span><span class="a-topic">Topic 01</span></a></li><li><a href="#part-2"><span class="a-letter">2</span><span class="a-title">Persist Card Settings with Liferay Objects</span><span class="a-topic">Topic 02</span></a></li><li><a href="#part-3"><span class="a-letter">3</span><span class="a-title">Get Data Insights with AI Hub</span><span class="a-topic">Topic 03</span></a></li></ol>
 	</nav>
 	<a class="to-agenda" href="#agenda">Agenda &uarr;</a>
 
@@ -293,9 +288,9 @@ html { scroll-behavior: smooth; }
 <section class="part" id="part-1">
 	<header class="part-head">
 		<span class="letter">1</span>
-		<div><h2>Connect to LDP and Fetch Real Data</h2><span class="topic">Topic 04</span></div>
+		<div><h2>Connect to LDP and Fetch Real Data</h2><span class="topic">Topic 01</span></div>
 	</header>
-	<p class="part-intro">Ship a card as a Custom Element hosted in Documents and Media, then let it read real LDP metrics through DXP: no LDP token in the browser, no backend.</p>
+	
 	<ol class="steps"><li class="sub"><h3>LDP connected to DXP</h3></li>
 <li class="step k-say">
 	
@@ -305,7 +300,7 @@ html { scroll-behavior: smooth; }
 	</div>
 </li>
 <li class="step k-ui">
-	<label class="done"><input id="done-13" type="checkbox" data-key="13"><span class="sr">Done</span></label>
+	
 	<div class="step-body">
 		<span class="kind">In the UI</span>
 		<p class="step-title"><strong>Log in</strong></p>
@@ -316,7 +311,7 @@ html { scroll-behavior: smooth; }
 	</div>
 </li>
 <li class="step k-ui">
-	<label class="done"><input id="done-14" type="checkbox" data-key="14"><span class="sr">Done</span></label>
+	
 	<div class="step-body">
 		<span class="kind">In the UI</span>
 		<ol>
@@ -326,7 +321,7 @@ html { scroll-behavior: smooth; }
 	</div>
 </li><li class="sub"><h3>The first client extension</h3></li>
 <li class="step k-code">
-	<label class="done"><input id="done-16" type="checkbox" data-key="16"><span class="sr">Done</span></label>
+	
 	<div class="step-body">
 		<span class="kind">In the editor</span>
 		
@@ -342,14 +337,14 @@ html { scroll-behavior: smooth; }
 	</div>
 </li>
 <li class="step k-ui">
-	<label class="done"><input id="done-17" type="checkbox" data-key="17"><span class="sr">Done</span></label>
+	
 	<div class="step-body">
 		<span class="kind">In the UI</span>
 		<p class="step-title"><strong>Host it in Documents and Media</strong></p><ol><li>Tab 3: check the site is <b>DEVCON Demo</b> &rarr; Content &amp; Data &rarr; <b>Documents and Media</b>.</li><li><b>New</b> &rarr; <b>File Upload</b> &rarr; pick the file &rarr; <b>Publish</b>.</li></ol><div class="table-scroll"><table class="values"><tbody><tr><th scope="row">Title</th><td><code>ldp-demo-card.js</code></td><td><button class="copy" type="button" data-copy="c2">Copy</button></td></tr><tr><th scope="row">URL it gets</th><td><code>/documents/d/devcon-demo/ldp-demo-card-js</code></td><td></td></tr></tbody></table></div>
 	</div>
 </li>
 <li class="step k-ui">
-	<label class="done"><input id="done-18" type="checkbox" data-key="18"><span class="sr">Done</span></label>
+	
 	<div class="step-body">
 		<span class="kind">In the UI</span>
 		<p class="step-title"><strong>Register the Custom Element</strong></p><ol><li>Tab 4: Applications &rarr; <b>Client Extensions</b> &rarr; <b>New</b> &rarr; <b>Add Custom Element</b>.</li><li>Fill in the fields below &rarr; <b>Publish</b>.</li></ol><div class="table-scroll"><table class="values"><tbody><tr><th scope="row">Name</th><td><code>LDP Demo Card</code></td><td><button class="copy" type="button" data-copy="c3">Copy</button></td></tr><tr><th scope="row">HTML Element Name</th><td><code>ldp-demo-card</code></td><td><button class="copy" type="button" data-copy="c4">Copy</button></td></tr><tr><th scope="row">JavaScript URL</th><td><code>/documents/d/devcon-demo/ldp-demo-card-js?v=1</code></td><td><button class="copy" type="button" data-copy="c5">Copy</button></td></tr><tr><th scope="row">Instanceable</th><td><span class="pill">checked</span></td><td></td></tr></tbody></table></div>
@@ -363,7 +358,7 @@ html { scroll-behavior: smooth; }
 	</div>
 </li>
 <li class="step k-ui">
-	<label class="done"><input id="done-110" type="checkbox" data-key="110"><span class="sr">Done</span></label>
+	
 	<div class="step-body">
 		<span class="kind">In the UI</span>
 		<p class="step-title"><strong>Put it on a page</strong></p><ol><li>Tab 5: DEVCON Demo &rarr; Site Builder &rarr; <b>Pages</b> &rarr; <b>New</b>.</li><li><b>Basic Templates</b> &rarr; <b>Blank</b> &rarr; name below &rarr; <b>Add</b>.</li><li><b>Components</b> panel &rarr; <b>Fragments</b> &rarr; Layout Elements &rarr; drag <b>Grid</b>. Set <b>Number of Modules</b> to 2.</li><li><b>Widgets</b> tab &rarr; search the name below &rarr; drag it into the <b>left</b> module &rarr; <b>Publish</b>.</li></ol><div class="table-scroll"><table class="values"><tbody><tr><th scope="row">Page name</th><td><code>Demo</code></td><td><button class="copy" type="button" data-copy="c6">Copy</button></td></tr><tr><th scope="row">Widget search</th><td><code>LDP Demo Card</code></td><td><button class="copy" type="button" data-copy="c7">Copy</button></td></tr></tbody></table></div>
@@ -377,7 +372,7 @@ html { scroll-behavior: smooth; }
 	</div>
 </li>
 <li class="step k-ui">
-	<label class="done"><input id="done-113" type="checkbox" data-key="113"><span class="sr">Done</span></label>
+	
 	<div class="step-body">
 		<span class="kind">In the UI</span>
 		<p class="step-title"><strong>Get the channel ID from LDP</strong></p><ol><li>Tab 1: open <code>ldp-internal.liferay.com</code> &rarr; workspace <b>Liferay Data Platform</b> &rarr; property <b>SWELL LAB DevCon 2026</b> &rarr; <b>Sites</b>.</li><li>The channel ID is the number in the URL, between the workspace and <code>/sites</code>. Copy it.</li><li>Leave the Sites dashboard on <b>Last 7 days</b>: the card must show the same numbers.</li></ol><div class="table-scroll"><table class="values"><tbody><tr><th scope="row">LDP Sites URL</th><td><code>https://ldp-internal.liferay.com/workspace/liferay-data-platform/845351493326064678/sites</code></td><td><button class="copy" type="button" data-copy="c8">Copy</button></td></tr><tr><th scope="row">Channel ID</th><td><code>845351493326064678</code></td><td><button class="copy" type="button" data-copy="c9">Copy</button></td></tr></tbody></table></div>
@@ -391,7 +386,7 @@ html { scroll-behavior: smooth; }
 	</div>
 </li>
 <li class="step k-code">
-	<label class="done"><input id="done-115" type="checkbox" data-key="115"><span class="sr">Done</span></label>
+	
 	<div class="step-body">
 		<span class="kind">In the editor</span>
 		
@@ -407,7 +402,7 @@ html { scroll-behavior: smooth; }
 	</div>
 </li>
 <li class="step k-ui">
-	<label class="done"><input id="done-116" type="checkbox" data-key="116"><span class="sr">Done</span></label>
+	
 	<div class="step-body">
 		<span class="kind">In the UI</span>
 		<p class="step-title"><strong>Ship version 2</strong></p>
@@ -428,7 +423,7 @@ html { scroll-behavior: smooth; }
 	</div>
 </li>
 <li class="step k-code">
-	<label class="done"><input id="done-119" type="checkbox" data-key="119"><span class="sr">Done</span></label>
+	
 	<div class="step-body">
 		<span class="kind">In the editor</span>
 		
@@ -444,7 +439,7 @@ html { scroll-behavior: smooth; }
 	</div>
 </li>
 <li class="step k-ui">
-	<label class="done"><input id="done-120" type="checkbox" data-key="120"><span class="sr">Done</span></label>
+	
 	<div class="step-body">
 		<span class="kind">In the UI</span>
 		<p class="step-title"><strong>Ship version 3</strong></p>
@@ -458,7 +453,7 @@ html { scroll-behavior: smooth; }
 	</div>
 </li>
 <li class="step k-ui">
-	<label class="done"><input id="done-121" type="checkbox" data-key="121"><span class="sr">Done</span></label>
+	
 	<div class="step-body">
 		<span class="kind">In the UI</span>
 		<ol><li>Edit the Demo page &rarr; drag a second <b>LDP Demo Card</b> into the <b>right</b> module &rarr; <b>Publish</b>.</li><li>Right card &rarr; select <b>Sessions</b>.</li><li>Reload the page.</li></ol>
@@ -475,12 +470,12 @@ html { scroll-behavior: smooth; }
 <section class="part" id="part-2">
 	<header class="part-head">
 		<span class="letter">2</span>
-		<div><h2>Persist Card Settings with Liferay Objects</h2><span class="topic">Topic 05</span></div>
+		<div><h2>Persist Card Settings with Liferay Objects</h2><span class="topic">Topic 02</span></div>
 	</header>
-	<p class="part-intro">Each card must remember its own metric. One Object gives us storage and a REST API, with zero backend code.</p>
+	
 	<ol class="steps">
 <li class="step k-ui">
-	<label class="done"><input id="done-21" type="checkbox" data-key="21"><span class="sr">Done</span></label>
+	
 	<div class="step-body">
 		<span class="kind">In the UI</span>
 		<p class="step-title"><strong>Create the Object</strong></p><ol><li>Control Panel &rarr; Object &rarr; <b>Objects</b> &rarr; folder <b>DEVCON Demo</b> &rarr; <b>Create New Object</b> &rarr; fill in &rarr; <b>Save</b>.</li></ol><div class="table-scroll"><table class="values"><tbody><tr><th scope="row">Label</th><td><code>Demo Card Config</code></td><td><button class="copy" type="button" data-copy="c14">Copy</button></td></tr><tr><th scope="row">Plural Label</th><td><code>Demo Card Configs</code></td><td><button class="copy" type="button" data-copy="c15">Copy</button></td></tr><tr><th scope="row">Object Name</th><td><code>DemoCardConfig</code></td><td><button class="copy" type="button" data-copy="c16">Copy</button></td></tr></tbody></table></div><ol start="2"><li><b>Fields</b> &rarr; <b>Add Field</b> &rarr; fill in &rarr; <b>Save</b>.</li></ol><div class="table-scroll"><table class="values"><tbody><tr><th scope="row">Label</th><td><code>Metric</code></td><td><button class="copy" type="button" data-copy="c17">Copy</button></td></tr><tr><th scope="row">Field Name</th><td><code>metric</code></td><td><button class="copy" type="button" data-copy="c18">Copy</button></td></tr><tr><th scope="row">Type</th><td><span class="pill">Text</span></td><td></td></tr></tbody></table></div><ol start="3"><li><b>Details</b> &rarr; Scope <b>Company</b> &rarr; <b>Publish</b>.</li></ol>
@@ -494,7 +489,7 @@ html { scroll-behavior: smooth; }
 	</div>
 </li>
 <li class="step k-code">
-	<label class="done"><input id="done-23" type="checkbox" data-key="23"><span class="sr">Done</span></label>
+	
 	<div class="step-body">
 		<span class="kind">In the editor</span>
 		
@@ -510,7 +505,7 @@ html { scroll-behavior: smooth; }
 	</div>
 </li>
 <li class="step k-ui">
-	<label class="done"><input id="done-24" type="checkbox" data-key="24"><span class="sr">Done</span></label>
+	
 	<div class="step-body">
 		<span class="kind">In the UI</span>
 		<p class="step-title"><strong>Ship version 4</strong></p>
@@ -524,7 +519,7 @@ html { scroll-behavior: smooth; }
 	</div>
 </li>
 <li class="step k-ui">
-	<label class="done"><input id="done-25" type="checkbox" data-key="25"><span class="sr">Done</span></label>
+	
 	<div class="step-body">
 		<span class="kind">In the UI</span>
 		<ol><li>Right card &rarr; select <b>Sessions</b>.</li><li>Reload the page.</li></ol>
@@ -534,12 +529,12 @@ html { scroll-behavior: smooth; }
 <section class="part" id="part-3">
 	<header class="part-head">
 		<span class="letter">3</span>
-		<div><h2>Get Data Insights with AI Hub</h2><span class="topic">Topic 05</span></div>
+		<div><h2>Get Data Insights with AI Hub</h2><span class="topic">Topic 03</span></div>
 	</header>
-	<p class="part-intro">The card already has the numbers. An AI Hub agent turns them into a short insight, while DXP keeps the credentials.</p>
+	
 	<ol class="steps">
 <li class="step k-ui">
-	<label class="done"><input id="done-31" type="checkbox" data-key="31"><span class="sr">Done</span></label>
+	
 	<div class="step-body">
 		<span class="kind">In the UI</span>
 		<p class="step-title"><strong>Connect DXP to AI Hub</strong></p><ol><li>Tab 6: AI Hub &rarr; the account configuration &rarr; copy the <b>Client ID</b> and the <b>Client Secret</b>.</li><li>In the same configuration, check the <b>Environment URL</b>: the DXP address below, with no slash at the end.</li><li>Tab 2: Control Panel &rarr; Instance Settings &rarr; Platform &rarr; <b>AI Hub</b> &rarr; paste the values &rarr; <b>Save</b>.</li></ol><div class="table-scroll"><table class="values"><tbody><tr><th scope="row">Client ID</th><td>Copied from AI Hub</td><td></td></tr><tr><th scope="row">Client Secret</th><td>Copied from AI Hub</td><td></td></tr><tr><th scope="row">Service URL</th><td><code>https://na1.hub.liferay.com</code></td><td><button class="copy" type="button" data-copy="c21">Copy</button></td></tr><tr><th scope="row">Environment URL (in AI Hub)</th><td><code>https://webserver-lctacdemodevcon-prd.lfr.cloud</code></td><td><button class="copy" type="button" data-copy="c22">Copy</button></td></tr></tbody></table></div>
@@ -560,7 +555,7 @@ html { scroll-behavior: smooth; }
 	</div>
 </li>
 <li class="step k-ui">
-	<label class="done"><input id="done-34" type="checkbox" data-key="34"><span class="sr">Done</span></label>
+	
 	<div class="step-body">
 		<span class="kind">In the UI</span>
 		<p class="step-title"><strong>Create the agent</strong></p><ol><li>Tab 6: AI Hub &rarr; <b>Agent Builder</b>.</li><li><b>Make Shorter</b> &rarr; &#8942; &rarr; <b>Duplicate</b>.</li><li>On the copy: &#8942; &rarr; <b>View</b> &rarr; fill in the fields below &rarr; <b>Save</b>.</li></ol><div class="table-scroll"><table class="values"><tbody><tr><th scope="row">Title</th><td><code>DevCon 2026 Demo LDP Metric Insight</code></td><td><button class="copy" type="button" data-copy="c23">Copy</button></td></tr><tr><th scope="row">Description</th><td><code>Turns one LDP metric from the DEVCON demo card into a short insight.</code></td><td><button class="copy" type="button" data-copy="c24">Copy</button></td></tr><tr><th scope="row">External reference code</th><td><code>DEVCON_2026_DEMO_LDP_METRIC_INSIGHT</code></td><td><button class="copy" type="button" data-copy="c25">Copy</button></td></tr><tr><th scope="row">Input variables</th><td><code>metrics</code></td><td><button class="copy" type="button" data-copy="c26">Copy</button></td></tr><tr><th scope="row">Output variable</th><td><code>insight</code></td><td><button class="copy" type="button" data-copy="c27">Copy</button></td></tr></tbody></table></div>
@@ -574,7 +569,7 @@ html { scroll-behavior: smooth; }
 	</div>
 </li>
 <li class="step k-ui">
-	<label class="done"><input id="done-36" type="checkbox" data-key="36"><span class="sr">Done</span></label>
+	
 	<div class="step-body">
 		<span class="kind">In the UI</span>
 		<p class="step-title"><strong>Write its workflow</strong></p><ol><li><b>View Workflow</b> &rarr; click the LLM node in the middle.</li><li>In the panel on the right, fill in the fields below &rarr; <b>Update</b>.</li></ol><div class="table-scroll"><table class="values"><tbody><tr><th scope="row">Node Name</th><td><code>ldpMetricInsight</code></td><td><button class="copy" type="button" data-copy="c28">Copy</button></td></tr><tr><th scope="row">Input variables</th><td><code>[{&quot;name&quot;:&quot;metrics&quot;,&quot;type&quot;:&quot;string&quot;}]</code></td><td><button class="copy" type="button" data-copy="c29">Copy</button></td></tr><tr><th scope="row">Output variables</th><td><code>[{&quot;name&quot;:&quot;insight&quot;,&quot;type&quot;:&quot;string&quot;}]</code></td><td><button class="copy" type="button" data-copy="c30">Copy</button></td></tr><tr><th scope="row">Prompt</th><td><code>You are an analytics assistant. You receive one website metric from Liferay Data Platform: its name, the period, the value, the previous period&#x27;s value, and the change.
@@ -591,7 +586,7 @@ Write at most three short sentences for a marketing manager: what the number say
 	</div>
 </li>
 <li class="step k-code">
-	<label class="done"><input id="done-38" type="checkbox" data-key="38"><span class="sr">Done</span></label>
+	
 	<div class="step-body">
 		<span class="kind">In the editor</span>
 		
@@ -607,7 +602,7 @@ Write at most three short sentences for a marketing manager: what the number say
 	</div>
 </li>
 <li class="step k-ui">
-	<label class="done"><input id="done-39" type="checkbox" data-key="39"><span class="sr">Done</span></label>
+	
 	<div class="step-body">
 		<span class="kind">In the UI</span>
 		<p class="step-title"><strong>Ship version 5</strong></p>
@@ -621,7 +616,7 @@ Write at most three short sentences for a marketing manager: what the number say
 	</div>
 </li>
 <li class="step k-ui">
-	<label class="done"><input id="done-310" type="checkbox" data-key="310"><span class="sr">Done</span></label>
+	
 	<div class="step-body">
 		<span class="kind">In the UI</span>
 		<ol><li>Right card &rarr; <b>&#10022; AI insight</b>.</li></ol>
@@ -636,21 +631,7 @@ Write at most three short sentences for a marketing manager: what the number say
 </li></ol>
 </section>
 
-	<section class="part" id="reset-demo">
-		<header class="part-head"><span class="letter">&#8634;</span><div><h2>Reset the demo</h2><span class="topic">Start over</span></div></header>
-		<div class="reset-card">
-			<ol>
-				<li><b>DEVCON Demo</b> &rarr; Site Builder &rarr; <b>Pages</b> &rarr; <b>Demo</b> &rarr; &#8942; &rarr; <b>Delete</b>. Keep <b>Home</b>.</li>
-				<li>Applications &rarr; <b>Client Extensions</b> &rarr; <b>LDP Demo Card</b> &rarr; &#8942; &rarr; <b>Delete</b>.</li>
-				<li><b>DEVCON Demo</b> &rarr; Documents and Media &rarr; <code>ldp-demo-card.js</code> &rarr; &#8942; &rarr; <b>Move to Recycle Bin</b>.</li>
-				<li><b>DEVCON Demo</b> &rarr; <b>Recycle Bin</b> &rarr; <b>Empty the Recycle Bin</b>. Otherwise the next upload gets a different URL.</li>
-				<li>Control Panel &rarr; <b>Objects</b> &rarr; folder <b>DEVCON Demo</b> &rarr; <b>Demo Card Config</b> &rarr; &#8942; &rarr; <b>Delete</b>. Its entries go with it.</li>
-				<li>AI Hub &rarr; <b>Agent Builder</b> &rarr; <b>DevCon 2026 Demo LDP Metric Insight</b> &rarr; &#8942; &rarr; <b>Delete</b>, so its external reference code is free again.</li>
-				<li>In the editor, empty <code>ldp-demo-card.js</code>.</li>
-			</ol>
-			<button class="reset" id="reset" type="button">Clear all checkmarks</button>
-		</div>
-	</section>
+	
 
 	<footer class="foot">
 		<span>Code from <code>interaminense/devcon-2026-stuff</code>, folder <code>demo/</code>.</span>
@@ -824,7 +805,7 @@ Write at most three short sentences for a marketing manager: what the number say
 
 	showWalkStep(1);
 
-	document.getElementById('reset').addEventListener('click', () => {
+	document.getElementById('reset')?.addEventListener('click', () => {
 		for (const box of boxes) {
 			box.checked = false;
 			store.set('done-' + box.dataset.key, null);
@@ -835,7 +816,7 @@ Write at most three short sentences for a marketing manager: what the number say
 	const optionsTab = document.getElementById('options-tab');
 	const optionsPanel = document.getElementById('options-panel');
 
-	optionsTab.addEventListener('click', () => {
+	optionsTab?.addEventListener('click', () => {
 		const open = optionsPanel.hidden;
 
 		optionsPanel.hidden = !open;
@@ -846,6 +827,10 @@ Write at most three short sentences for a marketing manager: what the number say
 
 	for (const id of ['no-say']) {
 		const toggle = document.getElementById(id);
+
+		if (!toggle) {
+			continue;
+		}
 
 		toggle.checked = store.get(id) === '1';
 		document.body.classList.toggle(id, toggle.checked);

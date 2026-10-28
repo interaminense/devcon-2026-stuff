@@ -256,12 +256,13 @@ html { scroll-behavior: smooth; }
 		<button class="show-diagram" id="open-walk" type="button">Animated Walkthrough</button>
 	</div>
 
-	<aside class="options" id="options">
+		<aside class="options" id="options">
 		<button class="options-tab" id="options-tab" type="button" aria-controls="options-panel" aria-expanded="false" aria-label="Show options">&lsaquo;</button>
 		<div class="options-panel" id="options-panel" hidden>
 			<label class="toggle"><input id="no-say" type="checkbox"> Hide the &ldquo;Say&rdquo; boxes</label>
 		</div>
 	</aside>
+
 
 	<dialog class="diagram-modal" id="diagram-modal" aria-label="Diagram Flow">
 		<button class="close-diagram" id="close-diagram" type="button" aria-label="Close">&times;</button>
@@ -674,7 +675,7 @@ Write at most three short sentences for a marketing manager: what the number say
 </li></ol>
 </section>
 
-	<section class="part" id="reset-demo">
+		<section class="part" id="reset-demo">
 		<header class="part-head"><span class="letter">&#8634;</span><div><h2>Reset the demo</h2><span class="topic">Start over</span></div></header>
 		<div class="reset-card">
 			<ol>
@@ -689,6 +690,7 @@ Write at most three short sentences for a marketing manager: what the number say
 			<button class="reset" id="reset" type="button">Clear all checkmarks</button>
 		</div>
 	</section>
+
 
 	<footer class="foot">
 		<span>Code from <code>interaminense/devcon-2026-stuff</code>, folder <code>demo/</code>.</span>
@@ -862,7 +864,7 @@ Write at most three short sentences for a marketing manager: what the number say
 
 	showWalkStep(1);
 
-	document.getElementById('reset').addEventListener('click', () => {
+	document.getElementById('reset')?.addEventListener('click', () => {
 		for (const box of boxes) {
 			box.checked = false;
 			store.set('done-' + box.dataset.key, null);
@@ -873,7 +875,7 @@ Write at most three short sentences for a marketing manager: what the number say
 	const optionsTab = document.getElementById('options-tab');
 	const optionsPanel = document.getElementById('options-panel');
 
-	optionsTab.addEventListener('click', () => {
+	optionsTab?.addEventListener('click', () => {
 		const open = optionsPanel.hidden;
 
 		optionsPanel.hidden = !open;
@@ -884,6 +886,10 @@ Write at most three short sentences for a marketing manager: what the number say
 
 	for (const id of ['no-say']) {
 		const toggle = document.getElementById(id);
+
+		if (!toggle) {
+			continue;
+		}
 
 		toggle.checked = store.get(id) === '1';
 		document.body.classList.toggle(id, toggle.checked);
