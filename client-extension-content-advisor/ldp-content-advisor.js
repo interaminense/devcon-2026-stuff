@@ -777,8 +777,14 @@
 					return;
 				}
 
-				const ranked = [...this.blocks].sort((a, b) => a.share - b.share);
+				// A tie goes to the newest post (the highest asset id), so a
+				// post nobody clicked yet is the first one to improve
 
+				const ranked = [...this.blocks].sort(
+					(a, b) =>
+						a.share - b.share ||
+						(Number(b.assetId) || 0) - (Number(a.assetId) || 0)
+				);
 
 				this.best = ranked[ranked.length - 1];
 
