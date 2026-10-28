@@ -418,9 +418,6 @@
 		return page?.viewsMetric?.value || 0;
 	}
 
-	// The blog list shows the newest post first by reversing the cards with
-	// CSS, so a post's position on screen counts from the end of the DOM
-
 	function readBlogPosts() {
 		const cards = [...document.querySelectorAll('.sl-blog-card')];
 
@@ -433,7 +430,7 @@
 				assetId: mapped?.dataset.analyticsAssetId,
 				element,
 				id: (mapped?.dataset.analyticsExternalReferenceCode || '').toLowerCase(),
-				position: cards.length - index,
+				position: index + 1,
 				text:
 					element.querySelector('.sl-card__text')?.textContent.trim() || '',
 				title:
