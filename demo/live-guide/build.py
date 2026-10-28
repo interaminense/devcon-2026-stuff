@@ -295,6 +295,7 @@ code = {n: (DEMO / f).read_text().rstrip('\n') for n, f in {
 	3: 'step-3-card.js',
 	4: 'step-4-objects.js',
 	5: 'step-5-ai-hub.js',
+	6: 'step-6-dashboard.js',
 }.items()}
 
 parts = []
@@ -401,7 +402,18 @@ if SHORT:
 	p3.step('code', code_block(name, code[4], code[5]))
 	p3.step(*ship(4)).step(*hub[9])
 
-	parts = [p1, p2, p3]
+	p4 = Part('4', 'Build a Custom Dashboard', 'Topic 04')
+	p4.step('code', code_block(name, code[5], code[6]))
+	p4.step(*ship(5))
+	p4.step('ui', '<p class="step-title"><strong>Build the dashboard</strong></p><ol><li>Edit the Demo page.</li><li><b>Components</b> panel &rarr; <b>Fragments</b> &rarr; Layout Elements &rarr; drag a <b>Grid</b> under the first one. Set <b>Number of Modules</b> to 3. Repeat for a third row.</li><li><b>Widgets</b> tab &rarr; drag an <b>LDP Demo Card</b> into each new module &rarr; <b>Publish</b>.</li><li>Pick a widget on each card, as below, then reload the page: every card keeps its choice.</li></ol>'
+		+ values([
+			plain('Row 1', 'Unique visitors &middot; Sessions per visitor'),
+			plain('Row 2', 'Sessions &middot; Session duration &middot; Bounce rate'),
+			plain('Row 3', 'Top pages by views &middot; Acquisition by channel &middot; Visitors by device'),
+		]))
+	p4.step('ui', '<ol><li>Any card &rarr; <b>&#10022; AI insight</b>. Lists work too: the card sends its top items.</li></ol>')
+
+	parts = [p1, p2, p3, p4]
 
 
 def render_part(part):
