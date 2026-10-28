@@ -5,7 +5,7 @@ const CHANNEL_ID = '845351493326064678';
 const RANGE_KEY = 7;
 
 const METRICS = {
-	sessionsMetric: 'Sessions',
+	viewsMetric: 'Views',
 	visitorsMetric: 'Unique visitors',
 };
 
@@ -47,9 +47,10 @@ const STYLE = `
 `;
 
 async function getMetric(metric) {
+	// page() without a page URL returns the totals of the whole site
 	const query = `
 		query ($channelId: String!, $rangeKey: Int) {
-			site(channelId: $channelId, interval: "D", rangeKey: $rangeKey) {
+			page(channelId: $channelId, rangeKey: $rangeKey) {
 				${metric} {
 					previousValue
 					trend {
@@ -77,7 +78,7 @@ async function getMetric(metric) {
 
 	const {data} = await response.json();
 
-	return data.site[metric];
+	return data.page[metric];
 }
 
 function formatTrend(result) {

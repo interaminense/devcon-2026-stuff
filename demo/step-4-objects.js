@@ -8,7 +8,7 @@ const RANGE_KEY = 7;
 const OBJECT_URL = '/o/c/democardconfigs';
 
 const METRICS = {
-	sessionsMetric: 'Sessions',
+	viewsMetric: 'Views',
 	visitorsMetric: 'Unique visitors',
 };
 
@@ -66,9 +66,10 @@ async function api(url, options = {}) {
 }
 
 async function getMetric(metric) {
+	// page() without a page URL returns the totals of the whole site
 	const query = `
 		query ($channelId: String!, $rangeKey: Int) {
-			site(channelId: $channelId, interval: "D", rangeKey: $rangeKey) {
+			page(channelId: $channelId, rangeKey: $rangeKey) {
 				${metric} {
 					previousValue
 					trend {
@@ -90,7 +91,7 @@ async function getMetric(metric) {
 		method: 'POST',
 	});
 
-	return data.site[metric];
+	return data.page[metric];
 }
 
 // Each widget instance has its own portlet id, the same on the draft and the

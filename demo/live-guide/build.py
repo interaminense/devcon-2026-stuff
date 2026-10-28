@@ -328,7 +328,7 @@ p.step('say', 'The card calls DXP on the same origin, with the user&rsquo;s sess
 p.step('ui', '<p class="step-title"><strong>Get the channel ID from LDP</strong></p><ol><li>Tab 1: open <code>ldp-internal.liferay.com</code> &rarr; workspace <b>Liferay Data Platform</b> &rarr; property <b>SWELL LAB DevCon 2026</b> &rarr; <b>Sites</b>.</li><li>The channel ID is the number in the URL, between the workspace and <code>/sites</code>. Copy it.</li><li>Leave the Sites dashboard on <b>Last 7 days</b>: the card must show the same numbers.</li></ol>'
 	+ values([v('LDP Sites URL', 'https://ldp-internal.liferay.com/workspace/liferay-data-platform/845351493326064678/sites'), v('Channel ID', '845351493326064678')]))
 p.step('say', 'One property is one channel. The channel ID is all the card needs to know whose data to ask for.')
-p.step('code', code_block('ldp-demo-card.js', code[1], code[2], 'Point at <code>CHANNEL_ID</code>, <code>RANGE_KEY = 7</code>, the <code>site</code> query and the <code>x-csrf-token</code> header.'))
+p.step('code', code_block('ldp-demo-card.js', code[1], code[2], 'Point at <code>CHANNEL_ID</code>, <code>RANGE_KEY = 7</code>, the <code>page</code> query and the <code>x-csrf-token</code> header.'))
 p.step(*ship(2))
 parts.append(p)
 
@@ -336,7 +336,7 @@ p = Part('4', 'Two instances, one card', 'Topic 04')
 p.step('say', 'Now a real card: a metric picker, the value, and the trend against the previous period, which LDP computes for us.')
 p.step('code', code_block('ldp-demo-card.js', code[2], code[3], 'Point at <code>METRICS</code> and <code>formatTrend</code>. The config lives only in memory.'))
 p.step(*ship(3))
-p.step('ui', '<ol><li>Edit the Demo page &rarr; drag a second <b>LDP Demo Card</b> into the <b>right</b> module &rarr; <b>Publish</b>.</li><li>Right card &rarr; select <b>Sessions</b>.</li><li>Reload the page.</li></ol>')
+p.step('ui', '<ol><li>Edit the Demo page &rarr; drag a second <b>LDP Demo Card</b> into the <b>right</b> module &rarr; <b>Publish</b>.</li><li>Right card &rarr; select <b>Views</b>.</li><li>Reload the page.</li></ol>')
 p.step('say', 'The setting was in memory, so it is gone. A dashboard has to remember each card, separately, and we do not want a backend for that.')
 parts.append(p)
 
@@ -349,7 +349,7 @@ p.step('ui', '<p class="step-title"><strong>Create the Object</strong></p><ol><l
 p.step('say', 'Publishing the Object gives us a REST API for free, at /o/c/democardconfigs. Each entry is keyed by the widget instance id, which DXP already generates.')
 p.step('code', code_block('ldp-demo-card.js', code[3], code[4]))
 p.step(*ship(4))
-p.step('ui', '<ol><li>Right card &rarr; select <b>Sessions</b>.</li><li>Reload the page.</li></ol>')
+p.step('ui', '<ol><li>Right card &rarr; select <b>Views</b>.</li><li>Reload the page.</li></ol>')
 parts.append(p)
 
 p = Part('6', 'AI Hub insight', 'Topic 05')
