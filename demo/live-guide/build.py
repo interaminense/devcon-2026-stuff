@@ -459,6 +459,11 @@ def render_part(part):
 </section>'''
 
 
+DIAGRAM_MODAL = f'''<dialog class="diagram-modal" id="diagram-modal" aria-label="Diagram Flow">
+		<button class="close-diagram" id="close-diagram" type="button" aria-label="Close">&times;</button>
+		{render_diagram()}
+	</dialog>'''
+
 LEDE = (
 	"Today we're going to build a custom dashboard card right inside DXP, in three moves: read real LDP data, remember each card's settings with Objects, and ask AI Hub what the numbers mean."
 	if SHORT else
@@ -723,8 +728,8 @@ html {{ scroll-behavior: smooth; }}
 	</header>
 
 	<div class="below-hero">
-		<button class="show-diagram" id="open-diagram" type="button">Diagram Flow</button>
-		<button class="show-diagram" id="open-walk" type="button">Animated Walkthrough</button>
+		{'' if SHORT else '<button class="show-diagram" id="open-diagram" type="button">Diagram Flow</button>'}
+		<button class="show-diagram" id="open-walk" type="button">{'Diagram Flow' if SHORT else 'Animated Walkthrough'}</button>
 	</div>
 
 	<aside class="options" id="options">
@@ -734,14 +739,11 @@ html {{ scroll-behavior: smooth; }}
 		</div>
 	</aside>
 
-	<dialog class="diagram-modal" id="diagram-modal" aria-label="Diagram Flow">
-		<button class="close-diagram" id="close-diagram" type="button" aria-label="Close">&times;</button>
-		{render_diagram()}
-	</dialog>
+	{'' if SHORT else DIAGRAM_MODAL}
 
-	<dialog class="diagram-modal" id="walk-modal" aria-label="Animated Walkthrough">
+	<dialog class="diagram-modal" id="walk-modal" aria-label="{'Diagram Flow' if SHORT else 'Animated Walkthrough'}">
 		<button class="close-diagram" id="close-walk" type="button" aria-label="Close">&times;</button>
-		{render_walkthrough()}
+		{render_walkthrough('Diagram Flow', play=False) if SHORT else render_walkthrough()}
 	</dialog>
 
 	<nav class="agenda" id="agenda" aria-label="Agenda">
@@ -831,9 +833,9 @@ html {{ scroll-behavior: smooth; }}
 
 	const modal = document.getElementById('diagram-modal');
 
-	document.getElementById('open-diagram').addEventListener('click', () => modal.showModal());
-	document.getElementById('close-diagram').addEventListener('click', () => modal.close());
-	modal.addEventListener('click', (event) => {{
+	document.getElementById('open-diagram')?.addEventListener('click', () => modal.showModal());
+	document.getElementById('close-diagram')?.addEventListener('click', () => modal.close());
+	modal?.addEventListener('click', (event) => {{
 		if (event.target === modal) {{
 			modal.close();
 		}}
@@ -877,7 +879,10 @@ html {{ scroll-behavior: smooth; }}
 	const stopWalk = () => {{
 		clearInterval(walkTimer);
 		walkTimer = null;
-		walkPlay.textContent = 'Play';
+
+		if (walkPlay) {{
+			walkPlay.textContent = 'Play';
+		}}
 	}};
 
 	const playWalk = () => {{
@@ -899,7 +904,10 @@ html {{ scroll-behavior: smooth; }}
 	document.getElementById('open-walk').addEventListener('click', () => {{
 		walkModal.showModal();
 		showWalkStep(1);
-		playWalk();
+
+		if (walkPlay) {{
+			playWalk();
+		}}
 	}});
 	document.getElementById('close-walk').addEventListener('click', () => walkModal.close());
 	walkModal.addEventListener('click', (event) => {{
@@ -908,7 +916,14 @@ html {{ scroll-behavior: smooth; }}
 		}}
 	}});
 	walkModal.addEventListener('close', stopWalk);
-	walkPlay.addEventListener('click', () => (walkTimer ? stopWalk() : playWalk()));
+	walkPlay?.addEventListener('click', () => (walkTimer ? stopWalk() : playWalk()));
+	walkModal.addEventListener('keydown', (event) => {{
+		if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {{
+			event.preventDefault();
+			stopWalk();
+			showWalkStep(walkStep + (event.key === 'ArrowRight' ? 1 : -1));
+		}}
+	}});
 	document.getElementById('walk-prev').addEventListener('click', () => {{
 		stopWalk();
 		showWalkStep(walkStep - 1);

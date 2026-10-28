@@ -182,7 +182,7 @@ WALK = [
 ]
 
 
-def render_walkthrough():
+def render_walkthrough(heading='Animated Walkthrough', play=True):
 	bx, by, bw, bh = BROWSER
 	dx, dy, dw, dh = DXP
 	groups = {}
@@ -294,13 +294,13 @@ def render_walkthrough():
 
 	return f'''
 <section class="diagram walk" id="walk" data-steps="{len(WALK)}">
-	<h2 class="agenda-title">Animated Walkthrough</h2>
+	<h2 class="agenda-title">{heading}</h2>
 	<div class="diagram-scroll">{svg}</div>
 	<div class="walk-bar">
 		<div class="walk-captions" aria-live="polite">{captions}</div>
 		<div class="walk-controls">
 			<button class="walk-btn" id="walk-prev" type="button" aria-label="Previous step">&lsaquo;</button>
-			<button class="walk-btn walk-play" id="walk-play" type="button">Pause</button>
+			{'<button class="walk-btn walk-play" id="walk-play" type="button">Pause</button>' if play else ''}
 			<button class="walk-btn" id="walk-next" type="button" aria-label="Next step">&rsaquo;</button>
 			<div class="walk-dots">{dots}</div>
 		</div>

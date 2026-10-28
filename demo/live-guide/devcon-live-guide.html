@@ -753,9 +753,9 @@ Write at most three short sentences for a marketing manager: what the number say
 
 	const modal = document.getElementById('diagram-modal');
 
-	document.getElementById('open-diagram').addEventListener('click', () => modal.showModal());
-	document.getElementById('close-diagram').addEventListener('click', () => modal.close());
-	modal.addEventListener('click', (event) => {
+	document.getElementById('open-diagram')?.addEventListener('click', () => modal.showModal());
+	document.getElementById('close-diagram')?.addEventListener('click', () => modal.close());
+	modal?.addEventListener('click', (event) => {
 		if (event.target === modal) {
 			modal.close();
 		}
@@ -799,7 +799,10 @@ Write at most three short sentences for a marketing manager: what the number say
 	const stopWalk = () => {
 		clearInterval(walkTimer);
 		walkTimer = null;
-		walkPlay.textContent = 'Play';
+
+		if (walkPlay) {
+			walkPlay.textContent = 'Play';
+		}
 	};
 
 	const playWalk = () => {
@@ -821,7 +824,10 @@ Write at most three short sentences for a marketing manager: what the number say
 	document.getElementById('open-walk').addEventListener('click', () => {
 		walkModal.showModal();
 		showWalkStep(1);
-		playWalk();
+
+		if (walkPlay) {
+			playWalk();
+		}
 	});
 	document.getElementById('close-walk').addEventListener('click', () => walkModal.close());
 	walkModal.addEventListener('click', (event) => {
@@ -830,7 +836,14 @@ Write at most three short sentences for a marketing manager: what the number say
 		}
 	});
 	walkModal.addEventListener('close', stopWalk);
-	walkPlay.addEventListener('click', () => (walkTimer ? stopWalk() : playWalk()));
+	walkPlay?.addEventListener('click', () => (walkTimer ? stopWalk() : playWalk()));
+	walkModal.addEventListener('keydown', (event) => {
+		if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
+			event.preventDefault();
+			stopWalk();
+			showWalkStep(walkStep + (event.key === 'ArrowRight' ? 1 : -1));
+		}
+	});
 	document.getElementById('walk-prev').addEventListener('click', () => {
 		stopWalk();
 		showWalkStep(walkStep - 1);
