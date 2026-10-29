@@ -7,7 +7,7 @@ import sys
 
 sys.path.insert(0, str(pathlib.Path(__file__).parent))
 
-from diagram import render as render_diagram, render_walkthrough
+from diagram import render as render_diagram, render_fragment_walkthrough, render_walkthrough
 
 DEMO = pathlib.Path.home() / 'dev/projects/devcon-2026/devcon-2026-stuff/demo'
 FRAGMENT = 'fragment' in sys.argv[1:]
@@ -842,7 +842,7 @@ html {{ scroll-behavior: smooth; }}
 		{'' if SHORT else f'<p class="lede">{LEDE}</p>'}
 	</header>
 
-	{'' if FRAGMENT else BELOW_HERO}
+	{BELOW_HERO}
 
 	{'' if SHORT else OPTIONS}
 
@@ -850,7 +850,7 @@ html {{ scroll-behavior: smooth; }}
 
 	<dialog class="diagram-modal" id="walk-modal" aria-label="{'Diagram Flow' if SHORT else 'Animated Walkthrough'}">
 		<button class="close-diagram" id="close-walk" type="button" aria-label="Close">&times;</button>
-		{render_walkthrough('Diagram Flow', play=False, captions=False) if SHORT else render_walkthrough()}
+		{render_fragment_walkthrough() if FRAGMENT else render_walkthrough('Diagram Flow', play=False, captions=False) if SHORT else render_walkthrough()}
 	</dialog>
 
 	<nav class="agenda" id="agenda" aria-label="Agenda">
