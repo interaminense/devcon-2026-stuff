@@ -77,6 +77,56 @@ source = sub(source, '''		_canConfigure() {
 		}''', '''		_canConfigure() {
 			return false;
 		}''')
+source = sub(source, '''						${
+							this._canConfigure()
+								? '<button aria-label="Configure" class="cog" data-role="cog" title="Configure" type="button">⚙</button>'
+								: ''
+						}''', '''						<span class="period">${escape((RANGES.find(({key}) => key === this._config.range.key) || {label: ''}).label)}</span>''')
+source = sub(source, '''					${this._config.aiInsight ? '<div class="insight" data-role="insight"></div>' : ''}''', '''					<button class="ai" data-role="ai" hidden type="button">✦ AI insight</button>
+					<div class="insight" data-role="insight"></div>''')
+source = sub(source, '''				if (this._config.aiInsight) {
+					this._loadInsight({''', '''				const button = this._get('ai');
+
+				button.hidden = false;
+
+				button.addEventListener('click', () => this._loadInsight({''')
+source = sub(source, '''						period: rangeLabel,
+					});
+				}''', '''						period: rangeLabel,
+					}));''')
+source = source.replace('<style>${STYLE}</style>', '<style>${STYLE}${FRAGMENT_STYLE}</style>')
+source = sub(source, '''	class LdpMetricCard extends HTMLElement {''', '''	// The period sits in the header, as on the demo card, and the AI insight
+	// waits for a click
+
+	const FRAGMENT_STYLE = `
+		.period {
+			color: var(--ldp-muted, #6b6c7e);
+			font-size: 13px;
+			white-space: nowrap;
+		}
+
+		.status {
+			display: none;
+		}
+
+		.ai {
+			background: var(--ldp-accent, #0b5fff);
+			border: 0;
+			border-radius: 6px;
+			color: #fff;
+			cursor: pointer;
+			font: inherit;
+			font-size: 13px;
+			margin-top: 12px;
+			padding: 4px 12px;
+		}
+
+		.insight:empty {
+			display: none;
+		}
+	`;
+
+	class LdpMetricCard extends HTMLElement {''')
 source = source.replace("customElements.get('ldp-metric-card')", "customElements.get('ldp-metric-card-fragment')")
 source = source.replace("customElements.define('ldp-metric-card', LdpMetricCard)", "customElements.define('ldp-metric-card-fragment', LdpMetricCard)")
 
@@ -85,17 +135,15 @@ catalog = json.loads(subprocess.run(
 	capture_output=True, check=True, text=True).stdout)
 
 write('ldp-metric-card-fragment', 'LDP Metric Card', source + MOUNT.format(tag='ldp-metric-card-fragment', config='''{
-	aiInsight: configuration.aiInsight === true || configuration.aiInsight === 'true',
 	chart: configuration.chart || '',
 	metric: configuration.metric || 'visitorsMetric',
-	range: {key: Number(configuration.rangeKey ?? 30)},
+	range: {key: Number(configuration.rangeKey ?? 7)},
 	title: configuration.title || '',
 }'''), [
 	select('metric', 'Metric', catalog, 'visitorsMetric'),
 	select('chart', 'Chart', [('', 'Default for the metric'), ('area', 'Area'), ('line', 'Line'), ('columns', 'Columns'), ('number', 'Number only'), ('bars', 'Horizontal bars'), ('donut', 'Donut'), ('table', 'Table'), ('heatmap', 'Heatmap')], ''),
-	select('rangeKey', 'Time range', RANGES + [('365', 'Last 365 days')], '30'),
+	select('rangeKey', 'Time range', RANGES + [('365', 'Last 365 days')], '7'),
 	{'dataType': 'string', 'defaultValue': '', 'label': 'Title', 'name': 'title', 'type': 'text'},
-	checkbox('aiInsight', 'Show AI insight'),
 ])
 
 source = (REPO / 'client-extension-visitors-behavior/ldp-visitors-behavior.js').read_text()
@@ -105,15 +153,27 @@ source = sub(source, '''			this._key = getInstanceKey(this);
 
 			this._key = null;
 			this._config = this.config || {''')
+source = sub(source, '''						<div class="controls">
+							<label class="check">
+								<input ${this._config.aiInsight ? 'checked' : ''} name="aiInsight" type="checkbox" />
+								AI insight
+							</label>
+							<select aria-label="Period" name="rangeKey">
+								${RANGES.map(({key, label}) => `<option ${key === range.key ? 'selected' : ''} value="${key}">${label}</option>`).join('')}
+							</select>
+						</div>''', '''						<span class="period">${range.label}</span>''')
+source = sub(source, '''					<div class="status">${range.label.toLowerCase()}${this._elapsed ? ` · ${this._elapsed} ms` : ''}</div>
+''', '')
+source = source.replace('<style>${STYLE}</style>', '<style>${STYLE}.period { color: var(--ldp-muted, #6b6c7e); font-size: 13px; white-space: nowrap; }</style>')
 source = source.replace("'ldp-visitors-behavior'", "'ldp-visitors-behavior-fragment'")
 
 write('ldp-visitors-behavior-fragment', 'LDP Visitors Behavior', source + MOUNT.format(tag='ldp-visitors-behavior-fragment', config='''{
 	aiInsight: configuration.aiInsight === true || configuration.aiInsight === 'true',
 	metric: configuration.metric || 'visitorsMetric',
-	rangeKey: Number(configuration.rangeKey ?? 0),
+	rangeKey: Number(configuration.rangeKey ?? 7),
 }'''), [
 	select('metric', 'First tab', [('visitorsMetric', 'Unique Visitors'), ('sessionsMetric', 'Sessions'), ('sessionsPerVisitorMetric', 'Sessions/Visitor'), ('sessionDurationMetric', 'Session Duration'), ('bounceRateMetric', 'Bounce Rate')], 'visitorsMetric'),
-	select('rangeKey', 'Time range', RANGES, '0'),
+	select('rangeKey', 'Time range', RANGES, '7'),
 	checkbox('aiInsight', 'Show AI insight'),
 ])
 

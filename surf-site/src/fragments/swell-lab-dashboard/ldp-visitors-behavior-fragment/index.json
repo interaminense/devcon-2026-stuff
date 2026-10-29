@@ -35,7 +35,7 @@
 				},
 				{
 					"dataType": "string",
-					"defaultValue": "0",
+					"defaultValue": "7",
 					"label": "Time range",
 					"name": "rangeKey",
 					"type": "select",

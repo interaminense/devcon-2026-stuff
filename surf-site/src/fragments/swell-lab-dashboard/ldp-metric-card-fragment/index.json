@@ -146,7 +146,7 @@
 				},
 				{
 					"dataType": "string",
-					"defaultValue": "30",
+					"defaultValue": "7",
 					"label": "Time range",
 					"name": "rangeKey",
 					"type": "select",
@@ -181,12 +181,6 @@
 					"label": "Title",
 					"name": "title",
 					"type": "text"
-				},
-				{
-					"defaultValue": false,
-					"label": "Show AI insight",
-					"name": "aiInsight",
-					"type": "checkbox"
 				}
 			]
 		}

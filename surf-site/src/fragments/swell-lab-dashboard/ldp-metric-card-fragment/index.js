@@ -1669,6 +1669,37 @@
 		);
 	}
 
+	// The period sits in the header, as on the demo card, and the AI insight
+	// waits for a click
+
+	const FRAGMENT_STYLE = `
+		.period {
+			color: var(--ldp-muted, #6b6c7e);
+			font-size: 13px;
+			white-space: nowrap;
+		}
+
+		.status {
+			display: none;
+		}
+
+		.ai {
+			background: var(--ldp-accent, #0b5fff);
+			border: 0;
+			border-radius: 6px;
+			color: #fff;
+			cursor: pointer;
+			font: inherit;
+			font-size: 13px;
+			margin-top: 12px;
+			padding: 4px 12px;
+		}
+
+		.insight:empty {
+			display: none;
+		}
+	`;
+
 	class LdpMetricCard extends HTMLElement {
 		async connectedCallback() {
 			if (this.shadowRoot) {
@@ -1676,7 +1707,7 @@
 			}
 
 			this.attachShadow({mode: 'open'}).innerHTML =
-				`<style>${STYLE}</style><div class="card"><div class="empty">Loading...</div></div>`;
+				`<style>${STYLE}${FRAGMENT_STYLE}</style><div class="card"><div class="empty">Loading...</div></div>`;
 
 			readPalette(this);
 
@@ -1704,21 +1735,18 @@
 			const metric = getMetric(this._config.metric);
 
 			this.shadowRoot.innerHTML = `
-				<style>${STYLE}</style>
+				<style>${STYLE}${FRAGMENT_STYLE}</style>
 				<div class="card">
 					<div class="header">
 						<div>
 							<div class="eyebrow">LDP · ${escape(metric.group)}</div>
 							<div class="title">${escape(this._config.title || metric.label)}</div>
 						</div>
-						${
-							this._canConfigure()
-								? '<button aria-label="Configure" class="cog" data-role="cog" title="Configure" type="button">⚙</button>'
-								: ''
-						}
+						<span class="period">${escape((RANGES.find(({key}) => key === this._config.range.key) || {label: ''}).label)}</span>
 					</div>
 					<div data-role="body"><div class="empty">Loading...</div></div>
-					${this._config.aiInsight ? '<div class="insight" data-role="insight"></div>' : ''}
+					<button class="ai" data-role="ai" hidden type="button">✦ AI insight</button>
+					<div class="insight" data-role="insight"></div>
 					<div class="status">
 						<span data-role="status"></span>
 						<span class="save-status" data-role="save-status">${escape(this._saveStatus || '')}</span>
@@ -1764,14 +1792,16 @@
 				this._get('status').textContent =
 					`${rangeLabel} · ${Math.round(performance.now() - startedAt)} ms`;
 
-				if (this._config.aiInsight) {
-					this._loadInsight({
+				const button = this._get('ai');
+
+				button.hidden = false;
+
+				button.addEventListener('click', () => this._loadInsight({
 						data: compact(metric.extract(data)),
 						group: metric.group,
 						metric: this._config.title || metric.label,
 						period: rangeLabel,
-					});
-				}
+					}));
 			}
 			catch (error) {
 				this._get('body').innerHTML =
@@ -1974,10 +2004,9 @@
 const card = document.createElement('ldp-metric-card-fragment');
 
 card.config = {
-	aiInsight: configuration.aiInsight === true || configuration.aiInsight === 'true',
 	chart: configuration.chart || '',
 	metric: configuration.metric || 'visitorsMetric',
-	range: {key: Number(configuration.rangeKey ?? 30)},
+	range: {key: Number(configuration.rangeKey ?? 7)},
 	title: configuration.title || '',
 };
 

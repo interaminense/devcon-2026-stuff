@@ -831,7 +831,7 @@
 			}
 
 			this.attachShadow({mode: 'open'}).innerHTML =
-				`<style>${STYLE}</style><div class="card"><div class="empty">Loading...</div></div>`;
+				`<style>${STYLE}.period { color: var(--ldp-muted, #6b6c7e); font-size: 13px; white-space: nowrap; }</style><div class="card"><div class="empty">Loading...</div></div>`;
 
 			// The fragment hands the configuration over: the tabs, the range
 			// and the AI switch change the view, and nothing is saved
@@ -1042,28 +1042,19 @@
 					: '<div class="empty">Loading...</div>';
 
 			this.shadowRoot.innerHTML = `
-				<style>${STYLE}</style>
+				<style>${STYLE}.period { color: var(--ldp-muted, #6b6c7e); font-size: 13px; white-space: nowrap; }</style>
 				<section class="card">
 					<div class="header">
 						<div>
 							<div class="eyebrow">LDP · Site</div>
 							<div class="title">Visitors Behavior</div>
 						</div>
-						<div class="controls">
-							<label class="check">
-								<input ${this._config.aiInsight ? 'checked' : ''} name="aiInsight" type="checkbox" />
-								AI insight
-							</label>
-							<select aria-label="Period" name="rangeKey">
-								${RANGES.map(({key, label}) => `<option ${key === range.key ? 'selected' : ''} value="${key}">${label}</option>`).join('')}
-							</select>
-						</div>
+						<span class="period">${range.label}</span>
 					</div>
 					<div class="tabs" role="tablist">${tabs}</div>
 					<div class="chart-label">${metric.label}</div>
 					${body}
 					${this._config.aiInsight ? '<div class="insight" data-role="insight"></div>' : ''}
-					<div class="status">${range.label.toLowerCase()}${this._elapsed ? ` · ${this._elapsed} ms` : ''}</div>
 				</section>
 			`;
 		}
@@ -1082,7 +1073,7 @@ const card = document.createElement('ldp-visitors-behavior-fragment');
 card.config = {
 	aiInsight: configuration.aiInsight === true || configuration.aiInsight === 'true',
 	metric: configuration.metric || 'visitorsMetric',
-	rangeKey: Number(configuration.rangeKey ?? 0),
+	rangeKey: Number(configuration.rangeKey ?? 7),
 };
 
 fragmentElement.querySelector('.ldp-card-slot').append(card);
