@@ -352,7 +352,7 @@ function renderList(items) {
 				.map(
 					({label, value}) => `
 						<li>
-							<span class="label" title="${escape(label)}">${escape(label)}</span>
+							<span class="name" title="${escape(label)}">${escape(label)}</span>
 							<span class="bar"><span style="width: ${(value / max) * 100}%"></span></span>
 							<span class="count">${formatValue(value)}</span>
 						</li>

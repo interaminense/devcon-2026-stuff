@@ -208,7 +208,7 @@ const STYLE = `
 			grid-template-columns: minmax(0, 2fr) minmax(0, 3fr) 3.5em;
 		}
 
-		.ldp-demo-card .list .label {
+		.ldp-demo-card .list .name {
 			overflow: hidden;
 			text-overflow: ellipsis;
 			white-space: nowrap;
@@ -561,7 +561,7 @@ function renderList(items) {
 				.map(
 					({label, value}) => `
 						<li>
-							<span class="label" title="${escape(label)}">${escape(label)}</span>
+							<span class="name" title="${escape(label)}">${escape(label)}</span>
 							<span class="bar"><span style="width: ${(value / max) * 100}%"></span></span>
 							<span class="count">${formatValue(value)}</span>
 						</li>

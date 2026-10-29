@@ -110,7 +110,7 @@
 	grid-template-columns: minmax(0, 2fr) minmax(0, 3fr) 3.5em;
 }
 
-.ldp-fragment-card .list .label {
+.ldp-fragment-card .list .name {
 	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;
