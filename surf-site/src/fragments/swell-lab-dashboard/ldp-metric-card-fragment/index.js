@@ -1684,10 +1684,11 @@
 		}
 
 		.ai {
-			background: var(--ldp-accent, #0b5fff);
-			border: 0;
+			background: #e8f6f5;
+			border: 1px solid rgba(11, 79, 108, 0.18);
 			border-radius: 6px;
-			color: #fff;
+			color: var(--ldp-title, #0b4f6c);
+			font-weight: 600;
 			cursor: pointer;
 			font: inherit;
 			font-size: 13px;
@@ -1713,7 +1714,7 @@
 
 		.ai::before {
 			animation: ldp-liquid 2.6s linear infinite paused;
-			background: conic-gradient(from 0deg, #17a9a3, #4fd1c5, #0a7a9e, #7de2ff, #17a9a3);
+			background: conic-gradient(from 0deg, #a8e6e1, #d9f7f4, #9fd8ec, #e3f6ff, #a8e6e1);
 			border-radius: 42% 58% 63% 37% / 41% 44% 56% 59%;
 			content: '';
 			filter: blur(6px);
@@ -1725,7 +1726,7 @@
 		}
 
 		.ai::after {
-			background: radial-gradient(circle 38px at var(--x, 50%) var(--y, 50%), rgba(255, 255, 255, 0.55), transparent 70%);
+			background: radial-gradient(circle 38px at var(--x, 50%) var(--y, 50%), rgba(255, 255, 255, 0.8), transparent 70%);
 			content: '';
 			inset: 0;
 			opacity: 0;
@@ -1734,8 +1735,15 @@
 			transition: opacity 0.25s ease;
 		}
 
+		/* The text sits above the liquid and the shine */
+
+		.ai span {
+			position: relative;
+			z-index: 1;
+		}
+
 		.ai:hover:not(:disabled) {
-			box-shadow: 0 6px 18px rgba(23, 169, 163, 0.45);
+			box-shadow: 0 6px 18px rgba(23, 169, 163, 0.3);
 			transform: translateY(-1px);
 		}
 
@@ -1814,7 +1822,7 @@
 						<span class="period">${escape((RANGES.find(({key}) => key === this._config.range.key) || {label: ''}).label)}</span>
 					</div>
 					<div data-role="body"><div class="empty">Loading...</div></div>
-					<button class="ai" data-role="ai" hidden type="button">✦ AI insight</button>
+					<button class="ai" data-role="ai" hidden type="button"><span>✦ AI insight</span></button>
 					<div class="insight" data-role="insight"></div>
 					<div class="status">
 						<span data-role="status"></span>
