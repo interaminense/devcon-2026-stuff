@@ -73,16 +73,77 @@
 			display: inline-flex;
 			font: 700 13px/1 Inter, system-ui, sans-serif;
 			gap: 8px;
+			isolation: isolate;
+			overflow: hidden;
 			padding: 9px 14px 9px 12px;
-			transition: background 0.15s ease, color 0.15s ease, transform 0.15s ease;
+			position: relative;
+			transition: border-color 0.3s ease, box-shadow 0.3s ease, color 0.3s ease, transform 0.3s ease;
 		}
 
 		.ldp-advisor-ai:hover,
 		.ldp-advisor-ai:focus-visible {
-			background: var(--ldp-advisor-color);
+			background: #0b5fff;
+			border-color: transparent;
+			box-shadow: 0 6px 18px rgba(229, 0, 189, 0.35);
 			color: #fff;
 			outline: none;
 			transform: translateY(-1px);
+		}
+
+		/* On hover a glossy liquid in the DEVCON colors swirls inside the
+		   button, and a bright spot follows the pointer */
+
+		.ldp-advisor-ai::before {
+			animation: ldp-advisor-liquid 2.6s linear infinite paused;
+			background: conic-gradient(from 0deg, #0b5fff, #00c2fb, #7a3cff, #e500bd, #0b5fff);
+			border-radius: 42% 58% 63% 37% / 41% 44% 56% 59%;
+			content: '';
+			filter: blur(6px);
+			inset: -120% -30%;
+			opacity: 0;
+			position: absolute;
+			transition: opacity 0.35s ease;
+			z-index: -1;
+		}
+
+		.ldp-advisor-ai::after {
+			background: radial-gradient(circle 40px at var(--x, 50%) var(--y, 50%), rgba(255, 255, 255, 0.45), transparent 70%);
+			content: '';
+			inset: 0;
+			opacity: 0;
+			pointer-events: none;
+			position: absolute;
+			transition: opacity 0.25s ease;
+		}
+
+		.ldp-advisor-ai > * {
+			position: relative;
+			z-index: 1;
+		}
+
+		.ldp-advisor-ai:hover:not(:disabled)::before {
+			animation-play-state: running;
+			opacity: 1;
+		}
+
+		.ldp-advisor-ai:hover:not(:disabled)::after {
+			opacity: 1;
+		}
+
+		@keyframes ldp-advisor-liquid {
+			50% {
+				border-radius: 58% 42% 37% 63% / 56% 59% 41% 44%;
+			}
+
+			to {
+				transform: rotate(360deg);
+			}
+		}
+
+		@media (prefers-reduced-motion: reduce) {
+			.ldp-advisor-ai::before {
+				animation: none;
+			}
 		}
 
 		.ldp-advisor-ai svg {
@@ -189,6 +250,25 @@
 			letter-spacing: 0.04em;
 			padding: 6px 12px;
 			text-transform: uppercase;
+		}
+
+		.ldp-advisor-spinner {
+			animation: ldp-advisor-spin 0.8s linear infinite;
+			border: 2px solid currentColor;
+			border-radius: 50%;
+			border-right-color: transparent;
+			box-sizing: border-box;
+			display: inline-block;
+			height: 0.9em;
+			margin-right: 6px;
+			vertical-align: -0.1em;
+			width: 0.9em;
+		}
+
+		@keyframes ldp-advisor-spin {
+			to {
+				transform: rotate(360deg);
+			}
 		}
 
 		.ldp-advisor-modal__loading {
@@ -305,6 +385,17 @@
 	`;
 
 	// Sparkles, the usual AI mark
+
+
+	// The liquid highlight on hover follows the pointer
+	function followPointer(button) {
+		button.addEventListener('pointermove', (event) => {
+			const box = button.getBoundingClientRect();
+	
+			button.style.setProperty('--x', `${event.clientX - box.left}px`);
+			button.style.setProperty('--y', `${event.clientY - box.top}px`);
+		});
+	}
 
 	const AI_ICON =
 		'<svg aria-hidden="true" fill="currentColor" viewBox="0 0 24 24"><path d="M10 2.5l1.6 4.9a4 4 0 0 0 2.5 2.5L19 11.5l-4.9 1.6a4 4 0 0 0-2.5 2.5L10 20.5l-1.6-4.9a4 4 0 0 0-2.5-2.5L1 11.5l4.9-1.6a4 4 0 0 0 2.5-2.5z"/><path d="M19 1l.7 2.1a1.5 1.5 0 0 0 1 1L23 4.8l-2.1.7a1.5 1.5 0 0 0-1 1L19 8.6l-.7-2.1a1.5 1.5 0 0 0-1-1L15 4.8l2.1-.7a1.5 1.5 0 0 0 1-1z"/></svg>';
@@ -894,6 +985,8 @@
 						this.openSuggestion(block);
 					});
 
+					followPointer(button);
+
 					badge.appendChild(button);
 				}
 
@@ -985,7 +1078,7 @@
 			}
 
 			body.innerHTML =
-				'<p class="ldp-advisor-modal__loading">Asking AI Hub for ideas...</p>';
+				'<p class="ldp-advisor-modal__loading"><span class="ldp-advisor-spinner" aria-hidden="true"></span>Asking AI Hub for ideas...</p>';
 
 			try {
 				const fields = parseSuggestion(await askAgentWithRetry(contents));

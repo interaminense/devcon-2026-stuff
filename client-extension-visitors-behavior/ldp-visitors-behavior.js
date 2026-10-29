@@ -130,6 +130,25 @@
 			padding: 12px 14px;
 		}
 
+		.spinner {
+			animation: ldp-spin 0.8s linear infinite;
+			border: 2px solid currentColor;
+			border-radius: 50%;
+			border-right-color: transparent;
+			box-sizing: border-box;
+			display: inline-block;
+			height: 0.9em;
+			margin-right: 6px;
+			vertical-align: -0.1em;
+			width: 0.9em;
+		}
+
+		@keyframes ldp-spin {
+			to {
+				transform: rotate(360deg);
+			}
+		}
+
 		.insight-label {
 			color: var(--ldp-accent, #0b5fff);
 			font-size: 11px;
@@ -558,7 +577,7 @@
 
 		return `
 			<div class="insight-label">✦ AI insight</div>
-			<p class="insight-text${state.status === 'error' ? ' insight-error' : ''}">${escape(text)}</p>
+			<p class="insight-text${state.status === 'error' ? ' insight-error' : ''}">${state.status === 'loading' ? '<span class="spinner" aria-hidden="true"></span>' : ''}${escape(text)}</p>
 		`;
 	}
 

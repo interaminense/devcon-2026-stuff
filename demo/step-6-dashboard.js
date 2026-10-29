@@ -250,6 +250,25 @@ const STYLE = `
 			background: var(--primary-d1);
 		}
 
+		.ldp-demo-card .spinner {
+			animation: ldp-demo-spin 0.8s linear infinite;
+			border: 2px solid currentColor;
+			border-radius: 50%;
+			border-right-color: transparent;
+			box-sizing: border-box;
+			display: inline-block;
+			height: 0.9em;
+			margin-right: 6px;
+			vertical-align: -0.1em;
+			width: 0.9em;
+		}
+
+		@keyframes ldp-demo-spin {
+			to {
+				transform: rotate(360deg);
+			}
+		}
+
 		.ldp-demo-card .insight {
 			background: var(--primary-l3);
 			border-left: 3px solid var(--primary);
@@ -651,7 +670,7 @@ class LdpDemoCard extends HTMLElement {
 		button.addEventListener('click', async () => {
 			const insight = this.querySelector('.insight');
 
-			insight.textContent = 'Asking AI Hub...';
+			insight.innerHTML = '<span class="spinner" aria-hidden="true"></span>Asking AI Hub...';
 
 			try {
 				insight.textContent = await askAgent(describe(widget, result));

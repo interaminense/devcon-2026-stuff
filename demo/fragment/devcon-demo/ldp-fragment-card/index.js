@@ -418,7 +418,7 @@ async function render() {
 	button.addEventListener('click', async () => {
 		const insight = root.querySelector('.insight');
 
-		insight.textContent = 'Asking AI Hub...';
+		insight.innerHTML = '<span class="spinner" aria-hidden="true"></span>Asking AI Hub...';
 
 		try {
 			insight.textContent = await askAgent(describe(widget, result));

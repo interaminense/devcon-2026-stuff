@@ -104,6 +104,94 @@ const STYLE = `
 			opacity: 0.6;
 		}
 
+		.ldp-next-posts .np-ask {
+			isolation: isolate;
+			overflow: hidden;
+			position: relative;
+			transition: box-shadow 0.3s ease, transform 0.3s ease;
+		}
+
+		.ldp-next-posts .np-ask:hover:not(:disabled) {
+			background: #0b5fff;
+			box-shadow: 0 6px 18px rgba(229, 0, 189, 0.35);
+			transform: translateY(-1px);
+		}
+
+		/* On hover a glossy liquid in the DEVCON colors swirls inside the
+		   button, and a bright spot follows the pointer */
+
+		.ldp-next-posts .np-ask::before {
+			animation: ldp-next-posts-liquid 2.6s linear infinite paused;
+			background: conic-gradient(from 0deg, #0b5fff, #00c2fb, #7a3cff, #e500bd, #0b5fff);
+			border-radius: 42% 58% 63% 37% / 41% 44% 56% 59%;
+			content: '';
+			filter: blur(6px);
+			inset: -120% -30%;
+			opacity: 0;
+			position: absolute;
+			transition: opacity 0.35s ease;
+			z-index: -1;
+		}
+
+		.ldp-next-posts .np-ask::after {
+			background: radial-gradient(circle 40px at var(--x, 50%) var(--y, 50%), rgba(255, 255, 255, 0.45), transparent 70%);
+			content: '';
+			inset: 0;
+			opacity: 0;
+			pointer-events: none;
+			position: absolute;
+			transition: opacity 0.25s ease;
+		}
+
+		.ldp-next-posts .np-ask > * {
+			position: relative;
+			z-index: 1;
+		}
+
+		.ldp-next-posts .np-ask:hover:not(:disabled)::before {
+			animation-play-state: running;
+			opacity: 1;
+		}
+
+		.ldp-next-posts .np-ask:hover:not(:disabled)::after {
+			opacity: 1;
+		}
+
+		@keyframes ldp-next-posts-liquid {
+			50% {
+				border-radius: 58% 42% 37% 63% / 56% 59% 41% 44%;
+			}
+
+			to {
+				transform: rotate(360deg);
+			}
+		}
+
+		@media (prefers-reduced-motion: reduce) {
+			.ldp-next-posts .np-ask::before {
+				animation: none;
+			}
+		}
+
+		.ldp-next-posts .np-spinner {
+			animation: ldp-next-posts-spin 0.8s linear infinite;
+			border: 2px solid currentColor;
+			border-radius: 50%;
+			border-right-color: transparent;
+			box-sizing: border-box;
+			display: inline-block;
+			height: 0.9em;
+			margin-right: 6px;
+			vertical-align: -0.1em;
+			width: 0.9em;
+		}
+
+		@keyframes ldp-next-posts-spin {
+			to {
+				transform: rotate(360deg);
+			}
+		}
+
 		.ldp-next-posts .np-status {
 			color: #5b6b77;
 			margin: 18px 0 0;
@@ -571,6 +659,16 @@ function formatRate(rate) {
 	return rate === null ? 'n/a' : `${Math.round(rate * 100)}%`;
 }
 
+// The liquid highlight on hover follows the pointer
+function followPointer(button) {
+	button.addEventListener('pointermove', (event) => {
+		const box = button.getBoundingClientRect();
+
+		button.style.setProperty('--x', `${event.clientX - box.left}px`);
+		button.style.setProperty('--y', `${event.clientY - box.top}px`);
+	});
+}
+
 class LdpNextPosts extends HTMLElement {
 	async connectedCallback() {
 		if (!Liferay.ThemeDisplay.isSignedIn()) {
@@ -624,7 +722,7 @@ class LdpNextPosts extends HTMLElement {
 					<h2>What should we write next?</h2>
 					<span class="np-period">Surf Journal posts · last ${RANGE_KEY} days · ${this.data.listViews.toLocaleString()} views of the post list · Liferay Data Platform</span>
 				</div>
-				<button class="np-ask" type="button">✦ Suggest next posts</button>
+				<button class="np-ask" type="button"><span>✦ Suggest next posts</span></button>
 			</div>
 			<table>
 				<thead>
@@ -639,6 +737,8 @@ class LdpNextPosts extends HTMLElement {
 		this.querySelector('.np-ask').addEventListener('click', () =>
 			this.suggest()
 		);
+
+		followPointer(this.querySelector('.np-ask'));
 	}
 
 	async suggest() {
@@ -649,7 +749,7 @@ class LdpNextPosts extends HTMLElement {
 		button.disabled = true;
 		ideas.innerHTML = '';
 		status.hidden = false;
-		status.textContent = 'Asking AI Hub...';
+		status.innerHTML = '<span class="np-spinner" aria-hidden="true"></span>Asking AI Hub...';
 
 		try {
 			let answer;

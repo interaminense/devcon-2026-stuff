@@ -152,6 +152,25 @@
 	background: var(--primary-d1);
 }
 
+.ldp-fragment-card .spinner {
+	animation: ldp-fragment-spin 0.8s linear infinite;
+	border: 2px solid currentColor;
+	border-radius: 50%;
+	border-right-color: transparent;
+	box-sizing: border-box;
+	display: inline-block;
+	height: 0.9em;
+	margin-right: 6px;
+	vertical-align: -0.1em;
+	width: 0.9em;
+}
+
+@keyframes ldp-fragment-spin {
+	to {
+		transform: rotate(360deg);
+	}
+}
+
 .ldp-fragment-card .insight {
 	background: var(--primary-l3);
 	border-left: 3px solid var(--primary);
