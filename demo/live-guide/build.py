@@ -439,9 +439,17 @@ if FRAGMENT:
 
 	TABS = {'css': 'CSS', 'html': 'HTML', 'js': 'JavaScript', 'json': 'Configuration'}
 
+	ORDER = ('html', 'css', 'js', 'json')
+
+	# One step per version, with the tabs side by side in the order of the
+	# fragment editor
 	def fragment_code(n, kinds):
-		for kind in kinds:
-			yield ('code', code_block(f'LDP Fragment Card · {TABS[kind]}', fragment.get((n - 1, kind)), fragment[n, kind]))
+		blocks = ''.join(
+			code_block(f'LDP Fragment Card · {TABS[kind]}', fragment.get((n - 1, kind)), fragment[n, kind])
+			for kind in ORDER if kind in kinds
+		)
+
+		yield ('code', f'<div class="code-grid" style="--cols: {len(kinds)}">{blocks}</div>')
 
 	def ship_fragment(n, tabs):
 		return ('ui', f'''<p class="step-title"><strong>Ship version {n}</strong></p>
@@ -563,6 +571,11 @@ RESET = '''	<section class="part" id="reset-demo">
 SHORT_CSS = '''.step { grid-template-columns: minmax(0, 1fr); }
 .code-scroll { max-height: none; overflow: visible; }
 .lc { overflow-wrap: anywhere; white-space: pre-wrap; }'''
+
+# Side by side boxes, each one at most 400px tall and scrolling inside
+FRAGMENT_CSS = '''.code-grid { display: grid; gap: 16px; grid-template-columns: repeat(var(--cols), minmax(0, 1fr)); }
+.code-grid .code-scroll { max-height: 400px; overflow: auto; }
+@media (max-width: 900px) { .code-grid { grid-template-columns: minmax(0, 1fr); } }'''
 
 LEDE = (
 	"Today we're going to build a custom dashboard card right inside DXP, in three moves: read real LDP data, remember each card's settings with Objects, and ask AI Hub what the numbers mean."
@@ -819,6 +832,7 @@ h2 {{ font: 700 33px/1.15 var(--display); margin: 0; text-wrap: balance; }}
 }}
 html {{ scroll-behavior: smooth; }}
 {SHORT_CSS if SHORT else ''}
+{FRAGMENT_CSS if FRAGMENT else ''}
 </style>
 
 <div class="wrap">
