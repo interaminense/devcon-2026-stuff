@@ -67,7 +67,7 @@
 	width: 100%;
 }
 
-.ldp-fragment-card .chart polyline {
+.ldp-fragment-card .chart .line {
 	fill: none;
 	stroke: currentColor;
 	stroke-linejoin: round;
@@ -75,10 +75,6 @@
 	vector-effect: non-scaling-stroke;
 }
 
-.ldp-fragment-card .chart polygon {
-	fill: currentColor;
-	opacity: 0.12;
-}
 
 .ldp-fragment-card .axis {
 	display: flex;

@@ -28,7 +28,7 @@
 	width: 100%;
 }
 
-.ldp-fragment-card .chart polyline {
+.ldp-fragment-card .chart .line {
 	fill: none;
 	stroke: currentColor;
 	stroke-linejoin: round;
