@@ -50,7 +50,9 @@ body .sl-dashboard-header__title {
 }
 
 ldp-metric-card,
-ldp-visitors-behavior {
+ldp-metric-card-fragment,
+ldp-visitors-behavior,
+ldp-visitors-behavior-fragment {
 	--ldp-accent: #0b4f6c;
 	--ldp-accent-soft: rgba(11, 79, 108, 0.12);
 	--ldp-border: rgba(11, 79, 108, 0.06);
