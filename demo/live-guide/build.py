@@ -448,15 +448,22 @@ if FRAGMENT:
 
 	ORDER = ('html', 'css', 'js', 'json')
 
-	# One step per version, with the tabs side by side in the order of the
-	# fragment editor
+	# One step per version: one code box with a tab per fragment editor tab,
+	# in the editor's order
 	def fragment_code(n, kinds):
-		blocks = ''.join(
-			code_block(f'LDP Fragment Card · {TABS[kind]}', fragment.get((n - 1, kind)), fragment[n, kind])
-			for kind in ORDER if kind in kinds
+		shown = [kind for kind in ORDER if kind in kinds]
+		tabs = ''.join(
+			f'<button aria-selected="{str(i == 0).lower()}" class="code-tab" data-tab="{kind}" role="tab" type="button">{TABS[kind]}</button>'
+			for i, kind in enumerate(shown)
+		)
+		panels = ''.join(
+			f'<div class="code-panel" data-panel="{kind}" role="tabpanel"{"" if i == 0 else " hidden"}>'
+			+ code_block(f'LDP Fragment Card · {TABS[kind]}', fragment.get((n - 1, kind)), fragment[n, kind])
+			+ '</div>'
+			for i, kind in enumerate(shown)
 		)
 
-		yield ('code', f'<div class="code-grid" style="--cols: {len(kinds)}">{blocks}</div>')
+		yield ('code', f'<div class="code-tabs"><div class="code-tablist" role="tablist">{tabs}</div>{panels}</div>')
 
 	def ship_fragment(n, tabs):
 		return ('ui', f'''<p class="step-title"><strong>Ship version {n}</strong></p>
@@ -580,9 +587,13 @@ SHORT_CSS = '''.step { grid-template-columns: minmax(0, 1fr); }
 .lc { overflow-wrap: anywhere; white-space: pre-wrap; }'''
 
 # Side by side boxes, each one at most 400px tall and scrolling inside
-FRAGMENT_CSS = '''.code-grid { display: grid; gap: 16px; grid-template-columns: repeat(var(--cols), minmax(0, 1fr)); }
-.code-grid .code-scroll { max-height: 400px; overflow: auto; }
-@media (max-width: 900px) { .code-grid { grid-template-columns: minmax(0, 1fr); } }'''
+FRAGMENT_CSS = '''.code-tabs { display: grid; gap: 12px; min-width: 0; }
+.code-tablist { border-bottom: 1px solid var(--line); display: flex; flex-wrap: wrap; gap: 4px; }
+.code-tab { background: transparent; border: 0; border-bottom: 3px solid transparent; color: var(--muted); cursor: pointer; font: 600 18px/1 var(--body); margin-bottom: -1px; padding: 10px 16px; }
+.code-tab:hover, .code-tab:focus-visible { color: var(--fg); }
+.code-tab[aria-selected="true"] { border-bottom-color: var(--accent); color: var(--fg); }
+.code-panel[hidden] { display: none; }
+.code-tabs .code-scroll { max-height: 400px; overflow: auto; }'''
 
 LEDE = (
 	"Today we're going to build a custom dashboard card right inside DXP, in three moves: read real LDP data, remember each card's settings with Objects, and ask AI Hub what the numbers mean."
@@ -883,6 +894,25 @@ html {{ scroll-behavior: smooth; }}
 		get(key) {{ try {{ return localStorage.getItem(key); }} catch {{ return null; }} }},
 		set(key, value) {{ try {{ value === null ? localStorage.removeItem(key) : localStorage.setItem(key, value); }} catch {{}} }},
 	}};
+
+	// Code tabs: one panel per fragment editor tab
+	document.addEventListener('click', (event) => {{
+		const tab = event.target.closest('.code-tab');
+
+		if (!tab) {{
+			return;
+		}}
+
+		const box = tab.closest('.code-tabs');
+
+		for (const other of box.querySelectorAll('.code-tab')) {{
+			other.setAttribute('aria-selected', String(other === tab));
+		}}
+
+		for (const panel of box.querySelectorAll('.code-panel')) {{
+			panel.hidden = panel.dataset.panel !== tab.dataset.tab;
+		}}
+	}});
 
 	document.addEventListener('click', async (event) => {{
 		const button = event.target.closest('.copy');

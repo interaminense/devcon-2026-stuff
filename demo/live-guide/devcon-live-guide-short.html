@@ -590,6 +590,25 @@ Write at most three short sentences for a marketing manager: what the number say
 		set(key, value) { try { value === null ? localStorage.removeItem(key) : localStorage.setItem(key, value); } catch {} },
 	};
 
+	// Code tabs: one panel per fragment editor tab
+	document.addEventListener('click', (event) => {
+		const tab = event.target.closest('.code-tab');
+
+		if (!tab) {
+			return;
+		}
+
+		const box = tab.closest('.code-tabs');
+
+		for (const other of box.querySelectorAll('.code-tab')) {
+			other.setAttribute('aria-selected', String(other === tab));
+		}
+
+		for (const panel of box.querySelectorAll('.code-panel')) {
+			panel.hidden = panel.dataset.panel !== tab.dataset.tab;
+		}
+	});
+
 	document.addEventListener('click', async (event) => {
 		const button = event.target.closest('.copy');
 
