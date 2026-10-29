@@ -89,11 +89,30 @@ source = sub(source, '''				if (this._config.aiInsight) {
 
 				button.hidden = false;
 
-				button.addEventListener('click', () => this._loadInsight({''')
+				// The liquid highlight follows the pointer
+
+				button.addEventListener('pointermove', (event) => {
+					const box = button.getBoundingClientRect();
+
+					button.style.setProperty('--x', `${event.clientX - box.left}px`);
+					button.style.setProperty('--y', `${event.clientY - box.top}px`);
+				});
+
+				// The button goes away once the insight is there; after an
+				// error it stays, to try again
+
+				button.addEventListener('click', async () => {
+					button.disabled = true;
+
+					await this._loadInsight({''')
 source = sub(source, '''						period: rangeLabel,
 					});
 				}''', '''						period: rangeLabel,
-					}));''')
+					});
+
+					button.disabled = false;
+					button.hidden = this._insight?.status === 'done';
+				});''')
 source = source.replace('<style>${STYLE}</style>', '<style>${STYLE}${FRAGMENT_STYLE}</style>')
 source = sub(source, '''	class LdpMetricCard extends HTMLElement {''', '''	// The period sits in the header, as on the demo card, and the AI insight
 	// waits for a click
@@ -117,8 +136,77 @@ source = sub(source, '''	class LdpMetricCard extends HTMLElement {''', '''	// Th
 			cursor: pointer;
 			font: inherit;
 			font-size: 13px;
+			isolation: isolate;
 			margin-top: 12px;
+			overflow: hidden;
 			padding: 4px 12px;
+			position: relative;
+			transition: box-shadow 0.3s ease, transform 0.3s ease;
+		}
+
+		.ai[hidden] {
+			display: none;
+		}
+
+		.ai:disabled {
+			cursor: progress;
+			opacity: 0.7;
+		}
+
+		/* On hover a glossy liquid swirls inside the button, and a bright
+		   spot follows the pointer */
+
+		.ai::before {
+			animation: ldp-liquid 2.6s linear infinite paused;
+			background: conic-gradient(from 0deg, #17a9a3, #4fd1c5, #0a7a9e, #7de2ff, #17a9a3);
+			border-radius: 42% 58% 63% 37% / 41% 44% 56% 59%;
+			content: '';
+			filter: blur(6px);
+			inset: -120% -30%;
+			opacity: 0;
+			position: absolute;
+			transition: opacity 0.35s ease;
+			z-index: -1;
+		}
+
+		.ai::after {
+			background: radial-gradient(circle 38px at var(--x, 50%) var(--y, 50%), rgba(255, 255, 255, 0.55), transparent 70%);
+			content: '';
+			inset: 0;
+			opacity: 0;
+			pointer-events: none;
+			position: absolute;
+			transition: opacity 0.25s ease;
+		}
+
+		.ai:hover:not(:disabled) {
+			box-shadow: 0 6px 18px rgba(23, 169, 163, 0.45);
+			transform: translateY(-1px);
+		}
+
+		.ai:hover:not(:disabled)::before {
+			animation-play-state: running;
+			opacity: 1;
+		}
+
+		.ai:hover:not(:disabled)::after {
+			opacity: 1;
+		}
+
+		@keyframes ldp-liquid {
+			50% {
+				border-radius: 58% 42% 37% 63% / 56% 59% 41% 44%;
+			}
+
+			to {
+				transform: rotate(360deg);
+			}
+		}
+
+		@media (prefers-reduced-motion: reduce) {
+			.ai::before {
+				animation: none;
+			}
 		}
 
 		.insight:empty {
