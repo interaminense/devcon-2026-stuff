@@ -224,7 +224,8 @@ function formatTrend(result) {
 		return `Previous period: ${formatValue(result.previousValue)}`;
 	}
 
-	const arrow = percentage > 0 ? '▲' : percentage < 0 ? '▼' : '';
+	// Only the arrow takes the color of the change
+	const arrow = percentage > 0 ? '<span class="up">▲</span>' : percentage < 0 ? '<span class="down">▼</span>' : '';
 
 	return `${arrow} ${Math.abs(percentage).toFixed(1)}% vs previous period (${formatValue(result.previousValue)})`;
 }
@@ -276,7 +277,7 @@ class LdpDemoCard extends HTMLElement {
 		const result = await getMetric(this.config.metric);
 
 		this.querySelector('.value').textContent = formatValue(result.value);
-		this.querySelector('.trend').textContent = formatTrend(result);
+		this.querySelector('.trend').innerHTML = formatTrend(result);
 		this.querySelector('.chart-slot').innerHTML = renderChart(result);
 	}
 }

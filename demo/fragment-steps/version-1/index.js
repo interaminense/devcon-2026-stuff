@@ -113,7 +113,8 @@ function formatTrend(result) {
 		return `Previous period: ${formatValue(result.previousValue)}`;
 	}
 
-	const arrow = percentage > 0 ? '▲' : percentage < 0 ? '▼' : '';
+	// Only the arrow takes the color of the change
+	const arrow = percentage > 0 ? '<span class="up">▲</span>' : percentage < 0 ? '<span class="down">▼</span>' : '';
 
 	return `${arrow} ${Math.abs(percentage).toFixed(1)}% vs previous period (${formatValue(result.previousValue)})`;
 }
@@ -131,5 +132,5 @@ root.innerHTML = `
 const result = await getMetric('visitorsMetric');
 
 root.querySelector('.value').textContent = formatValue(result.value);
-root.querySelector('.trend').textContent = formatTrend(result);
+root.querySelector('.trend').innerHTML = formatTrend(result);
 root.querySelector('.chart-slot').innerHTML = renderChart(result);

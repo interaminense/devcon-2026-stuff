@@ -304,9 +304,13 @@ function formatTrend(result, format) {
 		return `Previous period: ${previous}`;
 	}
 
+	// Only the arrow takes the color: LDP says whether the change is good or
+	// bad, so a higher bounce rate goes red
+	const direction = getDirection(result);
 	const arrow = percentage > 0 ? '▲' : percentage < 0 ? '▼' : '';
+	const coloredArrow = arrow ? `<span class="${direction}">${arrow}</span>` : '';
 
-	return `${arrow} ${Math.abs(percentage).toFixed(1)}% vs previous period (${previous})`;
+	return `${coloredArrow} ${Math.abs(percentage).toFixed(1)}% vs previous period (${previous})`;
 }
 
 // Hours show in the viewer's time zone, days as LDP counts them, in UTC
@@ -363,7 +367,7 @@ function renderSeries(result, format) {
 
 	return `
 		<div class="value">${formatValue(result.value, format)}</div>
-		<div class="trend ${direction}">${formatTrend(result, format)}</div>
+		<div class="trend">${formatTrend(result, format)}</div>
 		<svg class="chart ${direction}" preserveAspectRatio="none" viewBox="0 0 100 32">
 			<defs>
 				<linearGradient id="${fade}" x1="0" x2="0" y1="0" y2="1">
