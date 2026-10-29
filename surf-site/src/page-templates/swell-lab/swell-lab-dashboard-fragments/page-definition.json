@@ -52,6 +52,7 @@
 						"pageElements": [
 							{
 								"definition": {
+									"size": 12,
 									"columnViewports": [
 										{
 											"columnViewportDefinition": {
@@ -71,8 +72,7 @@
 											},
 											"id": "tablet"
 										}
-									],
-									"size": 12
+									]
 								},
 								"pageElements": [
 									{
@@ -125,6 +125,7 @@
 						"pageElements": [
 							{
 								"definition": {
+									"size": 4,
 									"columnViewports": [
 										{
 											"columnViewportDefinition": {
@@ -144,8 +145,7 @@
 											},
 											"id": "tablet"
 										}
-									],
-									"size": 4
+									]
 								},
 								"pageElements": [
 									{
@@ -167,6 +167,7 @@
 							},
 							{
 								"definition": {
+									"size": 4,
 									"columnViewports": [
 										{
 											"columnViewportDefinition": {
@@ -186,8 +187,7 @@
 											},
 											"id": "tablet"
 										}
-									],
-									"size": 4
+									]
 								},
 								"pageElements": [
 									{
@@ -209,6 +209,7 @@
 							},
 							{
 								"definition": {
+									"size": 4,
 									"columnViewports": [
 										{
 											"columnViewportDefinition": {
@@ -228,8 +229,7 @@
 											},
 											"id": "tablet"
 										}
-									],
-									"size": 4
+									]
 								},
 								"pageElements": [
 									{
@@ -255,8 +255,8 @@
 					{
 						"definition": {
 							"gutters": true,
-							"modulesPerRow": 2,
-							"numberOfColumns": 2,
+							"modulesPerRow": 1,
+							"numberOfColumns": 1,
 							"reverseOrder": false,
 							"rowViewports": [
 								{
@@ -283,6 +283,7 @@
 						"pageElements": [
 							{
 								"definition": {
+									"size": 12,
 									"columnViewports": [
 										{
 											"columnViewportDefinition": {
@@ -302,8 +303,7 @@
 											},
 											"id": "tablet"
 										}
-									],
-									"size": 7
+									]
 								},
 								"pageElements": [
 									{
@@ -312,52 +312,10 @@
 												"key": "ldp-metric-card-fragment"
 											},
 											"fragmentConfig": {
-												"chart": "bars",
-												"metric": "topPages",
+												"chart": "heatmap",
+												"metric": "trafficHeatmap",
 												"rangeKey": "7",
-												"title": "Most visited pages"
-											}
-										},
-										"type": "Fragment"
-									}
-								],
-								"type": "Column"
-							},
-							{
-								"definition": {
-									"columnViewports": [
-										{
-											"columnViewportDefinition": {
-												"size": 12
-											},
-											"id": "landscapeMobile"
-										},
-										{
-											"columnViewportDefinition": {
-												"size": 12
-											},
-											"id": "portraitMobile"
-										},
-										{
-											"columnViewportDefinition": {
-												"size": 12
-											},
-											"id": "tablet"
-										}
-									],
-									"size": 5
-								},
-								"pageElements": [
-									{
-										"definition": {
-											"fragment": {
-												"key": "ldp-metric-card-fragment"
-											},
-											"fragmentConfig": {
-												"chart": "bars",
-												"metric": "acquisitionChannel",
-												"rangeKey": "7",
-												"title": "How surfers find us"
+												"title": "When surfers visit"
 											}
 										},
 										"type": "Fragment"
@@ -399,6 +357,7 @@
 						"pageElements": [
 							{
 								"definition": {
+									"size": 6,
 									"columnViewports": [
 										{
 											"columnViewportDefinition": {
@@ -418,8 +377,7 @@
 											},
 											"id": "tablet"
 										}
-									],
-									"size": 7
+									]
 								},
 								"pageElements": [
 									{
@@ -428,10 +386,24 @@
 												"key": "ldp-metric-card-fragment"
 											},
 											"fragmentConfig": {
-												"chart": "heatmap",
-												"metric": "trafficHeatmap",
+												"chart": "line",
+												"metric": "visitorsMetric",
 												"rangeKey": "7",
-												"title": "When surfers visit"
+												"title": "Visitors by browser"
+											}
+										},
+										"type": "Fragment"
+									},
+									{
+										"definition": {
+											"fragment": {
+												"key": "ldp-metric-card-fragment"
+											},
+											"fragmentConfig": {
+												"chart": "bars",
+												"metric": "topPages",
+												"rangeKey": "7",
+												"title": "Most visited pages"
 											}
 										},
 										"type": "Fragment"
@@ -441,6 +413,7 @@
 							},
 							{
 								"definition": {
+									"size": 6,
 									"columnViewports": [
 										{
 											"columnViewportDefinition": {
@@ -460,8 +433,7 @@
 											},
 											"id": "tablet"
 										}
-									],
-									"size": 5
+									]
 								},
 								"pageElements": [
 									{
@@ -474,6 +446,20 @@
 												"metric": "visitorsByDevice",
 												"rangeKey": "7",
 												"title": "Visitors by device"
+											}
+										},
+										"type": "Fragment"
+									},
+									{
+										"definition": {
+											"fragment": {
+												"key": "ldp-metric-card-fragment"
+											},
+											"fragmentConfig": {
+												"chart": "bars",
+												"metric": "acquisitionChannel",
+												"rangeKey": "7",
+												"title": "How surfers find us"
 											}
 										},
 										"type": "Fragment"
