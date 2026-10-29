@@ -1,0 +1,72 @@
+{
+	"fieldSets": [
+		{
+			"fields": [
+				{
+					"dataType": "string",
+					"defaultValue": "visitorsMetric",
+					"label": "First tab",
+					"name": "metric",
+					"type": "select",
+					"typeOptions": {
+						"validValues": [
+							{
+								"label": "Unique Visitors",
+								"value": "visitorsMetric"
+							},
+							{
+								"label": "Sessions",
+								"value": "sessionsMetric"
+							},
+							{
+								"label": "Sessions/Visitor",
+								"value": "sessionsPerVisitorMetric"
+							},
+							{
+								"label": "Session Duration",
+								"value": "sessionDurationMetric"
+							},
+							{
+								"label": "Bounce Rate",
+								"value": "bounceRateMetric"
+							}
+						]
+					}
+				},
+				{
+					"dataType": "string",
+					"defaultValue": "0",
+					"label": "Time range",
+					"name": "rangeKey",
+					"type": "select",
+					"typeOptions": {
+						"validValues": [
+							{
+								"label": "Last 24 hours",
+								"value": "0"
+							},
+							{
+								"label": "Last 7 days",
+								"value": "7"
+							},
+							{
+								"label": "Last 30 days",
+								"value": "30"
+							},
+							{
+								"label": "Last 90 days",
+								"value": "90"
+							}
+						]
+					}
+				},
+				{
+					"defaultValue": false,
+					"label": "Show AI insight",
+					"name": "aiInsight",
+					"type": "checkbox"
+				}
+			]
+		}
+	]
+}

@@ -1,0 +1,194 @@
+{
+	"fieldSets": [
+		{
+			"fields": [
+				{
+					"dataType": "string",
+					"defaultValue": "visitorsMetric",
+					"label": "Metric",
+					"name": "metric",
+					"type": "select",
+					"typeOptions": {
+						"validValues": [
+							{
+								"label": "Site: Visitors",
+								"value": "visitorsMetric"
+							},
+							{
+								"label": "Site: Sessions",
+								"value": "sessionsMetric"
+							},
+							{
+								"label": "Site: Anonymous visitors",
+								"value": "anonymousVisitorsMetric"
+							},
+							{
+								"label": "Site: Known visitors",
+								"value": "knownVisitorsMetric"
+							},
+							{
+								"label": "Site: Bounce rate",
+								"value": "bounceRateMetric"
+							},
+							{
+								"label": "Site: Session duration",
+								"value": "sessionDurationMetric"
+							},
+							{
+								"label": "Site: Sessions per visitor",
+								"value": "sessionsPerVisitorMetric"
+							},
+							{
+								"label": "Individuals: Total individuals",
+								"value": "totalIndividualsMetric"
+							},
+							{
+								"label": "Individuals: Known individuals",
+								"value": "knownIndividualsMetric"
+							},
+							{
+								"label": "Individuals: Anonymous individuals",
+								"value": "anonymousIndividualsMetric"
+							},
+							{
+								"label": "Acquisition: Acquisition by channel",
+								"value": "acquisitionChannel"
+							},
+							{
+								"label": "Acquisition: Acquisition by referrer",
+								"value": "acquisitionReferrer"
+							},
+							{
+								"label": "Acquisition: Acquisition by source / medium",
+								"value": "acquisitionSourceMedium"
+							},
+							{
+								"label": "Behavior: Search terms",
+								"value": "searchTerms"
+							},
+							{
+								"label": "Behavior: Site interests",
+								"value": "siteInterests"
+							},
+							{
+								"label": "Behavior: Visit frequency",
+								"value": "visitFrequency"
+							},
+							{
+								"label": "Behavior: Traffic by day and hour",
+								"value": "trafficHeatmap"
+							},
+							{
+								"label": "Behavior: Top pages",
+								"value": "topPages"
+							},
+							{
+								"label": "Visitors breakdown: Visitors by device",
+								"value": "visitorsByDevice"
+							},
+							{
+								"label": "Visitors breakdown: Visitors by browser",
+								"value": "visitorsByBrowser"
+							},
+							{
+								"label": "Visitors breakdown: Visitors by country",
+								"value": "visitorsByCountry"
+							}
+						]
+					}
+				},
+				{
+					"dataType": "string",
+					"defaultValue": "",
+					"label": "Chart",
+					"name": "chart",
+					"type": "select",
+					"typeOptions": {
+						"validValues": [
+							{
+								"label": "Default for the metric",
+								"value": ""
+							},
+							{
+								"label": "Area",
+								"value": "area"
+							},
+							{
+								"label": "Line",
+								"value": "line"
+							},
+							{
+								"label": "Columns",
+								"value": "columns"
+							},
+							{
+								"label": "Number only",
+								"value": "number"
+							},
+							{
+								"label": "Horizontal bars",
+								"value": "bars"
+							},
+							{
+								"label": "Donut",
+								"value": "donut"
+							},
+							{
+								"label": "Table",
+								"value": "table"
+							},
+							{
+								"label": "Heatmap",
+								"value": "heatmap"
+							}
+						]
+					}
+				},
+				{
+					"dataType": "string",
+					"defaultValue": "30",
+					"label": "Time range",
+					"name": "rangeKey",
+					"type": "select",
+					"typeOptions": {
+						"validValues": [
+							{
+								"label": "Last 24 hours",
+								"value": "0"
+							},
+							{
+								"label": "Last 7 days",
+								"value": "7"
+							},
+							{
+								"label": "Last 30 days",
+								"value": "30"
+							},
+							{
+								"label": "Last 90 days",
+								"value": "90"
+							},
+							{
+								"label": "Last 365 days",
+								"value": "365"
+							}
+						]
+					}
+				},
+				{
+					"dataType": "string",
+					"defaultValue": "",
+					"label": "Title",
+					"name": "title",
+					"type": "text"
+				},
+				{
+					"defaultValue": false,
+					"label": "Show AI insight",
+					"name": "aiInsight",
+					"type": "checkbox"
+				}
+			]
+		}
+	]
+}

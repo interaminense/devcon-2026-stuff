@@ -1,0 +1,8 @@
+{
+	"configurationPath": "index.json",
+	"htmlPath": "index.html",
+	"icon": "analytics",
+	"jsPath": "index.js",
+	"name": "LDP Visitors Behavior",
+	"type": "component"
+}
