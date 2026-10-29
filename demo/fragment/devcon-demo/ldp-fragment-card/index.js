@@ -1,8 +1,18 @@
 // The LDP property (channel) of the Swell Lab site
 const CHANNEL_ID = '845351493326064678';
 
-// 7 = last 7 days (LDP leaves today out)
-const RANGE_KEY = 7;
+const RANGES = {
+	0: 'Last 24 hours',
+	7: 'Last 7 days',
+	30: 'Last 30 days',
+	90: 'Last 90 days',
+};
+
+// The fragment configuration picks the range of each instance too. LDP
+// leaves today out of the day ranges, and answers the last 24 hours per hour
+const RANGE_KEY = RANGES[configuration.range] ? Number(configuration.range) : 7;
+const RANGE_LABEL = RANGES[RANGE_KEY];
+const INTERVAL = RANGE_KEY === 0 ? 'H' : 'D';
 
 // The AI Hub agent that writes the insight
 const AGENT_ERC = 'DEVCON_2026_DEMO_LDP_METRIC_INSIGHT';
@@ -127,7 +137,7 @@ async function queryLDP(body) {
 
 async function getMetric(metric) {
 	const data = await queryLDP(`
-		site(channelId: $channelId, interval: "D", rangeKey: $rangeKey) {
+		site(channelId: $channelId, interval: "${INTERVAL}", rangeKey: $rangeKey) {
 			${metric} {
 				histogram {
 					metrics {
@@ -222,7 +232,7 @@ async function askAgent(text) {
 
 // Plain text lines: the firewall in front of AI Hub rejects nested JSON
 function describe(widget, result) {
-	const lines = [`metric: ${widget.label}`, 'period: last 7 days'];
+	const lines = [`metric: ${widget.label}`, `period: ${RANGE_LABEL.toLowerCase()}`];
 
 	if (Array.isArray(result)) {
 		return [
@@ -299,7 +309,12 @@ function formatTrend(result, format) {
 	return `${arrow} ${Math.abs(percentage).toFixed(1)}% vs previous period (${previous})`;
 }
 
+// Hours show in the viewer's time zone, days as LDP counts them, in UTC
 function formatDay(key) {
+	if (INTERVAL === 'H') {
+		return new Date(`${key}Z`).toLocaleTimeString('en-US', {hour: 'numeric'});
+	}
+
 	return new Date(`${key}Z`).toLocaleDateString('en-US', {
 		day: 'numeric',
 		month: 'short',
@@ -373,7 +388,7 @@ async function render() {
 	root.innerHTML = `
 		<div class="head">
 			<strong>${widget.label}</strong>
-			<span class="period">Last 7 days</span>
+			<span class="period">${RANGE_LABEL}</span>
 		</div>
 		<div class="body"><p class="status">Loading LDP data...</p></div>
 		<button class="ai" hidden type="button">✦ AI insight</button>

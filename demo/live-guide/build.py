@@ -489,7 +489,7 @@ if FRAGMENT:
 	for step in fragment_code(4, ('js', 'css', 'json')):
 		p4.step(*step)
 	p4.step(*ship_fragment(4, '<b>JavaScript</b>, <b>CSS</b> and <b>Configuration</b> tabs'))
-	p4.step('ui', '<p class="step-title"><strong>Build the dashboard</strong></p><ol><li>Edit the Demo page.</li><li><b>Components</b> panel &rarr; <b>Fragments</b> &rarr; Layout Elements &rarr; drag a <b>Grid</b> under the first one. Set <b>Number of Modules</b> to 3. Repeat for a third row.</li><li>Drag an <b>LDP Fragment Card</b> into each new module.</li><li>Select each card &rarr; <b>General</b> &rarr; <b>Widget</b>, as below &rarr; <b>Publish</b>.</li></ol>'
+	p4.step('ui', '<p class="step-title"><strong>Build the dashboard</strong></p><ol><li>Edit the Demo page.</li><li><b>Components</b> panel &rarr; <b>Fragments</b> &rarr; Layout Elements &rarr; drag a <b>Grid</b> under the first one. Set <b>Number of Modules</b> to 3. Repeat for a third row.</li><li>Drag an <b>LDP Fragment Card</b> into each new module.</li><li>Select each card &rarr; <b>General</b> &rarr; <b>Widget</b>, as below. <b>Time range</b> is per card too (Last 24 hours to Last 90 days); check that the Widget did not change when you set it &rarr; <b>Publish</b>.</li></ol>'
 		+ values([
 			plain('Row 1', 'Unique visitors &middot; Sessions per visitor'),
 			plain('Row 2', 'Sessions &middot; Session duration &middot; Bounce rate'),
