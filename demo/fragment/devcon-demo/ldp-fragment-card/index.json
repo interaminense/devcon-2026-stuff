@@ -1,0 +1,51 @@
+{
+	"fieldSets": [
+		{
+			"fields": [
+				{
+					"dataType": "string",
+					"defaultValue": "visitorsMetric",
+					"label": "Widget",
+					"name": "metric",
+					"type": "select",
+					"typeOptions": {
+						"validValues": [
+							{
+								"label": "Unique visitors",
+								"value": "visitorsMetric"
+							},
+							{
+								"label": "Sessions",
+								"value": "sessionsMetric"
+							},
+							{
+								"label": "Sessions per visitor",
+								"value": "sessionsPerVisitorMetric"
+							},
+							{
+								"label": "Session duration",
+								"value": "sessionDurationMetric"
+							},
+							{
+								"label": "Bounce rate",
+								"value": "bounceRateMetric"
+							},
+							{
+								"label": "Top pages by views",
+								"value": "topPages"
+							},
+							{
+								"label": "Acquisition by channel",
+								"value": "acquisitionChannel"
+							},
+							{
+								"label": "Visitors by device",
+								"value": "visitorsByDevice"
+							}
+						]
+					}
+				}
+			]
+		}
+	]
+}
