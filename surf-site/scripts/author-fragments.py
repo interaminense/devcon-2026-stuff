@@ -30,7 +30,7 @@ fragment(
 			<a href="/spots">Spots</a>
 			<a href="/learn">Learn</a>
 			<a href="/blog">Blog</a>
-			<a class="sl-header__signed-in" hidden href="/dashboard">Dashboard</a>
+			<a class="sl-header__signed-in" hidden href="/dashboard-2">Dashboard</a>
 		</nav>
 
 		<div class="sl-header__actions">
