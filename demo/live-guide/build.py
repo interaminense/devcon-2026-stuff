@@ -10,8 +10,13 @@ sys.path.insert(0, str(pathlib.Path(__file__).parent))
 from diagram import render as render_diagram, render_walkthrough
 
 DEMO = pathlib.Path.home() / 'dev/projects/devcon-2026/devcon-2026-stuff/demo'
-SHORT = 'short' in sys.argv[1:]
-OUT = pathlib.Path(__file__).parent / ('devcon-live-guide-short.html' if SHORT else 'devcon-live-guide.html')
+FRAGMENT = 'fragment' in sys.argv[1:]
+SHORT = FRAGMENT or 'short' in sys.argv[1:]
+OUT = pathlib.Path(__file__).parent / (
+	'devcon-live-guide-fragment.html' if FRAGMENT else
+	'devcon-live-guide-short.html' if SHORT else
+	'devcon-live-guide.html'
+)
 
 SITE = 'https://webserver-lctacdemodevcon-prd.lfr.cloud'
 LOGIN = SITE + '/web/devcon-demo/home?p_p_id=com_liferay_login_web_portlet_LoginPortlet&p_p_state=maximized&_com_liferay_login_web_portlet_LoginPortlet_redirect=%2Fweb%2Fdevcon-demo'
@@ -415,6 +420,77 @@ if SHORT:
 
 	parts = [p1, p2, p3, p4]
 
+# The fragment guide builds the same card as a fragment: the code lives in
+# the fragment, and the fragment configuration picks each card's metric, so
+# there is no Documents and Media upload and no Object
+if FRAGMENT:
+	FRAGMENT_DIR = DEMO / 'fragment-steps'
+	fragment = {}
+
+	for n in (1, 2, 3):
+		for kind in ('html', 'css', 'js', 'json'):
+			path = FRAGMENT_DIR / f'version-{n}' / f'index.{kind}'
+
+			if path.exists():
+				fragment[n, kind] = path.read_text().rstrip('\n')
+
+	for kind in ('html', 'css', 'js', 'json'):
+		fragment[4, kind] = (DEMO / 'fragment/devcon-demo/ldp-fragment-card' / f'index.{kind}').read_text().rstrip('\n')
+
+	TABS = {'css': 'CSS', 'html': 'HTML', 'js': 'JavaScript', 'json': 'Configuration'}
+
+	def fragment_code(n, kinds):
+		for kind in kinds:
+			yield ('code', code_block(f'LDP Fragment Card · {TABS[kind]}', fragment.get((n - 1, kind)), fragment[n, kind]))
+
+	def ship_fragment(n, tabs):
+		return ('ui', f'''<p class="step-title"><strong>Ship version {n}</strong></p>
+<ol>
+	<li>Tab 3: Design &rarr; <b>Fragments</b> &rarr; <b>DEVCON Demo</b> &rarr; <b>LDP Fragment Card</b> &rarr; &#8942; &rarr; <b>Edit</b>.</li>
+	<li>Paste the code above into the {tabs} &rarr; <b>Publish</b>.</li>
+	<li>&#8942; &rarr; <b>View Usages</b> &rarr; select all &rarr; <b>Propagate</b>. Pages keep their copy of the fragment until you propagate.</li>
+	<li>Demo page &rarr; reload.</li>
+</ol>''')
+
+	p1 = Part('1', 'Connect to LDP and Fetch Real Data', 'Topic 01')
+	p1.step('sub', 'LDP connected to DXP')
+	p1.step(*ldp[1]).step(*ldp[2]).step(*data[1])
+	p1.step('sub', 'The first fragment')
+	p1.step('ui', '<p class="step-title"><strong>Create the fragment</strong></p><ol><li>Tab 3: DEVCON Demo &rarr; Design &rarr; <b>Fragments</b>.</li><li><b>+</b> next to Fragment Sets &rarr; name below &rarr; <b>Save</b>.</li><li><b>New</b> &rarr; <b>Basic Fragment</b> &rarr; <b>Next</b> &rarr; name below &rarr; <b>Add</b>.</li></ol>'
+		+ values([v('Fragment set', 'DEVCON Demo'), v('Fragment name', 'LDP Fragment Card')]))
+	for step in fragment_code(1, ('html', 'js')):
+		p1.step(*step)
+	p1.step('ui', '<ol><li>Paste the code above into the <b>HTML</b> and <b>JavaScript</b> tabs &rarr; <b>Publish</b>.</li></ol>')
+	p1.step('ui', '<p class="step-title"><strong>Put it on a page</strong></p><ol><li>Tab 4: DEVCON Demo &rarr; Site Builder &rarr; <b>Pages</b> &rarr; <b>New</b>.</li><li><b>Basic Templates</b> &rarr; <b>Blank</b> &rarr; name below &rarr; <b>Add</b>.</li><li><b>Components</b> panel &rarr; <b>Fragments</b> &rarr; Layout Elements &rarr; drag <b>Grid</b>. Set <b>Number of Modules</b> to 2.</li><li>Search the fragment below &rarr; drag it into the <b>left</b> module &rarr; <b>Publish</b>.</li></ol>'
+		+ values([v('Page name', 'Demo'), v('Fragment search', 'LDP Fragment Card')]))
+
+	p2 = Part('2', 'Configure Each Card with Fragment Configuration', 'Topic 02')
+	for step in fragment_code(2, ('js', 'css', 'json')):
+		p2.step(*step)
+	p2.step(*ship_fragment(2, '<b>JavaScript</b>, <b>CSS</b> and <b>Configuration</b> tabs'))
+	p2.step('ui', '<ol><li>Edit the Demo page &rarr; drag a second <b>LDP Fragment Card</b> into the <b>right</b> module.</li><li>With it selected: <b>General</b> &rarr; <b>Metric</b> &rarr; <b>Sessions per visitor</b> &rarr; <b>Publish</b>.</li><li>Reload the page: each card keeps its own metric, saved with the page.</li></ol>')
+
+	p3 = Part('3', 'Get Data Insights with AI Hub', 'Topic 03')
+	p3.step(*hub[0]).step(*hub[3]).step(*hub[5])
+	for step in fragment_code(3, ('js', 'css')):
+		p3.step(*step)
+	p3.step(*ship_fragment(3, '<b>JavaScript</b> and <b>CSS</b> tabs'))
+	p3.step(*hub[9])
+
+	p4 = Part('4', 'Build a Custom Dashboard', 'Topic 04')
+	for step in fragment_code(4, ('js', 'css', 'json')):
+		p4.step(*step)
+	p4.step(*ship_fragment(4, '<b>JavaScript</b>, <b>CSS</b> and <b>Configuration</b> tabs'))
+	p4.step('ui', '<p class="step-title"><strong>Build the dashboard</strong></p><ol><li>Edit the Demo page.</li><li><b>Components</b> panel &rarr; <b>Fragments</b> &rarr; Layout Elements &rarr; drag a <b>Grid</b> under the first one. Set <b>Number of Modules</b> to 3. Repeat for a third row.</li><li>Drag an <b>LDP Fragment Card</b> into each new module.</li><li>Select each card &rarr; <b>General</b> &rarr; <b>Widget</b>, as below &rarr; <b>Publish</b>.</li></ol>'
+		+ values([
+			plain('Row 1', 'Unique visitors &middot; Sessions per visitor'),
+			plain('Row 2', 'Sessions &middot; Session duration &middot; Bounce rate'),
+			plain('Row 3', 'Top pages by views &middot; Acquisition by channel &middot; Visitors by device'),
+		]))
+	p4.step('ui', '<ol><li>Any card &rarr; <b>&#10022; AI insight</b>. Lists work too: the card sends its top items.</li></ol>')
+
+	parts = [p1, p2, p3, p4]
+
 
 def render_part(part):
 	steps = []
@@ -450,6 +526,12 @@ DIAGRAM_MODAL = f'''<dialog class="diagram-modal" id="diagram-modal" aria-label=
 		<button class="close-diagram" id="close-diagram" type="button" aria-label="Close">&times;</button>
 		{render_diagram()}
 	</dialog>'''
+
+BELOW_HERO = '''	<div class="below-hero">
+		''' + ('' if SHORT else '<button class="show-diagram" id="open-diagram" type="button">Diagram Flow</button>') + '''
+		<button class="show-diagram" id="open-walk" type="button">''' + ('Diagram Flow' if SHORT else 'Animated Walkthrough') + '''</button>
+	</div>
+'''
 
 OPTIONS = '''	<aside class="options" id="options">
 		<button class="options-tab" id="options-tab" type="button" aria-controls="options-panel" aria-expanded="false" aria-label="Show options">&lsaquo;</button>
@@ -492,7 +574,7 @@ nav = ''.join(f'<li><a href="#part-{p.letter.lower()}"><span class="a-letter">{p
 nav += '' if SHORT else '<li><a href="#reset-demo"><span class="a-letter">&#8634;</span><span class="a-title">Reset the demo</span><span class="a-topic">Start over</span></a></li>'
 
 
-page = f'''<title>{'Live Demo Short Guide' if SHORT else 'Live Demo Guide'}</title>
+page = f'''<title>{'Live Demo Fragment Guide' if FRAGMENT else 'Live Demo Short Guide' if SHORT else 'Live Demo Guide'}</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;500;600;700;800&amp;family=JetBrains+Mono:wght@400;600&amp;display=swap">
 <style>
@@ -742,14 +824,11 @@ html {{ scroll-behavior: smooth; }}
 <div class="wrap">
 	<header class="hero">
 		<span class="eyebrow">DEVCON 2026 &middot; Live demo</span>
-		<h1>Live Demo Guide</h1>
+		<h1>{'Live Demo Guide · Fragments' if FRAGMENT else 'Live Demo Guide'}</h1>
 		{'' if SHORT else f'<p class="lede">{LEDE}</p>'}
 	</header>
 
-	<div class="below-hero">
-		{'' if SHORT else '<button class="show-diagram" id="open-diagram" type="button">Diagram Flow</button>'}
-		<button class="show-diagram" id="open-walk" type="button">{'Diagram Flow' if SHORT else 'Animated Walkthrough'}</button>
-	</div>
+	{'' if FRAGMENT else BELOW_HERO}
 
 	{'' if SHORT else OPTIONS}
 
@@ -901,7 +980,7 @@ html {{ scroll-behavior: smooth; }}
 		}}, WALK_DELAY);
 	}};
 
-	document.getElementById('open-walk').addEventListener('click', () => {{
+	document.getElementById('open-walk')?.addEventListener('click', () => {{
 		walkModal.showModal();
 		showWalkStep(1);
 

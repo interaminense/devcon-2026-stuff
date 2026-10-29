@@ -1,0 +1,48 @@
+// The LDP property (channel) of the Swell Lab site
+const CHANNEL_ID = '845351493326064678';
+
+// 7 = last 7 days (LDP leaves today out)
+const RANGE_KEY = 7;
+
+async function getMetric(metric) {
+	const query = `
+		query ($channelId: String!, $rangeKey: Int) {
+			site(channelId: $channelId, interval: "D", rangeKey: $rangeKey) {
+				${metric} {
+					previousValue
+					trend {
+						percentage
+					}
+					value
+				}
+			}
+		}
+	`;
+
+	// The DXP proxies the request to LDP with the user's session: no LDP
+	// token in the browser
+	const response = await fetch('/o/analytics-rest/v1.0/graphql', {
+		body: JSON.stringify({
+			query,
+			variables: {channelId: CHANNEL_ID, rangeKey: RANGE_KEY},
+		}),
+		headers: {
+			'Content-Type': 'application/json',
+			'x-csrf-token': Liferay.authToken,
+		},
+		method: 'POST',
+	});
+
+	const {data} = await response.json();
+
+	return data.site[metric];
+}
+
+// fragmentElement is this instance of the fragment on the page
+const root = fragmentElement.querySelector('.ldp-fragment-card');
+
+root.innerHTML = '<p>Loading...</p>';
+
+const result = await getMetric('visitorsMetric');
+
+root.innerHTML = `<p>Unique visitors: <strong>${result.value}</strong></p>`;

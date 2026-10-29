@@ -1,0 +1,27 @@
+{
+	"fieldSets": [
+		{
+			"fields": [
+				{
+					"dataType": "string",
+					"defaultValue": "visitorsMetric",
+					"label": "Metric",
+					"name": "metric",
+					"type": "select",
+					"typeOptions": {
+						"validValues": [
+							{
+								"label": "Unique visitors",
+								"value": "visitorsMetric"
+							},
+							{
+								"label": "Sessions per visitor",
+								"value": "sessionsPerVisitorMetric"
+							}
+						]
+					}
+				}
+			]
+		}
+	]
+}

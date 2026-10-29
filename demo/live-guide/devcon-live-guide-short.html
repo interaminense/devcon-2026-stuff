@@ -254,10 +254,11 @@ html { scroll-behavior: smooth; }
 		
 	</header>
 
-	<div class="below-hero">
+		<div class="below-hero">
 		
 		<button class="show-diagram" id="open-walk" type="button">Diagram Flow</button>
 	</div>
+
 
 	
 
@@ -705,7 +706,7 @@ Write at most three short sentences for a marketing manager: what the number say
 		}, WALK_DELAY);
 	};
 
-	document.getElementById('open-walk').addEventListener('click', () => {
+	document.getElementById('open-walk')?.addEventListener('click', () => {
 		walkModal.showModal();
 		showWalkStep(1);
 

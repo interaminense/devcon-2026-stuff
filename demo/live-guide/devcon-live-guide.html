@@ -252,10 +252,11 @@ html { scroll-behavior: smooth; }
 		<p class="lede">Today we're going to build a custom dashboard right inside DXP, using the Liferay tools you already have. We keep the flow simple on purpose: easy to follow, and easy to build yourself.</p>
 	</header>
 
-	<div class="below-hero">
+		<div class="below-hero">
 		<button class="show-diagram" id="open-diagram" type="button">Diagram Flow</button>
 		<button class="show-diagram" id="open-walk" type="button">Animated Walkthrough</button>
 	</div>
+
 
 		<aside class="options" id="options">
 		<button class="options-tab" id="options-tab" type="button" aria-controls="options-panel" aria-expanded="false" aria-label="Show options">&lsaquo;</button>
@@ -824,7 +825,7 @@ Write at most three short sentences for a marketing manager: what the number say
 		}, WALK_DELAY);
 	};
 
-	document.getElementById('open-walk').addEventListener('click', () => {
+	document.getElementById('open-walk')?.addEventListener('click', () => {
 		walkModal.showModal();
 		showWalkStep(1);
 
