@@ -1,8 +1,18 @@
 // The LDP property (channel) of the Swell Lab site
 const CHANNEL_ID = '845351493326064678';
 
-// 7 = last 7 days (LDP leaves today out)
-const RANGE_KEY = 7;
+const RANGES = {
+	0: 'Last 24 hours',
+	7: 'Last 7 days',
+	30: 'Last 30 days',
+	90: 'Last 90 days',
+};
+
+// The fragment configuration picks the range of each instance too. LDP
+// leaves today out of the day ranges, and answers the last 24 hours per hour
+const RANGE_KEY = RANGES[configuration.range] ? Number(configuration.range) : 7;
+const RANGE_LABEL = RANGES[RANGE_KEY];
+const INTERVAL = RANGE_KEY === 0 ? 'H' : 'D';
 
 // The AI Hub agent that writes the insight
 const AGENT_ERC = 'DEVCON_2026_DEMO_LDP_METRIC_INSIGHT';
@@ -31,7 +41,7 @@ async function api(url, options = {}) {
 async function getMetric(metric) {
 	const query = `
 		query ($channelId: String!, $rangeKey: Int) {
-			site(channelId: $channelId, interval: "D", rangeKey: $rangeKey) {
+			site(channelId: $channelId, interval: "${INTERVAL}", rangeKey: $rangeKey) {
 				${metric} {
 					histogram {
 						metrics {
@@ -131,7 +141,7 @@ async function askAgent(text) {
 function describe(label, result) {
 	return [
 		`metric: ${label}`,
-		'period: last 7 days',
+		`period: ${RANGE_LABEL.toLowerCase()}`,
 		`value: ${result.value}`,
 		`previous period value: ${result.previousValue}`,
 		`change: ${result.trend?.percentage ?? 'n/a'}%`,
@@ -185,7 +195,7 @@ function formatTrend(result) {
 const root = fragmentElement.querySelector('.ldp-fragment-card');
 
 root.innerHTML = `
-	<strong>${METRICS[configuration.metric]}</strong>
+	<strong>${METRICS[configuration.metric]} · ${RANGE_LABEL}</strong>
 	<div class="value">...</div>
 	<div class="trend">Last 7 days</div>
 	<div class="chart-slot"></div>

@@ -321,8 +321,8 @@ FRAGMENT_SUBS = [
 FRAGMENT_WALK = [
 	('Setup', 'Create LDP Fragment Card in Design, Fragments: its HTML, CSS, JavaScript and Configuration live in the fragment.'),
 	('Page', 'DXP renders the demo page with two instances of the fragment, each with its code inline. No upload, no script URL.'),
-	('Config', 'Each instance gets its own configuration, metric and time range, picked in the page editor and saved with the page.'),
 	('Metric', 'Each card asks the LDP proxy, with the user\'s session. DXP forwards the GraphQL query to LDP and returns value, previous value and trend.'),
+	('Config', 'Each instance gets its own configuration, metric and time range, picked in the page editor and saved with the page.'),
 	('Token', 'DXP signs in to AI Hub with the Client ID and Secret, and hands the card a short-lived token.'),
 	('Insight', 'The card calls the AI Hub agent directly. The LLM runs the prompt, and the insight shows up under the chart.'),
 	('The full picture', 'One fragment, four building blocks, no new backend.'),
@@ -358,9 +358,9 @@ def render_fragment_walkthrough(heading='Diagram Flow'):
 		py = [y + 118 - (p - low) / (high - low) * 30 for p in points]
 		line = ' '.join(f'{a:.1f},{b:.1f}' for a, b in zip(px, py))
 		add(2, f'<rect class="dg-card" x="{x}" y="{y}" width="{w}" height="{h}" rx="8"/>')
-		add(3, f'<text class="dg-card-label" x="{x + 14}" y="{y + 24}">{e(label)}</text>'
-			f'<text class="dg-card-saved" x="{x + w - 14}" y="{y + 24}" text-anchor="end">{e(period)}</text>')
-		add(4, f'<text class="dg-card-value" x="{x + 14}" y="{y + 56}">{e(value)}</text>'
+		add(2, f'<text class="dg-card-label" x="{x + 14}" y="{y + 24}">{e(label)}</text>')
+		add(4, f'<text class="dg-card-saved" x="{x + w - 14}" y="{y + 24}" text-anchor="end">{e(period)}</text>')
+		add(3, f'<text class="dg-card-value" x="{x + 14}" y="{y + 56}">{e(value)}</text>'
 			f'<text class="dg-card-trend dg-{direction}" x="{x + 14}" y="{y + 76}">{e(trend)}</text>'
 			f'<polyline class="dg-spark dg-{direction}" points="{line}"/>'
 			f'<circle class="dg-spark-dot dg-{direction}" cx="{px[-1]:.1f}" cy="{py[-1]:.1f}" r="3"/>')
@@ -371,12 +371,12 @@ def render_fragment_walkthrough(heading='Diagram Flow'):
 				f'<rect class="dg-card-text" x="{x + 14}" y="{y + 176}" width="{w - 60}" height="6" rx="3"/>'
 				f'<rect class="dg-card-text" x="{x + 14}" y="{y + 190}" width="{w - 90}" height="6" rx="3"/>')
 
-	sub_step = {'Fragments': 1, 'Fragment configuration': 3, 'LDP proxy': 4, 'AI Hub connection': 5}
+	sub_step = {'Fragments': 1, 'LDP proxy': 3, 'Fragment configuration': 4, 'AI Hub connection': 5}
 
 	for title, sub, y in FRAGMENT_SUBS:
 		add(sub_step[title], box(SUB_X, y, SUB_W, SUB_H, title, sub, ' app-dxp'))
 
-	right_step = {'LDP': 4, 'LLM': 6, 'AI Hub': 5}
+	right_step = {'LDP': 3, 'LLM': 6, 'AI Hub': 5}
 
 	for title, sub, y, cls in RIGHT:
 		add(right_step[title], box(RIGHT_X, y, RIGHT_W, SUB_H, title, sub, cls))
@@ -388,11 +388,11 @@ def render_fragment_walkthrough(heading='Diagram Flow'):
 	r_mid = (dx + dw + RIGHT_X) / 2
 
 	add(2, an_arrow(right_edge - 4, mid['Fragments'], left + 4, mid['Fragments'], cls=' app-dxp') + badge(a_mid, mid['Fragments'], 1, ' app-dxp'))
-	add(3, an_arrow(right_edge - 4, mid['Fragment configuration'], left + 4, mid['Fragment configuration'], cls=' app-dxp') + badge(a_mid, mid['Fragment configuration'], 2, ' app-dxp'))
-
 	y3 = mid['LDP proxy']
-	add(4, an_arrow(left + 4, y3, right_edge - 4, y3, both=True, cls=' app-dxp') + badge(a_mid, y3, 3, ' app-ldp')
-		+ an_arrow(sub_end + 4, y3, RIGHT_X - 4, y3, both=True, cls=' app-ldp') + badge(r_mid, y3, 3, ' app-ldp'))
+	add(3, an_arrow(left + 4, y3, right_edge - 4, y3, both=True, cls=' app-dxp') + badge(a_mid, y3, 2, ' app-ldp')
+		+ an_arrow(sub_end + 4, y3, RIGHT_X - 4, y3, both=True, cls=' app-ldp') + badge(r_mid, y3, 2, ' app-ldp'))
+
+	add(4, an_arrow(right_edge - 4, mid['Fragment configuration'], left + 4, mid['Fragment configuration'], cls=' app-dxp') + badge(a_mid, mid['Fragment configuration'], 3, ' app-dxp'))
 
 	y4 = mid['AI Hub connection']
 	add(5, an_arrow(left + 4, y4, right_edge - 4, y4, both=True, cls=' app-dxp') + badge(a_mid, y4, 4, ' app-hub')

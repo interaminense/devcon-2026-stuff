@@ -437,6 +437,13 @@ if FRAGMENT:
 	for kind in ('html', 'css', 'js', 'json'):
 		fragment[4, kind] = (DEMO / 'fragment/devcon-demo/ldp-fragment-card' / f'index.{kind}').read_text().rstrip('\n')
 
+	# A tab a version leaves alone keeps the previous version's code
+
+	for n in (2, 3):
+		for kind in ('html', 'css', 'js', 'json'):
+			if (n, kind) not in fragment and (n - 1, kind) in fragment:
+				fragment[n, kind] = fragment[n - 1, kind]
+
 	TABS = {'css': 'CSS', 'html': 'HTML', 'js': 'JavaScript', 'json': 'Configuration'}
 
 	ORDER = ('html', 'css', 'js', 'json')
@@ -466,17 +473,17 @@ if FRAGMENT:
 	p1.step('sub', 'The first fragment')
 	p1.step('ui', '<p class="step-title"><strong>Create the fragment</strong></p><ol><li>Tab 3: DEVCON Demo &rarr; Design &rarr; <b>Fragments</b>.</li><li><b>+</b> next to Fragment Sets &rarr; name below &rarr; <b>Save</b>.</li><li><b>New</b> &rarr; <b>Basic Fragment</b> &rarr; <b>Next</b> &rarr; name below &rarr; <b>Add</b>.</li></ol>'
 		+ values([v('Fragment set', 'DEVCON Demo'), v('Fragment name', 'LDP Fragment Card')]))
-	for step in fragment_code(1, ('html', 'js')):
+	for step in fragment_code(1, ('html', 'css', 'js')):
 		p1.step(*step)
-	p1.step('ui', '<ol><li>Paste the code above into the <b>HTML</b> and <b>JavaScript</b> tabs &rarr; <b>Publish</b>.</li></ol>')
-	p1.step('ui', '<p class="step-title"><strong>Put it on a page</strong></p><ol><li>Tab 4: DEVCON Demo &rarr; Site Builder &rarr; <b>Pages</b> &rarr; <b>New</b>.</li><li><b>Basic Templates</b> &rarr; <b>Blank</b> &rarr; name below &rarr; <b>Add</b>.</li><li><b>Components</b> panel &rarr; <b>Fragments</b> &rarr; Layout Elements &rarr; drag <b>Grid</b>. Set <b>Number of Modules</b> to 2.</li><li>Search the fragment below &rarr; drag it into the <b>left</b> module &rarr; <b>Publish</b>.</li></ol>'
+	p1.step('ui', '<ol><li>Paste the code above into the <b>HTML</b>, <b>CSS</b> and <b>JavaScript</b> tabs &rarr; <b>Publish</b>.</li></ol>')
+	p1.step('ui', '<p class="step-title"><strong>Put it on a page</strong></p><ol><li>Tab 4: DEVCON Demo &rarr; Site Builder &rarr; <b>Pages</b> &rarr; <b>New</b>.</li><li><b>Basic Templates</b> &rarr; <b>Blank</b> &rarr; name below &rarr; <b>Add</b>.</li><li><b>Components</b> panel &rarr; <b>Fragments</b> &rarr; Layout Elements &rarr; drag <b>Grid</b>. Set <b>Number of Modules</b> to 2.</li><li>Search the fragment below &rarr; drag it into the <b>left</b> module, and again into the <b>right</b> one &rarr; <b>Publish</b>.</li><li>Both cards show the same numbers: neither knows what else to show.</li></ol>'
 		+ values([v('Page name', 'Demo'), v('Fragment search', 'LDP Fragment Card')]))
 
 	p2 = Part('2', 'Configure Each Card with Fragment Configuration', 'Topic 02')
-	for step in fragment_code(2, ('js', 'css', 'json')):
+	for step in fragment_code(2, ('js', 'json')):
 		p2.step(*step)
-	p2.step(*ship_fragment(2, '<b>JavaScript</b>, <b>CSS</b> and <b>Configuration</b> tabs'))
-	p2.step('ui', '<ol><li>Edit the Demo page &rarr; drag a second <b>LDP Fragment Card</b> into the <b>right</b> module.</li><li>With it selected: <b>General</b> &rarr; <b>Metric</b> &rarr; <b>Sessions per visitor</b> &rarr; <b>Publish</b>.</li><li>Reload the page: each card keeps its own metric, saved with the page.</li></ol>')
+	p2.step(*ship_fragment(2, '<b>JavaScript</b> and <b>Configuration</b> tabs'))
+	p2.step('ui', '<ol><li>Edit the Demo page &rarr; select the <b>right</b> card.</li><li><b>General</b> &rarr; <b>Metric</b> &rarr; <b>Sessions per visitor</b>, and <b>Time range</b> &rarr; <b>Last 24 hours</b>. Check the Metric did not change back &rarr; <b>Publish</b>.</li><li>Reload the page: each card keeps its own metric and range, saved with the page.</li></ol>')
 
 	p3 = Part('3', 'Get Data Insights with AI Hub', 'Topic 03')
 	p3.step(*hub[0]).step(*hub[3]).step(*hub[5])
