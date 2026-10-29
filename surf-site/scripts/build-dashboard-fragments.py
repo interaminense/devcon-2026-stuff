@@ -129,14 +129,14 @@ source = sub(source, '''	class LdpMetricCard extends HTMLElement {''', '''	// Th
 		}
 
 		.ai {
-			background: #e8f6f5;
-			border: 1px solid rgba(11, 79, 108, 0.18);
+			background: var(--ldp-title, #0b4f6c);
+			border: 0;
 			border-radius: 6px;
-			color: var(--ldp-title, #0b4f6c);
-			font-weight: 600;
+			color: #fff;
 			cursor: pointer;
 			font: inherit;
 			font-size: 13px;
+			font-weight: 700;
 			isolation: isolate;
 			margin-top: 12px;
 			overflow: hidden;
@@ -154,12 +154,12 @@ source = sub(source, '''	class LdpMetricCard extends HTMLElement {''', '''	// Th
 			opacity: 0.7;
 		}
 
-		/* On hover a glossy liquid swirls inside the button, and a bright
-		   spot follows the pointer */
+		/* On hover a glossy liquid in the DEVCON colors swirls inside the
+		   button, and a bright spot follows the pointer */
 
 		.ai::before {
 			animation: ldp-liquid 2.6s linear infinite paused;
-			background: conic-gradient(from 0deg, #a8e6e1, #d9f7f4, #9fd8ec, #e3f6ff, #a8e6e1);
+			background: conic-gradient(from 0deg, #0b5fff, #00c2fb, #7a3cff, #e500bd, #0b5fff);
 			border-radius: 42% 58% 63% 37% / 41% 44% 56% 59%;
 			content: '';
 			filter: blur(6px);
@@ -171,7 +171,7 @@ source = sub(source, '''	class LdpMetricCard extends HTMLElement {''', '''	// Th
 		}
 
 		.ai::after {
-			background: radial-gradient(circle 38px at var(--x, 50%) var(--y, 50%), rgba(255, 255, 255, 0.8), transparent 70%);
+			background: radial-gradient(circle 38px at var(--x, 50%) var(--y, 50%), rgba(255, 255, 255, 0.45), transparent 70%);
 			content: '';
 			inset: 0;
 			opacity: 0;
@@ -188,7 +188,7 @@ source = sub(source, '''	class LdpMetricCard extends HTMLElement {''', '''	// Th
 		}
 
 		.ai:hover:not(:disabled) {
-			box-shadow: 0 6px 18px rgba(23, 169, 163, 0.3);
+			box-shadow: 0 6px 18px rgba(229, 0, 189, 0.35);
 			transform: translateY(-1px);
 		}
 
