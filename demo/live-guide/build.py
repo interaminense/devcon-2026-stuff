@@ -895,7 +895,7 @@ html {{ scroll-behavior: smooth; }}
 		{'' if SHORT else f'<p class="lede">{LEDE}</p>'}
 	</header>
 
-	{'' if HELPER else BELOW_HERO}
+	{BELOW_HERO}
 
 	{'' if SHORT else OPTIONS}
 
