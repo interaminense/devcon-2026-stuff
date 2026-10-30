@@ -7,9 +7,11 @@ const RANGES = {
 	90: 'Last 90 days',
 };
 
-const RANGE_KEY = RANGES[configuration.range] ? Number(configuration.range) : 7;
-const RANGE_LABEL = RANGES[RANGE_KEY];
-const INTERVAL = RANGE_KEY === 0 ? 'H' : 'D';
+function getRange() {
+	const key = RANGES[configuration.range] ? Number(configuration.range) : 7;
+
+	return {interval: key === 0 ? 'H' : 'D', key, label: RANGES[key]};
+}
 
 const ALERT_URL = '/o/c/insightalerts';
 
@@ -116,7 +118,7 @@ async function queryLDP(body) {
 	const {data, errors} = await api('/o/analytics-rest/v1.0/graphql', {
 		body: JSON.stringify({
 			query: `query ($channelId: String!, $rangeKey: Int) { ${body} }`,
-			variables: {channelId: CHANNEL_ID, rangeKey: RANGE_KEY},
+			variables: {channelId: CHANNEL_ID, rangeKey: getRange().key},
 		}),
 		method: 'POST',
 	});
@@ -130,7 +132,7 @@ async function queryLDP(body) {
 
 async function getMetric(metric) {
 	const data = await queryLDP(`
-		site(channelId: $channelId, interval: "${INTERVAL}", rangeKey: $rangeKey) {
+		site(channelId: $channelId, interval: "${getRange().interval}", rangeKey: $rangeKey) {
 			${metric} {
 				histogram {
 					metrics {
@@ -163,7 +165,7 @@ function notifyMarketingTeam(widget, text) {
 			insight: text,
 			metric: widget.label,
 			page: window.location.pathname,
-			period: RANGE_LABEL,
+			period: getRange().label,
 		}),
 		method: 'POST',
 	});
@@ -233,7 +235,7 @@ async function askAgent(text) {
 }
 
 function describe(widget, result) {
-	const lines = [`metric: ${widget.label}`, `period: ${RANGE_LABEL.toLowerCase()}`];
+	const lines = [`metric: ${widget.label}`, `period: ${getRange().label.toLowerCase()}`];
 
 	if (Array.isArray(result)) {
 		return [
@@ -309,7 +311,7 @@ function formatTrend(result, format) {
 }
 
 function formatDay(key) {
-	if (INTERVAL === 'H') {
+	if (getRange().interval === 'H') {
 		return new Date(`${key}Z`).toLocaleTimeString('en-US', {hour: 'numeric'});
 	}
 
@@ -397,6 +399,40 @@ function renderList(items) {
 	`;
 }
 
+async function showInsight(root, widget, result) {
+	const insight = root.querySelector('.insight');
+	const notify = root.querySelector('.notify');
+
+	insight.innerHTML = '<span class="spinner" aria-hidden="true"></span>Asking AI Hub...';
+	notify.hidden = true;
+
+	try {
+		insight.textContent = await askAgent(describe(widget, result));
+		notify.disabled = false;
+		notify.textContent = '📣 Notify marketing team';
+		notify.hidden = false;
+	}
+	catch (error) {
+		insight.textContent = `AI Hub is not available: ${error.message}`;
+	}
+}
+
+async function shareInsight(root, widget) {
+	const notify = root.querySelector('.notify');
+
+	notify.disabled = true;
+	notify.textContent = 'Notifying...';
+
+	try {
+		await notifyMarketingTeam(widget, root.querySelector('.insight').textContent);
+		notify.textContent = '✓ Marketing team notified';
+	}
+	catch (error) {
+		notify.disabled = false;
+		notify.textContent = `Try again (${error.message})`;
+	}
+}
+
 async function render() {
 	const metric = WIDGETS[configuration.metric] ? configuration.metric : 'visitorsMetric';
 	const widget = WIDGETS[metric];
@@ -405,7 +441,7 @@ async function render() {
 	root.innerHTML = `
 		<div class="head">
 			<strong>${widget.label}</strong>
-			<span class="period">${RANGE_LABEL}</span>
+			<span class="period">${getRange().label}</span>
 		</div>
 		<div class="body"><p class="status">Loading LDP data...</p></div>
 		<button class="ai" hidden type="button">✦ AI insight</button>
@@ -432,39 +468,8 @@ async function render() {
 	const button = root.querySelector('.ai');
 
 	button.hidden = false;
-
-	const notify = root.querySelector('.notify');
-
-	button.addEventListener('click', async () => {
-		const insight = root.querySelector('.insight');
-
-		insight.innerHTML = '<span class="spinner" aria-hidden="true"></span>Asking AI Hub...';
-		notify.hidden = true;
-
-		try {
-			insight.textContent = await askAgent(describe(widget, result));
-			notify.disabled = false;
-			notify.textContent = '📣 Notify marketing team';
-			notify.hidden = false;
-		}
-		catch (error) {
-			insight.textContent = `AI Hub is not available: ${error.message}`;
-		}
-	});
-
-	notify.addEventListener('click', async () => {
-		notify.disabled = true;
-		notify.textContent = 'Notifying...';
-
-		try {
-			await notifyMarketingTeam(widget, root.querySelector('.insight').textContent);
-			notify.textContent = '✓ Marketing team notified';
-		}
-		catch (error) {
-			notify.disabled = false;
-			notify.textContent = `Try again (${error.message})`;
-		}
-	});
+	button.addEventListener('click', () => showInsight(root, widget, result));
+	root.querySelector('.notify').addEventListener('click', () => shareInsight(root, widget));
 }
 
 render();

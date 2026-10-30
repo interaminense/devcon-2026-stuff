@@ -7,9 +7,11 @@ const RANGES = {
 	90: 'Last 90 days',
 };
 
-const RANGE_KEY = RANGES[configuration.range] ? Number(configuration.range) : 7;
-const RANGE_LABEL = RANGES[RANGE_KEY];
-const INTERVAL = RANGE_KEY === 0 ? 'H' : 'D';
+function getRange() {
+	const key = RANGES[configuration.range] ? Number(configuration.range) : 7;
+
+	return {interval: key === 0 ? 'H' : 'D', key, label: RANGES[key]};
+}
 
 const AGENT_ERC = 'DEVCON_2026_DEMO_LDP_METRIC_INSIGHT';
 
@@ -37,7 +39,7 @@ async function api(url, options = {}) {
 async function getMetric(metric) {
 	const query = `
 		query ($channelId: String!, $rangeKey: Int) {
-			site(channelId: $channelId, interval: "${INTERVAL}", rangeKey: $rangeKey) {
+			site(channelId: $channelId, interval: "${getRange().interval}", rangeKey: $rangeKey) {
 				${metric} {
 					histogram {
 						metrics {
@@ -57,7 +59,7 @@ async function getMetric(metric) {
 	const {data} = await api('/o/analytics-rest/v1.0/graphql', {
 		body: JSON.stringify({
 			query,
-			variables: {channelId: CHANNEL_ID, rangeKey: RANGE_KEY},
+			variables: {channelId: CHANNEL_ID, rangeKey: getRange().key},
 		}),
 		method: 'POST',
 	});
@@ -131,7 +133,7 @@ async function askAgent(text) {
 function describe(label, result) {
 	return [
 		`metric: ${label}`,
-		`period: ${RANGE_LABEL.toLowerCase()}`,
+		`period: ${getRange().label.toLowerCase()}`,
 		`value: ${result.value}`,
 		`previous period value: ${result.previousValue}`,
 		`change: ${result.trend?.percentage ?? 'n/a'}%`,
@@ -207,24 +209,7 @@ function formatTrend(result) {
 	return `${arrow} ${Math.abs(percentage).toFixed(1)}% vs previous period (${formatValue(result.previousValue)})`;
 }
 
-const root = fragmentElement.querySelector('.ldp-fragment-card');
-
-root.innerHTML = `
-	<strong>${METRICS[configuration.metric]} · ${RANGE_LABEL}</strong>
-	<div class="value">...</div>
-	<div class="trend">Last 7 days</div>
-	<div class="chart-slot"></div>
-	<button class="ai" type="button">✦ AI insight</button>
-	<p class="insight"></p>
-`;
-
-const result = await getMetric(configuration.metric);
-
-root.querySelector('.value').textContent = formatValue(result.value);
-root.querySelector('.trend').innerHTML = formatTrend(result);
-root.querySelector('.chart-slot').innerHTML = renderChart(result);
-
-root.querySelector('.ai').addEventListener('click', async () => {
+async function showInsight(root, result) {
 	const insight = root.querySelector('.insight');
 
 	insight.innerHTML = '<span class="spinner" aria-hidden="true"></span>Asking AI Hub...';
@@ -237,4 +222,27 @@ root.querySelector('.ai').addEventListener('click', async () => {
 	catch (error) {
 		insight.textContent = `AI Hub is not available: ${error.message}`;
 	}
-});
+}
+
+async function render() {
+	const root = fragmentElement.querySelector('.ldp-fragment-card');
+
+	root.innerHTML = `
+		<strong>${METRICS[configuration.metric]} · ${getRange().label}</strong>
+		<div class="value">...</div>
+		<div class="trend">Last 7 days</div>
+		<div class="chart-slot"></div>
+		<button class="ai" type="button">✦ AI insight</button>
+		<p class="insight"></p>
+	`;
+
+	const result = await getMetric(configuration.metric);
+
+	root.querySelector('.value').textContent = formatValue(result.value);
+	root.querySelector('.trend').innerHTML = formatTrend(result);
+	root.querySelector('.chart-slot').innerHTML = renderChart(result);
+
+	root.querySelector('.ai').addEventListener('click', () => showInsight(root, result));
+}
+
+render();

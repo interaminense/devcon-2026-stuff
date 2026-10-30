@@ -7,9 +7,11 @@ const RANGES = {
 	90: 'Last 90 days',
 };
 
-const RANGE_KEY = RANGES[configuration.range] ? Number(configuration.range) : 7;
-const RANGE_LABEL = RANGES[RANGE_KEY];
-const INTERVAL = RANGE_KEY === 0 ? 'H' : 'D';
+function getRange() {
+	const key = RANGES[configuration.range] ? Number(configuration.range) : 7;
+
+	return {interval: key === 0 ? 'H' : 'D', key, label: RANGES[key]};
+}
 
 const METRICS = {
 	sessionsPerVisitorMetric: 'Sessions per visitor',
@@ -19,7 +21,7 @@ const METRICS = {
 async function getMetric(metric) {
 	const query = `
 		query ($channelId: String!, $rangeKey: Int) {
-			site(channelId: $channelId, interval: "${INTERVAL}", rangeKey: $rangeKey) {
+			site(channelId: $channelId, interval: "${getRange().interval}", rangeKey: $rangeKey) {
 				${metric} {
 					histogram {
 						metrics {
@@ -39,7 +41,7 @@ async function getMetric(metric) {
 	const response = await fetch('/o/analytics-rest/v1.0/graphql', {
 		body: JSON.stringify({
 			query,
-			variables: {channelId: CHANNEL_ID, rangeKey: RANGE_KEY},
+			variables: {channelId: CHANNEL_ID, rangeKey: getRange().key},
 		}),
 		headers: {
 			'Content-Type': 'application/json',
@@ -122,17 +124,21 @@ function formatTrend(result) {
 	return `${arrow} ${Math.abs(percentage).toFixed(1)}% vs previous period (${formatValue(result.previousValue)})`;
 }
 
-const root = fragmentElement.querySelector('.ldp-fragment-card');
+async function render() {
+	const root = fragmentElement.querySelector('.ldp-fragment-card');
 
-root.innerHTML = `
-	<strong>${METRICS[configuration.metric]} · ${RANGE_LABEL}</strong>
-	<div class="value">...</div>
-	<div class="trend">Last 7 days</div>
-	<div class="chart-slot"></div>
-`;
+	root.innerHTML = `
+		<strong>${METRICS[configuration.metric]} · ${getRange().label}</strong>
+		<div class="value">...</div>
+		<div class="trend">Last 7 days</div>
+		<div class="chart-slot"></div>
+	`;
 
-const result = await getMetric(configuration.metric);
+	const result = await getMetric(configuration.metric);
 
-root.querySelector('.value').textContent = formatValue(result.value);
-root.querySelector('.trend').innerHTML = formatTrend(result);
-root.querySelector('.chart-slot').innerHTML = renderChart(result);
+	root.querySelector('.value').textContent = formatValue(result.value);
+	root.querySelector('.trend').innerHTML = formatTrend(result);
+	root.querySelector('.chart-slot').innerHTML = renderChart(result);
+}
+
+render();

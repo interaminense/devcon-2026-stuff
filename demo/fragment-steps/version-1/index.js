@@ -108,17 +108,21 @@ function formatTrend(result) {
 	return `${arrow} ${Math.abs(percentage).toFixed(1)}% vs previous period (${formatValue(result.previousValue)})`;
 }
 
-const root = fragmentElement.querySelector('.ldp-fragment-card');
+async function render() {
+	const root = fragmentElement.querySelector('.ldp-fragment-card');
 
-root.innerHTML = `
-	<strong>Unique visitors</strong>
-	<div class="value">...</div>
-	<div class="trend">Last 7 days</div>
-	<div class="chart-slot"></div>
-`;
+	root.innerHTML = `
+		<strong>Unique visitors</strong>
+		<div class="value">...</div>
+		<div class="trend">Last 7 days</div>
+		<div class="chart-slot"></div>
+	`;
 
-const result = await getMetric('visitorsMetric');
+	const result = await getMetric('visitorsMetric');
 
-root.querySelector('.value').textContent = formatValue(result.value);
-root.querySelector('.trend').innerHTML = formatTrend(result);
-root.querySelector('.chart-slot').innerHTML = renderChart(result);
+	root.querySelector('.value').textContent = formatValue(result.value);
+	root.querySelector('.trend').innerHTML = formatTrend(result);
+	root.querySelector('.chart-slot').innerHTML = renderChart(result);
+}
+
+render();
