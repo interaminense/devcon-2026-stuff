@@ -1,4 +1,3 @@
-// The LDP property (channel) of the Swell Lab site
 const CHANNEL_ID = '845351493326064678';
 
 const RANGES = {
@@ -8,13 +7,10 @@ const RANGES = {
 	90: 'Last 90 days',
 };
 
-// The fragment configuration picks the range of each instance too. LDP
-// leaves today out of the day ranges, and answers the last 24 hours per hour
 const RANGE_KEY = RANGES[configuration.range] ? Number(configuration.range) : 7;
 const RANGE_LABEL = RANGES[RANGE_KEY];
 const INTERVAL = RANGE_KEY === 0 ? 'H' : 'D';
 
-// The AI Hub agent that writes the insight
 const AGENT_ERC = 'DEVCON_2026_DEMO_LDP_METRIC_INSIGHT';
 
 const METRICS = {
@@ -58,8 +54,6 @@ async function getMetric(metric) {
 		}
 	`;
 
-	// The DXP proxies the request to LDP with the user's session: no LDP
-	// token in the browser
 	const {data} = await api('/o/analytics-rest/v1.0/graphql', {
 		body: JSON.stringify({
 			query,
@@ -71,9 +65,6 @@ async function getMetric(metric) {
 	return data.site[metric];
 }
 
-// AI Hub: the DXP issues a token, the browser subscribes to AI Hub's event
-// stream, starts the agent with the stream key, and reads the answer from the
-// event named after the agent
 async function askAgent(text) {
 	const token = await api('/o/ai-hub-cell/v1.0/authorization-tokens', {
 		method: 'POST',
@@ -137,7 +128,6 @@ async function askAgent(text) {
 	}
 }
 
-// Plain text lines: the firewall in front of AI Hub rejects nested JSON
 function describe(label, result) {
 	return [
 		`metric: ${label}`,
@@ -148,7 +138,6 @@ function describe(label, result) {
 	].join('\n');
 }
 
-// Same format as LDP: at most one decimal, truncated, and 1.2K from a thousand
 const NUMBER_FORMAT = new Intl.NumberFormat('en-US', {
 	maximumFractionDigits: 1,
 	notation: 'compact',
@@ -159,9 +148,6 @@ function formatValue(value) {
 	return NUMBER_FORMAT.format(value);
 }
 
-// A smooth line through the points: each segment is a cubic curve whose
-// control points follow the neighboring points, kept between the lowest and
-// the highest value so the line never dips under the chart
 function curve(points) {
 	const ys = points.map(([, y]) => y);
 	const clamp = (y) => Math.min(Math.max(y, Math.min(...ys)), Math.max(...ys));
@@ -181,7 +167,6 @@ function curve(points) {
 		.join(' ');
 }
 
-// A mini line chart of the daily values, colored by the trend
 function renderChart(result) {
 	const values = result.histogram.metrics.map(({value}) => value);
 	const max = Math.max(...values);
@@ -192,7 +177,6 @@ function renderChart(result) {
 	]);
 	const line = curve(points);
 
-	// Each chart needs its own gradient id: a page shows many cards
 	const fade = `ldp-fade-${Math.random().toString(36).slice(2, 8)}`;
 	const percentage = result.trend?.percentage;
 	const direction = percentage > 0 ? 'up' : percentage < 0 ? 'down' : '';
@@ -218,14 +202,11 @@ function formatTrend(result) {
 		return `Previous period: ${formatValue(result.previousValue)}`;
 	}
 
-	// Only the arrow takes the color of the change
 	const arrow = percentage > 0 ? '<span class="up">▲</span>' : percentage < 0 ? '<span class="down">▼</span>' : '';
 
 	return `${arrow} ${Math.abs(percentage).toFixed(1)}% vs previous period (${formatValue(result.previousValue)})`;
 }
 
-// The fragment configuration picks the metric of each instance, in the page
-// editor, and saves it with the page
 const root = fragmentElement.querySelector('.ldp-fragment-card');
 
 root.innerHTML = `
