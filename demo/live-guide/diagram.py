@@ -437,15 +437,15 @@ def render_fragment_walkthrough(heading='Diagram Flow'):
 </section>'''
 
 
-# The notification flow: from the Notify stakeholders click to the bell of
-# everyone in the Stakeholders role who can view the alert
+# The notification flow: from the Notify marketing team click to the bell of
+# everyone in the Marketing Team role who can view the alert
 NOTIFY_WALK = [
-	('Setup', 'The card shows an AI insight and the Notify stakeholders button. Sam, a stakeholder, is signed in on another browser.'),
+	('Setup', 'The card shows an AI insight and the Notify marketing team button. Sam, from the marketing team, is signed in on another browser.'),
 	('Click', 'The card posts the alert to the Object REST API with the user session.'),
 	('Saved', 'DXP stores the alert as an Insight Alert entry: metric, period, insight and page.'),
 	('Trigger', 'The Object Action On After Add fires for the new entry.'),
 	('Template', 'The action runs the notification template, which fills the subject with the entry fields.'),
-	('Recipients', 'The template goes to the Stakeholders role; only users who can view the entry get it.'),
+	('Recipients', 'The template goes to the Marketing Team role; only users who can view the entry get it.'),
 	('Bell', 'Sam\'s bell lights up with the insight.'),
 	('The full picture', 'The card only saves an alert; the Object decides who hears about it.'),
 ]
@@ -455,7 +455,7 @@ NOTIFY_BOXES = [
 	('Insight Alert entry', 'metric · period · insight · page', 150),
 	('Object Action', 'On After Add → Notification', 244),
 	('Notification Template', 'User Notification · [%INSIGHTALERT_…%]', 338),
-	('Role Stakeholders', 'only users who can view the alert', 432),
+	('Role Marketing Team', 'only users who can view the alert', 432),
 ]
 
 
@@ -490,12 +490,12 @@ def render_notification_walkthrough(heading='Notification Flow'):
 		f'<rect class="dg-card-text" x="{cx + 14}" y="{cy + 146}" width="{cw - 50}" height="6" rx="3"/>'
 		f'<rect class="dg-card-text" x="{cx + 14}" y="{cy + 160}" width="{cw - 80}" height="6" rx="3"/>'
 		f'<rect class="dg-box app-dxp" x="{cx + 14}" y="{cy + 196}" width="{cw - 28}" height="36" rx="8"/>'
-		f'<text class="dg-name" x="{cx + cw / 2}" y="{cy + 219}" text-anchor="middle">📣 Notify stakeholders</text>')
-	add(3, f'<text class="dg-card-saved" x="{cx + cw / 2}" y="{cy + 258}" text-anchor="middle">✓ Stakeholders notified</text>')
+		f'<text class="dg-name" x="{cx + cw / 2}" y="{cy + 219}" text-anchor="middle">📣 Notify marketing team</text>')
+	add(3, f'<text class="dg-card-saved" x="{cx + cw / 2}" y="{cy + 258}" text-anchor="middle">✓ Marketing team notified</text>')
 
 	add(1, f'<rect class="dg-box dg-browser" x="{sx}" y="{sy}" width="{sw}" height="{sh}" rx="12"/>'
 		f'<text class="dg-name" x="{sx + 18}" y="{sy + 30}">Sam\'s browser</text>'
-		f'<text class="dg-path" x="{sx + 18}" y="{sy + 52}">Stakeholders role · 2nd window</text>'
+		f'<text class="dg-path" x="{sx + 18}" y="{sy + 52}">Marketing Team role · 2nd window</text>'
 		f'<text class="dg-name" x="{sx + sw - 34}" y="{sy + 34}" text-anchor="middle">🔔</text>')
 
 	mids = {}
@@ -516,7 +516,7 @@ def render_notification_walkthrough(heading='Notification Flow'):
 		add(step, an_arrow(center_x, top + 4, center_x, bottom - 4, cls=' app-dxp')
 			+ badge(center_x + 30, (top + bottom) / 2, step - 1, ' app-dxp'))
 
-	y_role = mids['Role Stakeholders']
+	y_role = mids['Role Marketing Team']
 	y_card = sy + 72 + 75
 	elbow = (box_x + box_w + sx) / 2
 	add(7, f'<path class="dg-line app-hub" d="M{box_x + box_w + 4} {y_role} H{elbow} V{y_card} H{sx + 10}" marker-end="url(#an-a-hub)"/>'
@@ -540,7 +540,7 @@ def render_notification_walkthrough(heading='Notification Flow'):
 
 	body = ''.join(f'<g class="an-g" data-s="{step}">{"".join(groups[step])}</g>' for step in sorted(groups))
 	svg = (
-		'<svg role="img" aria-label="Step-by-step animation of how Notify stakeholders reaches the bell." '
+		'<svg role="img" aria-label="Step-by-step animation of how Notify marketing team reaches the bell." '
 		f'viewBox="0 0 {W} {H}" xmlns="http://www.w3.org/2000/svg">{defs}{body}</svg>'
 	)
 	dots = ''.join(

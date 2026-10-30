@@ -157,7 +157,7 @@ async function getItems(widget) {
 	return widget.toItems(data).sort((a, b) => b.value - a.value);
 }
 
-function notifyStakeholders(widget, text) {
+function notifyMarketingTeam(widget, text) {
 	return api(ALERT_URL, {
 		body: JSON.stringify({
 			insight: text,
@@ -410,7 +410,7 @@ async function render() {
 		<div class="body"><p class="status">Loading LDP data...</p></div>
 		<button class="ai" hidden type="button">✦ AI insight</button>
 		<p class="insight"></p>
-		<button class="notify" hidden type="button">📣 Notify stakeholders</button>
+		<button class="notify" hidden type="button">📣 Notify marketing team</button>
 	`;
 
 	let result;
@@ -444,7 +444,7 @@ async function render() {
 		try {
 			insight.textContent = await askAgent(describe(widget, result));
 			notify.disabled = false;
-			notify.textContent = '📣 Notify stakeholders';
+			notify.textContent = '📣 Notify marketing team';
 			notify.hidden = false;
 		}
 		catch (error) {
@@ -457,8 +457,8 @@ async function render() {
 		notify.textContent = 'Notifying...';
 
 		try {
-			await notifyStakeholders(widget, root.querySelector('.insight').textContent);
-			notify.textContent = '✓ Stakeholders notified';
+			await notifyMarketingTeam(widget, root.querySelector('.insight').textContent);
+			notify.textContent = '✓ Marketing team notified';
 		}
 		catch (error) {
 			notify.disabled = false;
