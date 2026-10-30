@@ -11,6 +11,8 @@ const RANGE_KEY = RANGES[configuration.range] ? Number(configuration.range) : 7;
 const RANGE_LABEL = RANGES[RANGE_KEY];
 const INTERVAL = RANGE_KEY === 0 ? 'H' : 'D';
 
+const ALERT_URL = '/o/c/insightalerts';
+
 const AGENT_ERC = 'DEVCON_2026_DEMO_LDP_METRIC_INSIGHT';
 
 const WIDGETS = {
@@ -153,6 +155,18 @@ async function getItems(widget) {
 	const data = await queryLDP(widget.query);
 
 	return widget.toItems(data).sort((a, b) => b.value - a.value);
+}
+
+function notifyStakeholders(widget, text) {
+	return api(ALERT_URL, {
+		body: JSON.stringify({
+			insight: text,
+			metric: widget.label,
+			page: window.location.pathname,
+			period: RANGE_LABEL,
+		}),
+		method: 'POST',
+	});
 }
 
 async function askAgent(text) {
@@ -396,6 +410,7 @@ async function render() {
 		<div class="body"><p class="status">Loading LDP data...</p></div>
 		<button class="ai" hidden type="button">✦ AI insight</button>
 		<p class="insight"></p>
+		<button class="notify" hidden type="button">📣 Notify stakeholders</button>
 	`;
 
 	let result;
@@ -418,16 +433,36 @@ async function render() {
 
 	button.hidden = false;
 
+	const notify = root.querySelector('.notify');
+
 	button.addEventListener('click', async () => {
 		const insight = root.querySelector('.insight');
 
 		insight.innerHTML = '<span class="spinner" aria-hidden="true"></span>Asking AI Hub...';
+		notify.hidden = true;
 
 		try {
 			insight.textContent = await askAgent(describe(widget, result));
+			notify.disabled = false;
+			notify.textContent = '📣 Notify stakeholders';
+			notify.hidden = false;
 		}
 		catch (error) {
 			insight.textContent = `AI Hub is not available: ${error.message}`;
+		}
+	});
+
+	notify.addEventListener('click', async () => {
+		notify.disabled = true;
+		notify.textContent = 'Notifying...';
+
+		try {
+			await notifyStakeholders(widget, root.querySelector('.insight').textContent);
+			notify.textContent = '✓ Stakeholders notified';
+		}
+		catch (error) {
+			notify.disabled = false;
+			notify.textContent = `Try again (${error.message})`;
 		}
 	});
 }
