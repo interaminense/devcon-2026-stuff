@@ -451,7 +451,7 @@ NOTIFY_WALK = [
 ]
 
 NOTIFY_BOXES = [
-	('REST API', 'POST /o/c/insightalerts', 56),
+	('Object REST API', 'POST /o/c/insightalerts', 56),
 	('Insight Alert entry', 'metric · period · insight · page', 150),
 	('Object Action', 'On After Add → Notification', 244),
 	('Notification Template', 'User Notification · [%INSIGHTALERT_…%]', 338),
@@ -506,8 +506,8 @@ def render_notification_walkthrough(heading='Notification Flow'):
 
 	button_y = cy + 214
 	elbow_x = (bx + bw + box_x) / 2
-	add(2, f'<path class="dg-line app-dxp" d="M{cx + cw + 2} {button_y} H{elbow_x} V{mids["REST API"]} H{box_x - 4}" marker-end="url(#an-a-dxp)"/>'
-		+ badge(elbow_x, (button_y + mids['REST API']) / 2, 1, ' app-dxp'))
+	add(2, f'<path class="dg-line app-dxp" d="M{cx + cw + 2} {button_y} H{elbow_x} V{mids["Object REST API"]} H{box_x - 4}" marker-end="url(#an-a-dxp)"/>'
+		+ badge(elbow_x, (button_y + mids['Object REST API']) / 2, 1, ' app-dxp'))
 
 	center_x = box_x + box_w / 2
 
