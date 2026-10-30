@@ -440,13 +440,13 @@ def render_fragment_walkthrough(heading='Diagram Flow'):
 # The notification flow: from the Notify marketing team click to the bell of
 # everyone in the Marketing Team role who can view the alert
 NOTIFY_WALK = [
-	('Setup', 'The card shows an AI insight and the Notify marketing team button. Sam, from the marketing team, is signed in on another browser.'),
+	('Setup', 'The card shows an AI insight and the Notify marketing team button. Bruna, from the marketing team, is signed in on another browser.'),
 	('Click', 'The card posts the alert to the Object REST API with the user session.'),
 	('Saved', 'DXP stores the alert as an Insight Alert entry: metric, period, insight and page.'),
 	('Trigger', 'The Object Action On After Add fires for the new entry.'),
 	('Template', 'The action runs the notification template, which fills the subject with the entry fields.'),
 	('Recipients', 'The template goes to the Marketing Team role; only users who can view the entry get it.'),
-	('Bell', 'Sam\'s bell lights up with the insight.'),
+	('Bell', 'Bruna\'s bell lights up with the insight.'),
 	('The full picture', 'The card only saves an alert; the Object decides who hears about it.'),
 ]
 
@@ -494,7 +494,7 @@ def render_notification_walkthrough(heading='Notification Flow'):
 	add(3, f'<text class="dg-card-saved" x="{cx + cw / 2}" y="{cy + 258}" text-anchor="middle">✓ Marketing team notified</text>')
 
 	add(1, f'<rect class="dg-box dg-browser" x="{sx}" y="{sy}" width="{sw}" height="{sh}" rx="12"/>'
-		f'<text class="dg-name" x="{sx + 18}" y="{sy + 30}">Sam\'s browser</text>'
+		f'<text class="dg-name" x="{sx + 18}" y="{sy + 30}">Bruna\'s browser</text>'
 		f'<text class="dg-path" x="{sx + 18}" y="{sy + 52}">Marketing Team role · 2nd window</text>'
 		f'<text class="dg-name" x="{sx + sw - 34}" y="{sy + 34}" text-anchor="middle">🔔</text>')
 

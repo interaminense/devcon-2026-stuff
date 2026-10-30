@@ -514,15 +514,15 @@ if FRAGMENT:
 	p5 = Part('5', 'Notify the Marketing Team with Objects and Notifications', 'Topic 05')
 	p5.step('ui', '<p class="step-title"><strong>Store the alerts in an Object</strong></p><ol><li>Control Panel &rarr; Object &rarr; <b>Objects</b> &rarr; folder <b>DEVCON2026</b> &rarr; <b>Insight Alert</b>. It is already published, with the fields below.</li></ol>'
 		+ values([v('Object name', 'InsightAlert'), plain('Fields', '<code>metric</code> Text &middot; <code>period</code> Text &middot; <code>insight</code> Long Text &middot; <code>page</code> Text'), v('REST', '/o/c/insightalerts')]))
-	p5.step('ui', '<p class="step-title"><strong>Pick who is told</strong></p><ol><li>Control Panel &rarr; Users &rarr; <b>Roles</b> &rarr; <b>Marketing Team</b>.</li><li><b>Define Permissions</b> &rarr; search <b>Insight</b>: <b>Insight Alert</b> &rarr; <b>View</b> (a user only gets the notification when they can view the alert), and <b>Control Panel &rarr; Object &rarr; Insight Alerts</b> &rarr; <b>Access in Control Panel</b> (so the notification link opens the alert, read-only).</li><li><b>Assignees</b>: you and Sam Marketing.</li></ol>'
-		+ values([v('Second window user', 'stakeholder@swelllab.example'), v('Password', 'Stakeholder#2026')]))
+	p5.step('ui', '<p class="step-title"><strong>Pick who is told</strong></p><ol><li>Control Panel &rarr; Users &rarr; <b>Roles</b> &rarr; <b>Marketing Team</b>.</li><li><b>Define Permissions</b> &rarr; search <b>Insight</b>: <b>Insight Alert</b> &rarr; <b>View</b> (a user only gets the notification when they can view the alert), and <b>Control Panel &rarr; Object &rarr; Insight Alerts</b> &rarr; <b>Access in Control Panel</b> (so the notification link opens the alert, read-only).</li><li><b>Assignees</b>: you and Bruna Marketing.</li></ol>'
+		+ values([v('Second window user', 'bruna.marketing@liferay.com'), v('Password', 'test')]))
 	p5.step('ui', '<p class="step-title"><strong>Write the notification</strong></p><ol><li>Control Panel &rarr; Notifications &rarr; <b>Templates</b> &rarr; <b>DEVCON 2026 Insight Alert</b>: a <b>User Notification</b> for the role <b>Marketing Team</b>.</li><li>Its subject uses the alert fields as terms.</li></ol>'
 		+ values([v('Subject', 'New LDP insight on [%INSIGHTALERT_METRIC%] ([%INSIGHTALERT_PERIOD%]): [%INSIGHTALERT_INSIGHT%]')]))
 	p5.step('ui', '<p class="step-title"><strong>Send it when an alert is saved</strong></p><ol><li>Objects &rarr; <b>Insight Alert</b> &rarr; <b>Actions</b> &rarr; <b>Notify marketing team</b>.</li><li>Trigger <b>On After Add</b>, action <b>Notification</b>, template <b>DEVCON 2026 Insight Alert</b>. No code: the Object does the sending.</li></ol>')
 	for step in fragment_code(5, ('css', 'js')):
 		p5.step(*step)
 	p5.step(*ship_fragment(5, '<b>JavaScript</b> and <b>CSS</b> tabs'))
-	p5.step('ui', '<ol><li>Open a second, private window and sign in as Sam Marketing.</li><li>In your window: any card &rarr; <b>&#10022; AI insight</b> &rarr; <b>&#128227; Notify marketing team</b>.</li><li>Sam&rsquo;s bell lights up with the insight. The alert also stays in the Object, as the history.</li></ol>')
+	p5.step('ui', '<ol><li>Open a second, private window and sign in as Bruna Marketing.</li><li>In your window: any card &rarr; <b>&#10022; AI insight</b> &rarr; <b>&#128227; Notify marketing team</b>.</li><li>Bruna&rsquo;s bell lights up with the insight. The alert also stays in the Object, as the history.</li></ol>')
 
 	parts = [p1, p2, p3, p4, p5]
 
