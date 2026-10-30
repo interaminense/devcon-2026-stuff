@@ -7,7 +7,7 @@ import sys
 
 sys.path.insert(0, str(pathlib.Path(__file__).parent))
 
-from diagram import render as render_diagram, render_fragment_walkthrough, render_walkthrough
+from diagram import render as render_diagram, render_fragment_walkthrough, render_notification_walkthrough, render_walkthrough
 
 DEMO = pathlib.Path.home() / 'dev/projects/devcon-2026/devcon-2026-stuff/demo'
 FRAGMENT = 'fragment' in sys.argv[1:]
@@ -562,9 +562,15 @@ DIAGRAM_MODAL = f'''<dialog class="diagram-modal" id="diagram-modal" aria-label=
 		{render_diagram()}
 	</dialog>'''
 
+NOTIFY_MODAL = f'''<dialog class="diagram-modal" id="notify-modal" aria-label="Notification Flow" data-walk-modal>
+		<button class="close-diagram" type="button" aria-label="Close">&times;</button>
+		{render_notification_walkthrough()}
+	</dialog>'''
+
 BELOW_HERO = '''	<div class="below-hero">
 		''' + ('' if SHORT else '<button class="show-diagram" id="open-diagram" type="button">Diagram Flow</button>') + '''
 		<button class="show-diagram" id="open-walk" type="button">''' + ('Diagram Flow' if SHORT else 'Animated Walkthrough') + '''</button>
+		''' + ('<button class="show-diagram" data-open-walk="notify-modal" type="button">Notification Flow</button>' if FRAGMENT else '') + '''
 	</div>
 '''
 
@@ -717,7 +723,7 @@ h1 {{ font: 700 clamp(34px, 6vw, 54px)/1.05 var(--display); letter-spacing: -0.0
 .to-agenda:hover {{ border-color: var(--accent); }}
 .below-hero {{ display: flex; flex-wrap: wrap; gap: 12px; padding-block: 28px; }}
 .dg-card-saved {{ fill: var(--check); font: 600 11px var(--mono); }}
-#walk-modal[open] {{ display: flex; flex-direction: column; overflow: hidden; }}
+#walk-modal[open], #notify-modal[open] {{ display: flex; flex-direction: column; overflow: hidden; }}
 .walk {{ flex: 1; grid-template-rows: auto minmax(0, 1fr) auto; min-height: 0; }}
 .walk .diagram-scroll {{ display: flex; justify-content: center; min-height: 0; overflow: hidden; }}
 .walk .diagram-scroll svg {{ height: 100%; max-width: 100%; min-width: 0; width: auto; }}
@@ -897,6 +903,8 @@ html {{ scroll-behavior: smooth; }}
 
 	{'' if SHORT else DIAGRAM_MODAL}
 
+	{NOTIFY_MODAL if FRAGMENT else ''}
+
 	<dialog class="diagram-modal" id="walk-modal" aria-label="{'Diagram Flow' if SHORT else 'Animated Walkthrough'}">
 		<button class="close-diagram" id="close-walk" type="button" aria-label="Close">&times;</button>
 		{render_fragment_walkthrough() if FRAGMENT else render_walkthrough('Diagram Flow', play=False, captions=False) if SHORT else render_walkthrough()}
@@ -925,6 +933,62 @@ html {{ scroll-behavior: smooth; }}
 		get(key) {{ try {{ return localStorage.getItem(key); }} catch {{ return null; }} }},
 		set(key, value) {{ try {{ value === null ? localStorage.removeItem(key) : localStorage.setItem(key, value); }} catch {{}} }},
 	}};
+
+	// Other step-by-step diagrams: same controls as the Diagram Flow
+	for (const modal of document.querySelectorAll('[data-walk-modal]')) {{
+		const walk = modal.querySelector('.walk');
+		const steps = Number(walk.dataset.steps);
+		const groups = [...walk.querySelectorAll('.an-g')];
+		const dots = [...walk.querySelectorAll('.walk-dot')];
+		let current = 1;
+
+		const show = (step) => {{
+			current = Math.min(Math.max(step, 1), steps);
+			const last = current === steps;
+
+			for (const group of groups) {{
+				const s = Number(group.dataset.s);
+
+				group.classList.toggle('is-hidden', s > current);
+				group.classList.toggle('is-now', !last && s === current);
+				group.classList.toggle('is-past', !last && s < current);
+			}}
+
+			for (const dot of dots) {{
+				const s = Number(dot.dataset.step);
+
+				dot.classList.toggle('is-now', s === current);
+				dot.classList.toggle('is-done', s < current);
+			}}
+		}};
+
+		document.querySelector(`[data-open-walk="${{modal.id}}"]`)?.addEventListener('click', () => {{
+			modal.showModal();
+			show(1);
+		}});
+		modal.querySelector('.close-diagram').addEventListener('click', () => modal.close());
+		modal.addEventListener('click', (event) => {{
+			if (event.target === modal) {{
+				modal.close();
+			}}
+		}});
+		modal.addEventListener('keydown', (event) => {{
+			if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {{
+				event.preventDefault();
+				show(current + (event.key === 'ArrowRight' ? 1 : -1));
+			}}
+		}});
+
+		for (const button of walk.querySelectorAll('[data-walk-move]')) {{
+			button.addEventListener('click', () => show(current + Number(button.dataset.walkMove)));
+		}}
+
+		for (const dot of dots) {{
+			dot.addEventListener('click', () => show(Number(dot.dataset.step)));
+		}}
+
+		show(1);
+	}}
 
 	// Code tabs: one panel per fragment editor tab
 	document.addEventListener('click', (event) => {{

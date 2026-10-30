@@ -435,3 +435,129 @@ def render_fragment_walkthrough(heading='Diagram Flow'):
 		</div>
 	</div>
 </section>'''
+
+
+# The notification flow: from the Notify stakeholders click to the bell of
+# everyone in the Stakeholders role who can view the alert
+NOTIFY_WALK = [
+	('Setup', 'The card shows an AI insight and the Notify stakeholders button. Sam, a stakeholder, is signed in on another browser.'),
+	('Click', 'The card posts the alert to the Object REST API with the user session.'),
+	('Saved', 'DXP stores the alert as an Insight Alert entry: metric, period, insight and page.'),
+	('Trigger', 'The Object Action On After Add fires for the new entry.'),
+	('Template', 'The action runs the notification template, which fills the subject with the entry fields.'),
+	('Recipients', 'The template goes to the Stakeholders role; only users who can view the entry get it.'),
+	('Bell', 'Sam\'s bell lights up with the insight.'),
+	('The full picture', 'The card only saves an alert; the Object decides who hears about it.'),
+]
+
+NOTIFY_BOXES = [
+	('REST API', 'POST /o/c/insightalerts', 56),
+	('Insight Alert entry', 'metric · period · insight · page', 150),
+	('Object Action', 'On After Add → Notification', 244),
+	('Notification Template', 'User Notification · [%INSIGHTALERT_…%]', 338),
+	('Role Stakeholders', 'only users who can view the alert', 432),
+]
+
+
+def render_notification_walkthrough(heading='Notification Flow'):
+	groups = {}
+
+	def add(step, markup):
+		groups.setdefault(step, []).append(markup)
+
+	def an_arrow(*args, **kwargs):
+		return arrow(*args, prefix='an-a', **kwargs)
+
+	bx, by, bw, bh = 30, 40, 250, 470
+	dx, dy, dw, dh = 330, 16, 470, 560
+	sx, sy, sw, sh = 870, 40, 250, 470
+	box_x, box_w = dx + 25, dw - 50
+
+	add(1, f'<rect class="dg-group app-dxp" x="{dx}" y="{dy}" width="{dw}" height="{dh}" rx="14"/>'
+		f'<text class="dg-group-name app-dxp" x="{dx + 25}" y="{dy + 30}">DXP</text>')
+
+	add(1, f'<rect class="dg-box dg-browser" x="{bx}" y="{by}" width="{bw}" height="{bh}" rx="12"/>'
+		f'<text class="dg-name" x="{bx + 18}" y="{by + 30}">Your browser</text>'
+		f'<text class="dg-path" x="{bx + 18}" y="{by + 52}">Demo page · LDP Fragment Card</text>')
+
+	cx, cy, cw, ch = bx + 14, by + 72, bw - 28, 300
+	add(1, f'<rect class="dg-card" x="{cx}" y="{cy}" width="{cw}" height="{ch}" rx="8"/>'
+		f'<text class="dg-card-label" x="{cx + 14}" y="{cy + 24}">Unique visitors</text>'
+		f'<text class="dg-card-value" x="{cx + 14}" y="{cy + 58}">19</text>'
+		f'<text class="dg-card-trend dg-down" x="{cx + 14}" y="{cy + 80}">▼ 66.1%</text>'
+		f'<text class="dg-card-ai" x="{cx + 14}" y="{cy + 118}">✦ AI insight</text>'
+		f'<rect class="dg-card-text" x="{cx + 14}" y="{cy + 132}" width="{cw - 28}" height="6" rx="3"/>'
+		f'<rect class="dg-card-text" x="{cx + 14}" y="{cy + 146}" width="{cw - 50}" height="6" rx="3"/>'
+		f'<rect class="dg-card-text" x="{cx + 14}" y="{cy + 160}" width="{cw - 80}" height="6" rx="3"/>'
+		f'<rect class="dg-box app-dxp" x="{cx + 14}" y="{cy + 196}" width="{cw - 28}" height="36" rx="8"/>'
+		f'<text class="dg-name" x="{cx + cw / 2}" y="{cy + 219}" text-anchor="middle">📣 Notify stakeholders</text>')
+	add(3, f'<text class="dg-card-saved" x="{cx + cw / 2}" y="{cy + 258}" text-anchor="middle">✓ Stakeholders notified</text>')
+
+	add(1, f'<rect class="dg-box dg-browser" x="{sx}" y="{sy}" width="{sw}" height="{sh}" rx="12"/>'
+		f'<text class="dg-name" x="{sx + 18}" y="{sy + 30}">Sam\'s browser</text>'
+		f'<text class="dg-path" x="{sx + 18}" y="{sy + 52}">Stakeholders role · 2nd window</text>'
+		f'<text class="dg-name" x="{sx + sw - 34}" y="{sy + 34}" text-anchor="middle">🔔</text>')
+
+	mids = {}
+
+	for step, (title, sub, y) in enumerate(NOTIFY_BOXES, 2):
+		add(step, box(box_x, y, box_w, SUB_H, title, sub, ' app-dxp'))
+		mids[title] = y + SUB_H / 2
+
+	button_y = cy + 214
+	elbow_x = (bx + bw + box_x) / 2
+	add(2, f'<path class="dg-line app-dxp" d="M{cx + cw + 2} {button_y} H{elbow_x} V{mids["REST API"]} H{box_x - 4}" marker-end="url(#an-a-dxp)"/>'
+		+ badge(elbow_x, (button_y + mids['REST API']) / 2, 1, ' app-dxp'))
+
+	center_x = box_x + box_w / 2
+
+	for step, (upper, lower) in enumerate(zip(NOTIFY_BOXES, NOTIFY_BOXES[1:]), 3):
+		top, bottom = upper[2] + SUB_H, lower[2]
+		add(step, an_arrow(center_x, top + 4, center_x, bottom - 4, cls=' app-dxp')
+			+ badge(center_x + 30, (top + bottom) / 2, step - 1, ' app-dxp'))
+
+	y_role = mids['Role Stakeholders']
+	y_card = sy + 72 + 75
+	elbow = (box_x + box_w + sx) / 2
+	add(7, f'<path class="dg-line app-hub" d="M{box_x + box_w + 4} {y_role} H{elbow} V{y_card} H{sx + 10}" marker-end="url(#an-a-hub)"/>'
+		+ badge(elbow, (y_role + y_card) / 2, 6, ' app-hub')
+		+ f'<circle class="dg-badge app-hub" cx="{sx + sw - 22}" cy="{sy + 20}" r="10"/>'
+		f'<text class="dg-badge-n" x="{sx + sw - 22}" y="{sy + 24}" text-anchor="middle">1</text>')
+
+	nx, ny, nw = sx + 14, sy + 72, sw - 28
+	add(7, f'<rect class="dg-card" x="{nx}" y="{ny}" width="{nw}" height="150" rx="8"/>'
+		f'<text class="dg-card-ai" x="{nx + 14}" y="{ny + 24}">New LDP insight</text>'
+		f'<text class="dg-card-label" x="{nx + 14}" y="{ny + 46}">Unique visitors (Last 7 days)</text>'
+		f'<rect class="dg-card-text" x="{nx + 14}" y="{ny + 66}" width="{nw - 28}" height="6" rx="3"/>'
+		f'<rect class="dg-card-text" x="{nx + 14}" y="{ny + 80}" width="{nw - 44}" height="6" rx="3"/>'
+		f'<rect class="dg-card-text" x="{nx + 14}" y="{ny + 94}" width="{nw - 70}" height="6" rx="3"/>'
+		f'<text class="dg-card-saved" x="{nx + nw - 14}" y="{ny + 130}" text-anchor="end">just now</text>')
+
+	defs = '<defs>' + ''.join(
+		f'<marker id="an-a-{app}" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="dg-head app-{app}" d="M0 0 L10 5 L0 10 z"/></marker>'
+		for app in ('dxp', 'hub')
+	) + '</defs>'
+
+	body = ''.join(f'<g class="an-g" data-s="{step}">{"".join(groups[step])}</g>' for step in sorted(groups))
+	svg = (
+		'<svg role="img" aria-label="Step-by-step animation of how Notify stakeholders reaches the bell." '
+		f'viewBox="0 0 {W} {H}" xmlns="http://www.w3.org/2000/svg">{defs}{body}</svg>'
+	)
+	dots = ''.join(
+		f'<button class="walk-dot" type="button" data-step="{i}" aria-label="Step {i}: {e(title)}">{i if i < len(NOTIFY_WALK) else "✓"}</button>'
+		for i, (title, _) in enumerate(NOTIFY_WALK, 1)
+	)
+
+	return f'''
+<section class="diagram walk" data-steps="{len(NOTIFY_WALK)}">
+	<h2 class="agenda-title">{heading}</h2>
+	<div class="diagram-scroll">{svg}</div>
+	<div class="walk-bar">
+		<div class="walk-captions" aria-live="polite"></div>
+		<div class="walk-controls">
+			<button class="walk-btn" data-walk-move="-1" type="button" aria-label="Previous step">&lsaquo;</button>
+			<button class="walk-btn" data-walk-move="1" type="button" aria-label="Next step">&rsaquo;</button>
+			<div class="walk-dots">{dots}</div>
+		</div>
+	</div>
+</section>'''
