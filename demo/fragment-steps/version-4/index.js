@@ -13,87 +13,13 @@ function getRange() {
 	return {interval: key === 0 ? 'H' : 'D', key, label: RANGES[key]};
 }
 
+const ALERT_URL = '/o/c/insightalerts';
+
 const AGENT_ERC = 'DEVCON_2026_DEMO_LDP_METRIC_INSIGHT';
 
-const WIDGETS = {
-	visitorsMetric: {group: 'Site', label: 'Unique visitors'},
-	sessionsMetric: {group: 'Site', label: 'Sessions'},
-	sessionsPerVisitorMetric: {group: 'Site', label: 'Sessions per visitor'},
-	sessionDurationMetric: {
-		format: 'duration',
-		group: 'Site',
-		label: 'Session duration',
-	},
-	bounceRateMetric: {format: 'percent', group: 'Site', label: 'Bounce rate'},
-	topPages: {
-		group: 'Lists',
-		label: 'Top pages by views',
-		query: `
-			pages(
-				channelId: $channelId
-				rangeKey: $rangeKey
-				size: 5
-				sort: {column: "viewsMetric", type: DESC}
-				start: 0
-			) {
-				assetMetrics {
-					... on PageMetric {
-						assetTitle
-						viewsMetric {
-							value
-						}
-					}
-				}
-			}
-		`,
-		toItems: (data) =>
-			data.pages.assetMetrics.map((page) => ({
-				label: page.assetTitle.split(' - ')[0],
-				value: page.viewsMetric.value,
-			})),
-	},
-	acquisitionChannel: {
-		group: 'Lists',
-		label: 'Acquisition by channel',
-		query: `
-			acquisitions(
-				acquisitionType: CHANNEL
-				channelId: $channelId
-				rangeKey: $rangeKey
-				size: 5
-				start: 0
-			) {
-				compositions {
-					count
-					name
-				}
-			}
-		`,
-		toItems: (data) =>
-			data.acquisitions.compositions.map(({count, name}) => ({
-				label: name,
-				value: count,
-			})),
-	},
-	visitorsByDevice: {
-		group: 'Lists',
-		label: 'Visitors by device',
-		query: `
-			site(channelId: $channelId, rangeKey: $rangeKey) {
-				visitorsMetric {
-					device {
-						value
-						valueKey
-					}
-				}
-			}
-		`,
-		toItems: (data) =>
-			data.site.visitorsMetric.device.map(({value, valueKey}) => ({
-				label: valueKey,
-				value,
-			})),
-	},
+const METRICS = {
+	sessionsPerVisitorMetric: 'Sessions per visitor',
+	visitorsMetric: 'Unique visitors',
 };
 
 async function api(url, options = {}) {
@@ -112,49 +38,35 @@ async function api(url, options = {}) {
 	return response.json();
 }
 
-async function queryLDP(body) {
-	const {data, errors} = await api('/o/analytics-rest/v1.0/graphql', {
+async function getMetric(metric) {
+	const query = `
+		query ($channelId: String!, $rangeKey: Int) {
+			site(channelId: $channelId, interval: "${getRange().interval}", rangeKey: $rangeKey) {
+				${metric} {
+					histogram {
+						metrics {
+							value
+						}
+					}
+					previousValue
+					trend {
+						percentage
+					}
+					value
+				}
+			}
+		}
+	`;
+
+	const {data} = await api('/o/analytics-rest/v1.0/graphql', {
 		body: JSON.stringify({
-			query: `query ($channelId: String!, $rangeKey: Int) { ${body} }`,
+			query,
 			variables: {channelId: CHANNEL_ID, rangeKey: getRange().key},
 		}),
 		method: 'POST',
 	});
 
-	if (errors) {
-		throw new Error(errors[0].message);
-	}
-
-	return data;
-}
-
-async function getMetric(metric) {
-	const data = await queryLDP(`
-		site(channelId: $channelId, interval: "${getRange().interval}", rangeKey: $rangeKey) {
-			${metric} {
-				histogram {
-					metrics {
-						key
-						value
-					}
-				}
-				previousValue
-				trend {
-					percentage
-					trendClassification
-				}
-				value
-			}
-		}
-	`);
-
 	return data.site[metric];
-}
-
-async function getItems(widget) {
-	const data = await queryLDP(widget.query);
-
-	return widget.toItems(data).sort((a, b) => b.value - a.value);
 }
 
 async function askAgent(text) {
@@ -220,20 +132,24 @@ async function askAgent(text) {
 	}
 }
 
-function describe(widget, result) {
-	const lines = [`metric: ${widget.label}`, `period: ${getRange().label.toLowerCase()}`];
+function notifyMarketingTeam(label, text) {
+	return api(ALERT_URL, {
+		body: JSON.stringify({
+			insight: text,
+			metric: label,
+			page: window.location.pathname,
+			period: getRange().label,
+		}),
+		method: 'POST',
+	});
+}
 
-	if (Array.isArray(result)) {
-		return [
-			...lines,
-			...result.map(({label, value}) => `${label}: ${value}`),
-		].join('\n');
-	}
-
+function describe(label, result) {
 	return [
-		...lines,
-		`value: ${formatValue(result.value, widget.format)}`,
-		`previous period value: ${formatValue(result.previousValue, widget.format)}`,
+		`metric: ${label}`,
+		`period: ${getRange().label.toLowerCase()}`,
+		`value: ${result.value}`,
+		`previous period value: ${result.previousValue}`,
 		`change: ${result.trend?.percentage ?? 'n/a'}%`,
 	].join('\n');
 }
@@ -244,68 +160,8 @@ const NUMBER_FORMAT = new Intl.NumberFormat('en-US', {
 	roundingMode: 'trunc',
 });
 
-function formatValue(value, format) {
-	if (value === null || value === undefined) {
-		return '-';
-	}
-
-	if (format === 'percent') {
-		return `${NUMBER_FORMAT.format(value * 100)}%`;
-	}
-
-	if (format === 'duration') {
-		const minutes = Math.floor(value / 60000);
-		const seconds = Math.floor((value % 60000) / 1000);
-
-		return minutes ? `${minutes}m ${seconds}s` : `${seconds}s`;
-	}
-
+function formatValue(value) {
 	return NUMBER_FORMAT.format(value);
-}
-
-function escape(text) {
-	const element = document.createElement('span');
-
-	element.textContent = text;
-
-	return element.innerHTML;
-}
-
-function getDirection(result) {
-	const classification = result.trend?.trendClassification;
-
-	return classification === 'POSITIVE'
-		? 'up'
-		: classification === 'NEGATIVE'
-			? 'down'
-			: '';
-}
-
-function formatTrend(result, format) {
-	const percentage = result.trend?.percentage;
-	const previous = formatValue(result.previousValue, format);
-
-	if (percentage === null || percentage === undefined) {
-		return `Previous period: ${previous}`;
-	}
-
-	const direction = getDirection(result);
-	const arrow = percentage > 0 ? '▲' : percentage < 0 ? '▼' : '';
-	const coloredArrow = arrow ? `<span class="${direction}">${arrow}</span>` : '';
-
-	return `${coloredArrow} ${Math.abs(percentage).toFixed(1)}% vs previous period (${previous})`;
-}
-
-function formatDay(key) {
-	if (getRange().interval === 'H') {
-		return new Date(`${key}Z`).toLocaleTimeString('en-US', {hour: 'numeric'});
-	}
-
-	return new Date(`${key}Z`).toLocaleDateString('en-US', {
-		day: 'numeric',
-		month: 'short',
-		timeZone: 'UTC',
-	});
 }
 
 function curve(points) {
@@ -327,23 +183,21 @@ function curve(points) {
 		.join(' ');
 }
 
-function renderSeries(result, format) {
-	const days = result.histogram.metrics;
-	const values = days.map(({value}) => value);
+function renderChart(result) {
+	const values = result.histogram.metrics.map(({value}) => value);
 	const max = Math.max(...values);
 	const min = Math.min(...values);
 	const points = values.map((value, index) => [
 		(index / (values.length - 1)) * 100,
-		30 - ((value - min) / (max - min || 1)) * 26,
+		28 - ((value - min) / (max - min || 1)) * 24,
 	]);
 	const line = curve(points);
 
 	const fade = `ldp-fade-${Math.random().toString(36).slice(2, 8)}`;
-	const direction = getDirection(result);
+	const percentage = result.trend?.percentage;
+	const direction = percentage > 0 ? 'up' : percentage < 0 ? 'down' : '';
 
 	return `
-		<div class="value">${formatValue(result.value, format)}</div>
-		<div class="trend">${formatTrend(result, format)}</div>
 		<svg class="chart ${direction}" preserveAspectRatio="none" viewBox="0 0 100 32">
 			<defs>
 				<linearGradient id="${fade}" x1="0" x2="0" y1="0" y2="1">
@@ -354,78 +208,73 @@ function renderSeries(result, format) {
 			<path d="${line} L100,32 L0,32 Z" fill="url(#${fade})"/>
 			<path class="line" d="${line}"/>
 		</svg>
-		<div class="axis">
-			<span>${formatDay(days[0].key)}</span>
-			<span>${formatDay(days[days.length - 1].key)}</span>
-		</div>
 	`;
 }
 
-function renderList(items) {
-	if (!items.length) {
-		return '<p class="status">No data for this period.</p>';
+function formatTrend(result) {
+	const percentage = result.trend?.percentage;
+
+	if (percentage === null || percentage === undefined) {
+		return `Previous period: ${formatValue(result.previousValue)}`;
 	}
 
-	const max = items[0].value || 1;
+	const arrow = percentage > 0 ? '<span class="up">▲</span>' : percentage < 0 ? '<span class="down">▼</span>' : '';
 
-	return `
-		<ol class="list">
-			${items
-				.map(
-					({label, value}) => `
-						<li>
-							<span class="name" title="${escape(label)}">${escape(label)}</span>
-							<span class="bar"><span style="width: ${(value / max) * 100}%"></span></span>
-							<span class="count">${formatValue(value)}</span>
-						</li>
-					`
-				)
-				.join('')}
-		</ol>
-	`;
+	return `${arrow} ${Math.abs(percentage).toFixed(1)}% vs previous period (${formatValue(result.previousValue)})`;
 }
 
-async function showInsight(root, widget, result) {
+async function showInsight(root, result) {
 	const insight = root.querySelector('.insight');
+	const notify = root.querySelector('.notify');
 
 	insight.innerHTML = '<span class="spinner" aria-hidden="true"></span>Asking AI Hub...';
+	notify.hidden = true;
 
 	try {
-		insight.textContent = await askAgent(describe(widget, result));
+		insight.textContent = await askAgent(
+			describe(METRICS[configuration.metric], result)
+		);
+		notify.disabled = false;
+		notify.textContent = '📣 Notify marketing team';
+		notify.hidden = false;
 	}
 	catch (error) {
 		insight.textContent = `AI Hub is not available: ${error.message}`;
 	}
 }
 
-async function render() {
-	const metric = WIDGETS[configuration.metric] ? configuration.metric : 'visitorsMetric';
-	const widget = WIDGETS[metric];
-	const root = fragmentElement.querySelector('.ldp-fragment-card');
+async function shareInsight(root) {
+	const notify = root.querySelector('.notify');
 
-	root.querySelector('.card-title').textContent = widget.label;
-	root.querySelector('.period').textContent = getRange().label;
-
-	let result;
+	notify.disabled = true;
+	notify.textContent = 'Notifying...';
 
 	try {
-		result = widget.query ? await getItems(widget) : await getMetric(metric);
+		await notifyMarketingTeam(
+			METRICS[configuration.metric],
+			root.querySelector('.insight').textContent
+		);
+		notify.textContent = '✓ Marketing team notified';
 	}
 	catch (error) {
-		root.querySelector('.body').innerHTML =
-			`<p class="status">Unable to load LDP data: ${escape(error.message)}</p>`;
-
-		return;
+		notify.disabled = false;
+		notify.textContent = `Try again (${error.message})`;
 	}
+}
 
-	root.querySelector('.body').innerHTML = widget.query
-		? renderList(result)
-		: renderSeries(result, widget.format);
+async function render() {
+	const root = fragmentElement.querySelector('.ldp-fragment-card');
 
-	const button = root.querySelector('.ai');
+	root.querySelector('.card-title').textContent = `${METRICS[configuration.metric]} · ${getRange().label}`;
 
-	button.hidden = false;
-	button.addEventListener('click', () => showInsight(root, widget, result));
+	const result = await getMetric(configuration.metric);
+
+	root.querySelector('.value').textContent = formatValue(result.value);
+	root.querySelector('.trend').innerHTML = formatTrend(result);
+	root.querySelector('.chart-slot').innerHTML = renderChart(result);
+
+	root.querySelector('.ai').addEventListener('click', () => showInsight(root, result));
+	root.querySelector('.notify').addEventListener('click', () => shareInsight(root));
 }
 
 render();
