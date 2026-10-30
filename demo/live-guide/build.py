@@ -522,7 +522,8 @@ if FRAGMENT:
 	for step in fragment_code(5, ('css', 'js')):
 		p5.step(*step)
 	p5.step(*ship_fragment(5, '<b>JavaScript</b> and <b>CSS</b> tabs'))
-	p5.step('ui', '<ol><li>Open a second, private window and sign in as Bruna Marketing.</li><li>In your window: any card &rarr; <b>&#10022; AI insight</b> &rarr; <b>&#128227; Notify marketing team</b>.</li><li>Bruna&rsquo;s bell lights up with the insight. The alert also stays in the Object, as the history.</li></ol>')
+	p5.step('ui', '<ol><li>Open a second window with the link below: it impersonates Bruna Marketing. Or sign in as her in a private window, with the user in <b>Pick who is told</b>.</li><li>In your window: any card &rarr; <b>&#10022; AI insight</b> &rarr; <b>&#128227; Notify marketing team</b>.</li><li>Bruna&rsquo;s bell lights up with the insight. The alert also stays in the Object, as the history.</li></ol>'
+		+ values([v('Impersonate Bruna', 'https://webserver-lctacdemodevcon-prd.lfr.cloud/web/devcon-demo/home?doAsUserId=b8236dcd1996e0bc7e23d850928d6a5ef0')]))
 
 	parts = [p1, p2, p3, p4, p5]
 
