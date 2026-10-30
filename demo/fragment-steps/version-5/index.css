@@ -1,0 +1,121 @@
+.ldp-fragment-card {
+	background: var(--white);
+	border: 1px solid var(--gray-300);
+	border-radius: var(--border-radius-lg);
+	box-shadow: var(--box-shadow-sm);
+	color: var(--body-color);
+	display: block;
+	font-family: var(--font-family-base);
+	padding: var(--spacer-4);
+}
+
+.ldp-fragment-card .value {
+	color: var(--dark);
+	font-size: 2.5rem;
+	font-weight: 600;
+	margin: var(--spacer-3) 0 var(--spacer-1);
+}
+
+.ldp-fragment-card .trend {
+	color: var(--secondary);
+	font-size: var(--font-size-sm);
+}
+
+.ldp-fragment-card .chart {
+	display: block;
+	height: 48px;
+	margin-top: var(--spacer-3);
+	width: 100%;
+}
+
+.ldp-fragment-card .chart .line {
+	fill: none;
+	stroke: currentColor;
+	stroke-linejoin: round;
+	stroke-width: 2;
+	vector-effect: non-scaling-stroke;
+}
+
+.ldp-fragment-card .up {
+	color: var(--success);
+}
+
+.ldp-fragment-card .down {
+	color: var(--danger);
+}
+
+.ldp-fragment-card .ai {
+	background: var(--primary);
+	border: 0;
+	border-radius: var(--border-radius);
+	color: var(--white);
+	cursor: pointer;
+	font: inherit;
+	font-size: var(--font-size-sm);
+	margin-top: var(--spacer-3);
+	padding: var(--spacer-1) var(--spacer-3);
+}
+
+.ldp-fragment-card .ai:hover {
+	background: var(--primary-d1);
+}
+
+.ldp-fragment-card .spinner {
+	animation: ldp-fragment-spin 0.8s linear infinite;
+	border: 2px solid currentColor;
+	border-radius: 50%;
+	border-right-color: transparent;
+	box-sizing: border-box;
+	display: inline-block;
+	height: 0.9em;
+	margin-right: 6px;
+	vertical-align: -0.1em;
+	width: 0.9em;
+}
+
+@keyframes ldp-fragment-spin {
+	to {
+		transform: rotate(360deg);
+	}
+}
+
+.ldp-fragment-card .notify {
+	background: var(--white);
+	border: 1px solid var(--primary);
+	border-radius: var(--border-radius);
+	color: var(--primary);
+	cursor: pointer;
+	display: block;
+	font: inherit;
+	font-size: var(--font-size-sm);
+	margin-top: var(--spacer-2);
+	padding: var(--spacer-1) var(--spacer-3);
+}
+
+.ldp-fragment-card .notify[hidden] {
+	display: none;
+}
+
+.ldp-fragment-card .notify:hover:not(:disabled) {
+	background: var(--primary-l3);
+}
+
+.ldp-fragment-card .notify:disabled {
+	cursor: default;
+	opacity: 0.8;
+}
+
+.ldp-fragment-card .insight {
+	background: var(--primary-l3);
+	border-left: 3px solid var(--primary);
+	border-radius: var(--border-radius);
+	color: var(--body-color);
+	font-size: var(--font-size-sm);
+	line-height: 1.5;
+	margin: var(--spacer-3) 0 0;
+	padding: var(--spacer-2) var(--spacer-3);
+}
+
+.ldp-fragment-card .insight:empty {
+	display: none;
+}

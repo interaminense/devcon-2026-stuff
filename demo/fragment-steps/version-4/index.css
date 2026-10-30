@@ -79,32 +79,6 @@
 	}
 }
 
-.ldp-fragment-card .notify {
-	background: var(--white);
-	border: 1px solid var(--primary);
-	border-radius: var(--border-radius);
-	color: var(--primary);
-	cursor: pointer;
-	display: block;
-	font: inherit;
-	font-size: var(--font-size-sm);
-	margin-top: var(--spacer-2);
-	padding: var(--spacer-1) var(--spacer-3);
-}
-
-.ldp-fragment-card .notify[hidden] {
-	display: none;
-}
-
-.ldp-fragment-card .notify:hover:not(:disabled) {
-	background: var(--primary-l3);
-}
-
-.ldp-fragment-card .notify:disabled {
-	cursor: default;
-	opacity: 0.8;
-}
-
 .ldp-fragment-card .insight {
 	background: var(--primary-l3);
 	border-left: 3px solid var(--primary);

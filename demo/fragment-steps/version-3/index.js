@@ -13,28 +13,10 @@ function getRange() {
 	return {interval: key === 0 ? 'H' : 'D', key, label: RANGES[key]};
 }
 
-const AGENT_ERC = 'DEVCON_2026_DEMO_LDP_METRIC_INSIGHT';
-
 const METRICS = {
 	sessionsPerVisitorMetric: 'Sessions per visitor',
 	visitorsMetric: 'Unique visitors',
 };
-
-async function api(url, options = {}) {
-	const response = await fetch(url, {
-		...options,
-		headers: {
-			'Content-Type': 'application/json',
-			'x-csrf-token': Liferay.authToken,
-		},
-	});
-
-	if (!response.ok) {
-		throw new Error(`${url} returned ${response.status}`);
-	}
-
-	return response.json();
-}
 
 async function getMetric(metric) {
 	const query = `
@@ -56,88 +38,21 @@ async function getMetric(metric) {
 		}
 	`;
 
-	const {data} = await api('/o/analytics-rest/v1.0/graphql', {
+	const response = await fetch('/o/analytics-rest/v1.0/graphql', {
 		body: JSON.stringify({
 			query,
 			variables: {channelId: CHANNEL_ID, rangeKey: getRange().key},
 		}),
+		headers: {
+			'Content-Type': 'application/json',
+			'x-csrf-token': Liferay.authToken,
+		},
 		method: 'POST',
 	});
+
+	const {data} = await response.json();
 
 	return data.site[metric];
-}
-
-async function askAgent(text) {
-	const token = await api('/o/ai-hub-cell/v1.0/authorization-tokens', {
-		method: 'POST',
-	});
-
-	const stream = await fetch(
-		`${token.serviceURL}/o/ai-hub/v1.0/agent-instances/subscribe`,
-		{
-			headers: {
-				Accept: 'text/event-stream',
-				Authorization: `Bearer ${token.accessToken}`,
-			},
-		}
-	);
-
-	const reader = stream.body.getReader();
-	const decoder = new TextDecoder();
-
-	let buffer = '';
-
-	while (true) {
-		const {done, value} = await reader.read();
-
-		if (done) {
-			throw new Error('AI Hub closed the stream.');
-		}
-
-		buffer += decoder.decode(value, {stream: true});
-
-		let end;
-
-		while ((end = buffer.indexOf('\n\n')) >= 0) {
-			const block = buffer.slice(0, end);
-
-			buffer = buffer.slice(end + 2);
-
-			const name = block.match(/^event: ?(.*)$/m)?.[1];
-			const data = block.match(/^data: ?(.*)$/m)?.[1];
-
-			if (name === 'Subscribe') {
-				await fetch(`${token.serviceURL}/o/ai-hub/v1.0/agent-instances`, {
-					body: JSON.stringify({
-						agentDefinitionExternalReferenceCode: AGENT_ERC,
-						context: {metrics: text},
-						sseEventSinkKey: data,
-					}),
-					headers: {
-						'Authorization': `Bearer ${token.accessToken}`,
-						'Content-Type': 'application/json',
-						'Liferay-AI-Hub-Cell-On-Behalf-Of': token.userToken,
-					},
-					method: 'POST',
-				});
-			}
-			else if (name === AGENT_ERC) {
-				reader.cancel();
-
-				return JSON.parse(data).data;
-			}
-		}
-	}
-}
-
-function describe(label, result) {
-	return [
-		`metric: ${label}`,
-		`period: ${getRange().label.toLowerCase()}`,
-		`value: ${result.value}`,
-		`previous period value: ${result.previousValue}`,
-		`change: ${result.trend?.percentage ?? 'n/a'}%`,
-	].join('\n');
 }
 
 const NUMBER_FORMAT = new Intl.NumberFormat('en-US', {
@@ -209,22 +124,6 @@ function formatTrend(result) {
 	return `${arrow} ${Math.abs(percentage).toFixed(1)}% vs previous period (${formatValue(result.previousValue)})`;
 }
 
-async function showInsight(root, result) {
-	const insight = root.querySelector('.insight');
-
-	insight.innerHTML = '<span class="spinner" aria-hidden="true"></span>Asking AI Hub...';
-
-	try {
-		insight.textContent = await askAgent(
-			describe(METRICS[configuration.metric], result)
-		);
-		root.querySelector('.ai').hidden = true;
-	}
-	catch (error) {
-		insight.textContent = `AI Hub is not available: ${error.message}`;
-	}
-}
-
 async function render() {
 	const root = fragmentElement.querySelector('.ldp-fragment-card');
 
@@ -235,8 +134,6 @@ async function render() {
 	root.querySelector('.value').textContent = formatValue(result.value);
 	root.querySelector('.trend').innerHTML = formatTrend(result);
 	root.querySelector('.chart-slot').innerHTML = renderChart(result);
-
-	root.querySelector('.ai').addEventListener('click', () => showInsight(root, result));
 }
 
 render();

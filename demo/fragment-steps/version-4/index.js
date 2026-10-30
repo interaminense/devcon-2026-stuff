@@ -13,8 +13,6 @@ function getRange() {
 	return {interval: key === 0 ? 'H' : 'D', key, label: RANGES[key]};
 }
 
-const ALERT_URL = '/o/c/insightalerts';
-
 const AGENT_ERC = 'DEVCON_2026_DEMO_LDP_METRIC_INSIGHT';
 
 const METRICS = {
@@ -132,18 +130,6 @@ async function askAgent(text) {
 	}
 }
 
-function notifyMarketingTeam(label, text) {
-	return api(ALERT_URL, {
-		body: JSON.stringify({
-			insight: text,
-			metric: label,
-			page: window.location.pathname,
-			period: getRange().label,
-		}),
-		method: 'POST',
-	});
-}
-
 function describe(label, result) {
 	return [
 		`metric: ${label}`,
@@ -225,41 +211,17 @@ function formatTrend(result) {
 
 async function showInsight(root, result) {
 	const insight = root.querySelector('.insight');
-	const notify = root.querySelector('.notify');
 
 	insight.innerHTML = '<span class="spinner" aria-hidden="true"></span>Asking AI Hub...';
-	notify.hidden = true;
 
 	try {
 		insight.textContent = await askAgent(
 			describe(METRICS[configuration.metric], result)
 		);
 		root.querySelector('.ai').hidden = true;
-		notify.disabled = false;
-		notify.textContent = '📣 Notify marketing team';
-		notify.hidden = false;
 	}
 	catch (error) {
 		insight.textContent = `AI Hub is not available: ${error.message}`;
-	}
-}
-
-async function shareInsight(root) {
-	const notify = root.querySelector('.notify');
-
-	notify.disabled = true;
-	notify.textContent = 'Notifying...';
-
-	try {
-		await notifyMarketingTeam(
-			METRICS[configuration.metric],
-			root.querySelector('.insight').textContent
-		);
-		notify.textContent = '✓ Marketing team notified';
-	}
-	catch (error) {
-		notify.disabled = false;
-		notify.textContent = `Try again (${error.message})`;
 	}
 }
 
@@ -275,7 +237,6 @@ async function render() {
 	root.querySelector('.chart-slot').innerHTML = renderChart(result);
 
 	root.querySelector('.ai').addEventListener('click', () => showInsight(root, result));
-	root.querySelector('.notify').addEventListener('click', () => shareInsight(root));
 }
 
 render();

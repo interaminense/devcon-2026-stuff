@@ -1,17 +1,6 @@
 const CHANNEL_ID = '845351493326064678';
 
-const RANGES = {
-	0: 'Last 24 hours',
-	7: 'Last 7 days',
-	30: 'Last 30 days',
-	90: 'Last 90 days',
-};
-
-function getRange() {
-	const key = RANGES[configuration.range] ? Number(configuration.range) : 7;
-
-	return {interval: key === 0 ? 'H' : 'D', key, label: RANGES[key]};
-}
+const RANGE_KEY = 7;
 
 const METRICS = {
 	sessionsPerVisitorMetric: 'Sessions per visitor',
@@ -21,7 +10,7 @@ const METRICS = {
 async function getMetric(metric) {
 	const query = `
 		query ($channelId: String!, $rangeKey: Int) {
-			site(channelId: $channelId, interval: "${getRange().interval}", rangeKey: $rangeKey) {
+			site(channelId: $channelId, interval: "D", rangeKey: $rangeKey) {
 				${metric} {
 					histogram {
 						metrics {
@@ -41,7 +30,7 @@ async function getMetric(metric) {
 	const response = await fetch('/o/analytics-rest/v1.0/graphql', {
 		body: JSON.stringify({
 			query,
-			variables: {channelId: CHANNEL_ID, rangeKey: getRange().key},
+			variables: {channelId: CHANNEL_ID, rangeKey: RANGE_KEY},
 		}),
 		headers: {
 			'Content-Type': 'application/json',
@@ -124,16 +113,29 @@ function formatTrend(result) {
 	return `${arrow} ${Math.abs(percentage).toFixed(1)}% vs previous period (${formatValue(result.previousValue)})`;
 }
 
-async function render() {
-	const root = fragmentElement.querySelector('.ldp-fragment-card');
+function renderOptions(select) {
+	select.innerHTML = Object.entries(METRICS)
+		.map(([value, label]) => `<option value="${value}">${label}</option>`)
+		.join('');
+	select.value = 'visitorsMetric';
+}
 
-	root.querySelector('.card-title').textContent = `${METRICS[configuration.metric]} · ${getRange().label}`;
-
-	const result = await getMetric(configuration.metric);
+async function showMetric(root, metric) {
+	const result = await getMetric(metric);
 
 	root.querySelector('.value').textContent = formatValue(result.value);
 	root.querySelector('.trend').innerHTML = formatTrend(result);
 	root.querySelector('.chart-slot').innerHTML = renderChart(result);
+}
+
+async function render() {
+	const root = fragmentElement.querySelector('.ldp-fragment-card');
+	const select = root.querySelector('.metric');
+
+	renderOptions(select);
+	select.addEventListener('change', () => showMetric(root, select.value));
+
+	await showMetric(root, select.value);
 }
 
 render();

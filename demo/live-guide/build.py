@@ -429,7 +429,7 @@ if FRAGMENT:
 	FRAGMENT_DIR = DEMO / 'fragment-steps'
 	fragment = {}
 
-	for n in (1, 2, 3, 4):
+	for n in (1, 2, 3, 4, 5):
 		for kind in ('html', 'css', 'js', 'json'):
 			path = FRAGMENT_DIR / f'version-{n}' / f'index.{kind}'
 
@@ -438,7 +438,7 @@ if FRAGMENT:
 
 	# A tab a version leaves alone keeps the previous version's code
 
-	for n in (2, 3, 4):
+	for n in (2, 3, 4, 5):
 		for kind in ('html', 'css', 'js', 'json'):
 			if (n, kind) not in fragment and (n - 1, kind) in fragment:
 				fragment[n, kind] = fragment[n - 1, kind]
@@ -473,7 +473,7 @@ if FRAGMENT:
 	<li>Demo page &rarr; reload.</li>
 </ol>''')
 
-	p1 = Part('1', 'Connect to LDP and Fetch Real Data', 'Topic 01')
+	p1 = Part('1', 'Connect to LDP and Fetch Data', 'Topic 01')
 	p1.step('sub', 'LDP connected to DXP')
 	p1.step(*ldp[1]).step(*ldp[2]).step(*data[1])
 	p1.step('sub', 'The first fragment')
@@ -485,34 +485,40 @@ if FRAGMENT:
 	p1.step('ui', '<p class="step-title"><strong>Put it on a page</strong></p><ol><li>Tab 4: DEVCON Demo &rarr; Site Builder &rarr; <b>Pages</b> &rarr; <b>New</b>.</li><li><b>Basic Templates</b> &rarr; <b>Blank</b> &rarr; name below &rarr; <b>Add</b>.</li><li><b>Components</b> panel &rarr; <b>Fragments</b> &rarr; Layout Elements &rarr; drag <b>Grid</b>. Set <b>Number of Modules</b> to 2.</li><li>Search the fragment below &rarr; drag it into the <b>left</b> module, and again into the <b>right</b> one &rarr; <b>Publish</b>.</li><li>Both cards show the same numbers: neither knows what else to show.</li></ol>'
 		+ values([v('Page name', 'Demo'), v('Fragment search', 'LDP Fragment Card')]))
 
-	p2 = Part('2', 'Configure Each Card with Fragment Configuration', 'Topic 02')
-	for step in fragment_code(2, ('html', 'js', 'json')):
+	p2 = Part('2', 'Creating Two Cards with Different Metrics from the Same Fragment', 'Topic 02')
+	for step in fragment_code(2, ('html', 'css', 'js')):
 		p2.step(*step)
-	p2.step(*ship_fragment(2, '<b>HTML</b>, <b>JavaScript</b> and <b>Configuration</b> tabs'))
-	p2.step('ui', '<ol><li>Edit the Demo page &rarr; select the <b>right</b> card.</li><li><b>General</b> &rarr; <b>Metric</b> &rarr; <b>Sessions per visitor</b>, and <b>Time range</b> &rarr; <b>Last 24 hours</b>. Check the Metric did not change back &rarr; <b>Publish</b>.</li><li>Reload the page: each card keeps its own metric and range, saved with the page.</li></ol>')
+	p2.step(*ship_fragment(2, '<b>HTML</b>, <b>CSS</b> and <b>JavaScript</b> tabs'))
+	p2.step('ui', '<ol><li>Left card: keep <b>Unique visitors</b>. Right card: pick <b>Sessions per visitor</b>. Two instances of the same fragment, each showing its own metric.</li><li>Reload the page: both cards are back to Unique visitors. The choice lived only in the browser.</li></ol>')
 
-	p3 = Part('3', 'Get Data Insights with AI Hub', 'Topic 03')
-	p3.step(*hub[0]).step(*hub[3]).step(*hub[5])
-	for step in fragment_code(3, ('html', 'js', 'css')):
+	p3 = Part('3', 'Configure Each Card with Fragment Configuration', 'Topic 03')
+	for step in fragment_code(3, ('html', 'css', 'js', 'json')):
 		p3.step(*step)
-	p3.step(*ship_fragment(3, '<b>HTML</b>, <b>CSS</b> and <b>JavaScript</b> tabs'))
-	p3.step(*hub[9])
+	p3.step(*ship_fragment(3, '<b>HTML</b>, <b>CSS</b>, <b>JavaScript</b> and <b>Configuration</b> tabs'))
+	p3.step('ui', '<ol><li>Edit the Demo page &rarr; select the <b>right</b> card.</li><li><b>General</b> &rarr; <b>Metric</b> &rarr; <b>Sessions per visitor</b>, and <b>Time range</b> &rarr; <b>Last 24 hours</b>. Check the Metric did not change back &rarr; <b>Publish</b>.</li><li>Reload the page: each card keeps its own metric and range, saved with the page.</li></ol>')
 
-	p4 = Part('4', 'Taking Actions with Objects and Notifications', 'Topic 04')
-	p4.step('ui', '<p class="step-title"><strong>Store the alerts in an Object</strong></p><ol><li>Control Panel &rarr; Object &rarr; <b>Objects</b> &rarr; folder <b>DEVCON2026</b> &rarr; <b>Insight Alert</b>. It is already published, with the fields below.</li></ol>'
-		+ values([v('Object name', 'InsightAlert'), plain('Fields', '<code>metric</code> Text &middot; <code>period</code> Text &middot; <code>insight</code> Long Text &middot; <code>page</code> Text'), v('REST', '/o/c/insightalerts')]))
-	p4.step('ui', '<p class="step-title"><strong>Pick who is told</strong></p><ol><li>Control Panel &rarr; Users &rarr; <b>Roles</b> &rarr; <b>Marketing Team</b>.</li><li><b>Define Permissions</b> &rarr; search <b>Insight</b>: <b>Insight Alert</b> &rarr; <b>View</b> (a user only gets the notification when they can view the alert), and <b>Control Panel &rarr; Object &rarr; Insight Alerts</b> &rarr; <b>Access in Control Panel</b> (so the notification link opens the alert, read-only).</li><li><b>Assignees</b>: you and Bruna Marketing.</li></ol>'
-		+ values([v('Second window user', 'bruna.marketing@liferay.com'), v('Password', 'test')]))
-	p4.step('ui', '<p class="step-title"><strong>Write the notification</strong></p><ol><li>Control Panel &rarr; Notifications &rarr; <b>Templates</b> &rarr; <b>DEVCON 2026 Insight Alert</b>: a <b>User Notification</b> for the role <b>Marketing Team</b>.</li><li>Its subject uses the alert fields as terms.</li></ol>'
-		+ values([v('Subject', 'New LDP insight on [%INSIGHTALERT_METRIC%] ([%INSIGHTALERT_PERIOD%]): [%INSIGHTALERT_INSIGHT%]')]))
-	p4.step('ui', '<p class="step-title"><strong>Send it when an alert is saved</strong></p><ol><li>Objects &rarr; <b>Insight Alert</b> &rarr; <b>Actions</b> &rarr; <b>Notify marketing team</b>.</li><li>Trigger <b>On After Add</b>, action <b>Notification</b>, template <b>DEVCON 2026 Insight Alert</b>. No code: the Object does the sending.</li></ol>')
-	for step in fragment_code(4, ('html', 'css', 'js')):
+	p4 = Part('4', 'Get Data Insights with AI Hub', 'Topic 04')
+	p4.step(*hub[0]).step(*hub[3]).step(*hub[5])
+	for step in fragment_code(4, ('html', 'js', 'css')):
 		p4.step(*step)
 	p4.step(*ship_fragment(4, '<b>HTML</b>, <b>CSS</b> and <b>JavaScript</b> tabs'))
-	p4.step('ui', '<ol><li>Open a second window with the link below: it impersonates Bruna Marketing. Or sign in as her in a private window, with the user in <b>Pick who is told</b>.</li><li>In your window: any card &rarr; <b>&#10022; AI insight</b> &rarr; <b>&#128227; Notify marketing team</b>.</li><li>Bruna&rsquo;s bell lights up with the insight. The alert also stays in the Object, as the history.</li></ol>'
+	p4.step(*hub[9])
+
+	p5 = Part('5', 'Taking Actions with Objects and Notifications', 'Topic 05')
+	p5.step('ui', '<p class="step-title"><strong>Store the alerts in an Object</strong></p><ol><li>Control Panel &rarr; Object &rarr; <b>Objects</b> &rarr; folder <b>DEVCON2026</b> &rarr; <b>Insight Alert</b>. It is already published, with the fields below.</li></ol>'
+		+ values([v('Object name', 'InsightAlert'), plain('Fields', '<code>metric</code> Text &middot; <code>period</code> Text &middot; <code>insight</code> Long Text &middot; <code>page</code> Text'), v('REST', '/o/c/insightalerts')]))
+	p5.step('ui', '<p class="step-title"><strong>Pick who is told</strong></p><ol><li>Control Panel &rarr; Users &rarr; <b>Roles</b> &rarr; <b>Marketing Team</b>.</li><li><b>Define Permissions</b> &rarr; search <b>Insight</b>: <b>Insight Alert</b> &rarr; <b>View</b> (a user only gets the notification when they can view the alert), and <b>Control Panel &rarr; Object &rarr; Insight Alerts</b> &rarr; <b>Access in Control Panel</b> (so the notification link opens the alert, read-only).</li><li><b>Assignees</b>: you and Bruna Marketing.</li></ol>'
+		+ values([v('Second window user', 'bruna.marketing@liferay.com'), v('Password', 'test')]))
+	p5.step('ui', '<p class="step-title"><strong>Write the notification</strong></p><ol><li>Control Panel &rarr; Notifications &rarr; <b>Templates</b> &rarr; <b>DEVCON 2026 Insight Alert</b>: a <b>User Notification</b> for the role <b>Marketing Team</b>.</li><li>Its subject uses the alert fields as terms.</li></ol>'
+		+ values([v('Subject', 'New LDP insight on [%INSIGHTALERT_METRIC%] ([%INSIGHTALERT_PERIOD%]): [%INSIGHTALERT_INSIGHT%]')]))
+	p5.step('ui', '<p class="step-title"><strong>Send it when an alert is saved</strong></p><ol><li>Objects &rarr; <b>Insight Alert</b> &rarr; <b>Actions</b> &rarr; <b>Notify marketing team</b>.</li><li>Trigger <b>On After Add</b>, action <b>Notification</b>, template <b>DEVCON 2026 Insight Alert</b>. No code: the Object does the sending.</li></ol>')
+	for step in fragment_code(5, ('html', 'css', 'js')):
+		p5.step(*step)
+	p5.step(*ship_fragment(5, '<b>HTML</b>, <b>CSS</b> and <b>JavaScript</b> tabs'))
+	p5.step('ui', '<ol><li>Open a second window with the link below: it impersonates Bruna Marketing. Or sign in as her in a private window, with the user in <b>Pick who is told</b>.</li><li>In your window: any card &rarr; <b>&#10022; AI insight</b> &rarr; <b>&#128227; Notify marketing team</b>.</li><li>Bruna&rsquo;s bell lights up with the insight. The alert also stays in the Object, as the history.</li></ol>'
 		+ values([v('Impersonate Bruna', 'https://webserver-lctacdemodevcon-prd.lfr.cloud/web/devcon-demo/home?doAsUserId=b8236dcd1996e0bc7e23d850928d6a5ef0')]))
 
-	parts = [p1, p2, p3, p4]
+	parts = [p1, p2, p3, p4, p5]
 
 	# The helper keeps only the code to paste, topic by topic
 	if HELPER:
