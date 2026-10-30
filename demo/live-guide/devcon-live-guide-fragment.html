@@ -290,7 +290,7 @@ html { scroll-behavior: smooth; }
 
 	<nav class="agenda" id="agenda" aria-label="Agenda">
 		<h2 class="agenda-title">Agenda</h2>
-		<ol><li><a href="#part-1"><span class="a-letter">1</span><span class="a-title">Connect to LDP and Fetch Real Data</span><span class="a-topic">Topic 01</span></a></li><li><a href="#part-2"><span class="a-letter">2</span><span class="a-title">Configure Each Card with Fragment Configuration</span><span class="a-topic">Topic 02</span></a></li><li><a href="#part-3"><span class="a-letter">3</span><span class="a-title">Get Data Insights with AI Hub</span><span class="a-topic">Topic 03</span></a></li><li><a href="#part-4"><span class="a-letter">4</span><span class="a-title">Build a Custom Dashboard</span><span class="a-topic">Topic 04</span></a></li></ol>
+		<ol><li><a href="#part-1"><span class="a-letter">1</span><span class="a-title">Connect to LDP and Fetch Real Data</span><span class="a-topic">Topic 01</span></a></li><li><a href="#part-2"><span class="a-letter">2</span><span class="a-title">Configure Each Card with Fragment Configuration</span><span class="a-topic">Topic 02</span></a></li><li><a href="#part-3"><span class="a-letter">3</span><span class="a-title">Get Data Insights with AI Hub</span><span class="a-topic">Topic 03</span></a></li><li><a href="#part-4"><span class="a-letter">4</span><span class="a-title">Build a Custom Dashboard</span><span class="a-topic">Topic 04</span></a></li><li><a href="#reset-demo"><span class="a-letter">&#8634;</span><span class="a-title">Reset the demo</span><span class="a-topic">Start over</span></a></li></ol>
 	</nav>
 	<a class="to-agenda" href="#agenda">Agenda &uarr;</a>
 
@@ -586,7 +586,20 @@ Write at most three short sentences for a marketing manager: what the number say
 </li></ol>
 </section>
 
-	
+		<section class="part" id="reset-demo">
+		<header class="part-head"><span class="letter">&#8634;</span><div><h2>Reset the demo</h2><span class="topic">Start over</span></div></header>
+		<div class="reset-card">
+			<ol>
+				<li><b>DEVCON Demo</b> &rarr; Site Builder &rarr; <b>Pages</b> &rarr; <b>Demo</b> &rarr; &#8942; &rarr; <b>Delete</b>. Keep <b>Home</b>.</li>
+				<li>Same list: <b>Fragment Demo</b>, the test page, also uses the fragment. Delete it too, or the next step fails.</li>
+				<li>Design &rarr; <b>Fragments</b> &rarr; <b>DEVCON Demo</b> &rarr; <b>LDP Fragment Card</b> &rarr; &#8942; &rarr; <b>View Usages</b>: the list must be empty. Then &#8942; &rarr; <b>Delete</b>.</li>
+				<li>Fragment Sets &rarr; <b>DEVCON Demo</b> &rarr; &#8942; &rarr; <b>Delete</b>, so the next run creates the set and the fragment with the same names.</li>
+				<li>AI Hub &rarr; <b>Agent Builder</b> &rarr; <b>DevCon 2026 Demo LDP Metric Insight</b> &rarr; &#8942; &rarr; <b>Delete</b>, so its external reference code is free again.</li>
+				<li>Keep the DXP &harr; AI Hub connection (Instance Settings &rarr; AI Hub) and the LDP connection: the demo only shows them.</li>
+			</ol>
+		</div>
+	</section>
+
 
 	<footer class="foot">
 		<span>Code from <code>interaminense/devcon-2026-stuff</code>, folder <code>demo/</code>.</span>

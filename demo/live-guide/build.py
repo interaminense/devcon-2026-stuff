@@ -580,6 +580,23 @@ RESET = '''	<section class="part" id="reset-demo">
 	</section>
 '''
 
+# The fragment version keeps its code and configuration in the site: pages go
+# first, because DXP refuses to delete a fragment a page still uses
+FRAGMENT_RESET = '''	<section class="part" id="reset-demo">
+		<header class="part-head"><span class="letter">&#8634;</span><div><h2>Reset the demo</h2><span class="topic">Start over</span></div></header>
+		<div class="reset-card">
+			<ol>
+				<li><b>DEVCON Demo</b> &rarr; Site Builder &rarr; <b>Pages</b> &rarr; <b>Demo</b> &rarr; &#8942; &rarr; <b>Delete</b>. Keep <b>Home</b>.</li>
+				<li>Same list: <b>Fragment Demo</b>, the test page, also uses the fragment. Delete it too, or the next step fails.</li>
+				<li>Design &rarr; <b>Fragments</b> &rarr; <b>DEVCON Demo</b> &rarr; <b>LDP Fragment Card</b> &rarr; &#8942; &rarr; <b>View Usages</b>: the list must be empty. Then &#8942; &rarr; <b>Delete</b>.</li>
+				<li>Fragment Sets &rarr; <b>DEVCON Demo</b> &rarr; &#8942; &rarr; <b>Delete</b>, so the next run creates the set and the fragment with the same names.</li>
+				<li>AI Hub &rarr; <b>Agent Builder</b> &rarr; <b>DevCon 2026 Demo LDP Metric Insight</b> &rarr; &#8942; &rarr; <b>Delete</b>, so its external reference code is free again.</li>
+				<li>Keep the DXP &harr; AI Hub connection (Instance Settings &rarr; AI Hub) and the LDP connection: the demo only shows them.</li>
+			</ol>
+		</div>
+	</section>
+'''
+
 # Steps have no checkbox column; code boxes take the full width, grow to fit
 # the whole file and wrap long lines, so nothing scrolls
 SHORT_CSS = '''.step { grid-template-columns: minmax(0, 1fr); }
@@ -602,7 +619,7 @@ LEDE = (
 )
 
 nav = ''.join(f'<li><a href="#part-{p.letter.lower()}"><span class="a-letter">{p.letter}</span><span class="a-title">{p.title}</span><span class="a-topic">{p.topic}</span></a></li>' for p in parts)
-nav += '' if SHORT else '<li><a href="#reset-demo"><span class="a-letter">&#8634;</span><span class="a-title">Reset the demo</span><span class="a-topic">Start over</span></a></li>'
+nav += '' if SHORT and not FRAGMENT else '<li><a href="#reset-demo"><span class="a-letter">&#8634;</span><span class="a-title">Reset the demo</span><span class="a-topic">Start over</span></a></li>'
 
 
 page = f'''<title>{'Live Demo Fragment Guide' if FRAGMENT else 'Live Demo Short Guide' if SHORT else 'Live Demo Guide'}</title>
@@ -879,7 +896,7 @@ html {{ scroll-behavior: smooth; }}
 
 	{''.join(render_part(p) for p in parts)}
 
-	{'' if SHORT else RESET}
+	{FRAGMENT_RESET if FRAGMENT else '' if SHORT else RESET}
 
 	<footer class="foot">
 		<span>Code from <code>interaminense/devcon-2026-stuff</code>, folder <code>demo/</code>.</span>
