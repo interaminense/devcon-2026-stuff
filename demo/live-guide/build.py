@@ -10,9 +10,11 @@ sys.path.insert(0, str(pathlib.Path(__file__).parent))
 from diagram import render as render_diagram, render_fragment_walkthrough, render_notification_walkthrough, render_walkthrough
 
 DEMO = pathlib.Path.home() / 'dev/projects/devcon-2026/devcon-2026-stuff/demo'
-FRAGMENT = 'fragment' in sys.argv[1:]
+HELPER = 'helper' in sys.argv[1:]
+FRAGMENT = HELPER or 'fragment' in sys.argv[1:]
 SHORT = FRAGMENT or 'short' in sys.argv[1:]
 OUT = pathlib.Path(__file__).parent / (
+	'devcon-live-demo-helper.html' if HELPER else
 	'devcon-live-guide-fragment.html' if FRAGMENT else
 	'devcon-live-guide-short.html' if SHORT else
 	'devcon-live-guide.html'
@@ -527,6 +529,11 @@ if FRAGMENT:
 
 	parts = [p1, p2, p3, p4, p5]
 
+	# The helper keeps only the code to paste, topic by topic
+	if HELPER:
+		for part in parts:
+			part.items = [item for item in part.items if item[0] == 'code']
+
 
 def render_part(part):
 	steps = []
@@ -542,7 +549,7 @@ def render_part(part):
 <li class="step k-{kind}">
 	{'' if kind == 'say' or SHORT else f'<label class="done"><input id="done-{key}" type="checkbox" data-key="{key}"><span class="sr">Done</span></label>'}
 	<div class="step-body">
-		<span class="kind">{KIND[kind]}</span>
+		{'' if HELPER else f'<span class="kind">{KIND[kind]}</span>'}
 		{body if body.lstrip().startswith('<') else f'<p>{body}</p>'}
 	</div>
 </li>''')
@@ -639,10 +646,10 @@ LEDE = (
 )
 
 nav = ''.join(f'<li><a href="#part-{p.letter.lower()}"><span class="a-letter">{p.letter}</span><span class="a-title">{p.title}</span><span class="a-topic">{p.topic}</span></a></li>' for p in parts)
-nav += '' if SHORT and not FRAGMENT else '<li><a href="#reset-demo"><span class="a-letter">&#8634;</span><span class="a-title">Reset the demo</span><span class="a-topic">Start over</span></a></li>'
+nav += '' if HELPER or (SHORT and not FRAGMENT) else '<li><a href="#reset-demo"><span class="a-letter">&#8634;</span><span class="a-title">Reset the demo</span><span class="a-topic">Start over</span></a></li>'
 
 
-page = f'''<title>{'Live Demo Fragment Guide' if FRAGMENT else 'Live Demo Short Guide' if SHORT else 'Live Demo Guide'}</title>
+page = f'''<title>{'Live Demo Helper' if HELPER else 'Live Demo Fragment Guide' if FRAGMENT else 'Live Demo Short Guide' if SHORT else 'Live Demo Guide'}</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;500;600;700;800&amp;family=JetBrains+Mono:wght@400;600&amp;display=swap">
 <style>
@@ -893,11 +900,11 @@ html {{ scroll-behavior: smooth; }}
 <div class="wrap">
 	<header class="hero">
 		<span class="eyebrow">DEVCON 2026 &middot; Live demo</span>
-		<h1>{'Live Demo Guide · Fragments' if FRAGMENT else 'Live Demo Guide'}</h1>
+		<h1>{'Live Demo Helper' if HELPER else 'Live Demo Guide · Fragments' if FRAGMENT else 'Live Demo Guide'}</h1>
 		{'' if SHORT else f'<p class="lede">{LEDE}</p>'}
 	</header>
 
-	{BELOW_HERO}
+	{'' if HELPER else BELOW_HERO}
 
 	{'' if SHORT else OPTIONS}
 
@@ -918,7 +925,7 @@ html {{ scroll-behavior: smooth; }}
 
 	{''.join(render_part(p) for p in parts)}
 
-	{FRAGMENT_RESET if FRAGMENT else '' if SHORT else RESET}
+	{'' if HELPER else FRAGMENT_RESET if FRAGMENT else '' if SHORT else RESET}
 
 	<footer class="foot">
 		<span>Code from <code>interaminense/devcon-2026-stuff</code>, folder <code>demo/</code>.</span>
