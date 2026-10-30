@@ -438,16 +438,8 @@ async function render() {
 	const widget = WIDGETS[metric];
 	const root = fragmentElement.querySelector('.ldp-fragment-card');
 
-	root.innerHTML = `
-		<div class="head">
-			<strong>${widget.label}</strong>
-			<span class="period">${getRange().label}</span>
-		</div>
-		<div class="body"><p class="status">Loading LDP data...</p></div>
-		<button class="ai" hidden type="button">✦ AI insight</button>
-		<p class="insight"></p>
-		<button class="notify" hidden type="button">📣 Notify marketing team</button>
-	`;
+	root.querySelector('.card-title').textContent = widget.label;
+	root.querySelector('.period').textContent = getRange().label;
 
 	let result;
 

@@ -111,13 +111,6 @@ function formatTrend(result) {
 async function render() {
 	const root = fragmentElement.querySelector('.ldp-fragment-card');
 
-	root.innerHTML = `
-		<strong>Unique visitors</strong>
-		<div class="value">...</div>
-		<div class="trend">Last 7 days</div>
-		<div class="chart-slot"></div>
-	`;
-
 	const result = await getMetric('visitorsMetric');
 
 	root.querySelector('.value').textContent = formatValue(result.value);

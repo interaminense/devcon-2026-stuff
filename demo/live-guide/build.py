@@ -489,22 +489,22 @@ if FRAGMENT:
 		+ values([v('Page name', 'Demo'), v('Fragment search', 'LDP Fragment Card')]))
 
 	p2 = Part('2', 'Configure Each Card with Fragment Configuration', 'Topic 02')
-	for step in fragment_code(2, ('js', 'json')):
+	for step in fragment_code(2, ('html', 'js', 'json')):
 		p2.step(*step)
-	p2.step(*ship_fragment(2, '<b>JavaScript</b> and <b>Configuration</b> tabs'))
+	p2.step(*ship_fragment(2, '<b>HTML</b>, <b>JavaScript</b> and <b>Configuration</b> tabs'))
 	p2.step('ui', '<ol><li>Edit the Demo page &rarr; select the <b>right</b> card.</li><li><b>General</b> &rarr; <b>Metric</b> &rarr; <b>Sessions per visitor</b>, and <b>Time range</b> &rarr; <b>Last 24 hours</b>. Check the Metric did not change back &rarr; <b>Publish</b>.</li><li>Reload the page: each card keeps its own metric and range, saved with the page.</li></ol>')
 
 	p3 = Part('3', 'Get Data Insights with AI Hub', 'Topic 03')
 	p3.step(*hub[0]).step(*hub[3]).step(*hub[5])
-	for step in fragment_code(3, ('js', 'css')):
+	for step in fragment_code(3, ('html', 'js', 'css')):
 		p3.step(*step)
-	p3.step(*ship_fragment(3, '<b>JavaScript</b> and <b>CSS</b> tabs'))
+	p3.step(*ship_fragment(3, '<b>HTML</b>, <b>CSS</b> and <b>JavaScript</b> tabs'))
 	p3.step(*hub[9])
 
 	p4 = Part('4', 'Build a Custom Dashboard', 'Topic 04')
-	for step in fragment_code(4, ('js', 'css', 'json')):
+	for step in fragment_code(4, ('html', 'js', 'css', 'json')):
 		p4.step(*step)
-	p4.step(*ship_fragment(4, '<b>JavaScript</b>, <b>CSS</b> and <b>Configuration</b> tabs'))
+	p4.step(*ship_fragment(4, '<b>HTML</b>, <b>CSS</b>, <b>JavaScript</b> and <b>Configuration</b> tabs'))
 	p4.step('ui', '<p class="step-title"><strong>Build the dashboard</strong></p><ol><li>Edit the Demo page.</li><li><b>Components</b> panel &rarr; <b>Fragments</b> &rarr; Layout Elements &rarr; drag a <b>Grid</b> under the first one. Set <b>Number of Modules</b> to 3. Repeat for a third row.</li><li>Drag an <b>LDP Fragment Card</b> into each new module.</li><li>Select each card &rarr; <b>General</b> &rarr; <b>Widget</b>, as below. <b>Time range</b> is per card too (Last 24 hours to Last 90 days); check that the Widget did not change when you set it &rarr; <b>Publish</b>.</li></ol>'
 		+ values([
 			plain('Row 1', 'Unique visitors &middot; Sessions per visitor'),
@@ -521,9 +521,9 @@ if FRAGMENT:
 	p5.step('ui', '<p class="step-title"><strong>Write the notification</strong></p><ol><li>Control Panel &rarr; Notifications &rarr; <b>Templates</b> &rarr; <b>DEVCON 2026 Insight Alert</b>: a <b>User Notification</b> for the role <b>Marketing Team</b>.</li><li>Its subject uses the alert fields as terms.</li></ol>'
 		+ values([v('Subject', 'New LDP insight on [%INSIGHTALERT_METRIC%] ([%INSIGHTALERT_PERIOD%]): [%INSIGHTALERT_INSIGHT%]')]))
 	p5.step('ui', '<p class="step-title"><strong>Send it when an alert is saved</strong></p><ol><li>Objects &rarr; <b>Insight Alert</b> &rarr; <b>Actions</b> &rarr; <b>Notify marketing team</b>.</li><li>Trigger <b>On After Add</b>, action <b>Notification</b>, template <b>DEVCON 2026 Insight Alert</b>. No code: the Object does the sending.</li></ol>')
-	for step in fragment_code(5, ('css', 'js')):
+	for step in fragment_code(5, ('html', 'css', 'js')):
 		p5.step(*step)
-	p5.step(*ship_fragment(5, '<b>JavaScript</b> and <b>CSS</b> tabs'))
+	p5.step(*ship_fragment(5, '<b>HTML</b>, <b>CSS</b> and <b>JavaScript</b> tabs'))
 	p5.step('ui', '<ol><li>Open a second window with the link below: it impersonates Bruna Marketing. Or sign in as her in a private window, with the user in <b>Pick who is told</b>.</li><li>In your window: any card &rarr; <b>&#10022; AI insight</b> &rarr; <b>&#128227; Notify marketing team</b>.</li><li>Bruna&rsquo;s bell lights up with the insight. The alert also stays in the Object, as the history.</li></ol>'
 		+ values([v('Impersonate Bruna', 'https://webserver-lctacdemodevcon-prd.lfr.cloud/web/devcon-demo/home?doAsUserId=b8236dcd1996e0bc7e23d850928d6a5ef0')]))
 

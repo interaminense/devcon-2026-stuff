@@ -127,12 +127,7 @@ function formatTrend(result) {
 async function render() {
 	const root = fragmentElement.querySelector('.ldp-fragment-card');
 
-	root.innerHTML = `
-		<strong>${METRICS[configuration.metric]} · ${getRange().label}</strong>
-		<div class="value">...</div>
-		<div class="trend">Last 7 days</div>
-		<div class="chart-slot"></div>
-	`;
+	root.querySelector('.card-title').textContent = `${METRICS[configuration.metric]} · ${getRange().label}`;
 
 	const result = await getMetric(configuration.metric);
 
