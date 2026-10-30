@@ -234,6 +234,7 @@ async function showInsight(root, result) {
 		insight.textContent = await askAgent(
 			describe(METRICS[configuration.metric], result)
 		);
+		root.querySelector('.ai').hidden = true;
 		notify.disabled = false;
 		notify.textContent = '📣 Notify marketing team';
 		notify.hidden = false;

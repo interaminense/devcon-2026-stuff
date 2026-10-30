@@ -218,6 +218,7 @@ async function showInsight(root, result) {
 		insight.textContent = await askAgent(
 			describe(METRICS[configuration.metric], result)
 		);
+		root.querySelector('.ai').hidden = true;
 	}
 	catch (error) {
 		insight.textContent = `AI Hub is not available: ${error.message}`;
