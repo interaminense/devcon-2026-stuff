@@ -1,4 +1,6 @@
 const CHANNEL_ID = '845351493326064678';
+const AGENT_ERC = 'DEVCON_2026_DEMO_LDP_METRIC_INSIGHT';
+const ALERT_URL = '/o/c/insightalerts';
 
 const RANGES = {
 	0: 'Last 24 hours',
@@ -7,20 +9,16 @@ const RANGES = {
 	90: 'Last 90 days',
 };
 
+const METRICS = {
+	sessionsPerVisitorMetric: 'Sessions per visitor',
+	visitorsMetric: 'Unique visitors',
+};
+
 function getRange() {
 	const key = RANGES[configuration.range] ? Number(configuration.range) : 7;
 
 	return {interval: key === 0 ? 'H' : 'D', key, label: RANGES[key]};
 }
-
-const ALERT_URL = '/o/c/insightalerts';
-
-const AGENT_ERC = 'DEVCON_2026_DEMO_LDP_METRIC_INSIGHT';
-
-const METRICS = {
-	sessionsPerVisitorMetric: 'Sessions per visitor',
-	visitorsMetric: 'Unique visitors',
-};
 
 async function fetchData(url, body) {
 	const response = await fetch(url, {

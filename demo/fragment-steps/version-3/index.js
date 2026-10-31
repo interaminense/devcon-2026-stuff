@@ -7,16 +7,16 @@ const RANGES = {
 	90: 'Last 90 days',
 };
 
+const METRICS = {
+	sessionsPerVisitorMetric: 'Sessions per visitor',
+	visitorsMetric: 'Unique visitors',
+};
+
 function getRange() {
 	const key = RANGES[configuration.range] ? Number(configuration.range) : 7;
 
 	return {interval: key === 0 ? 'H' : 'D', key, label: RANGES[key]};
 }
-
-const METRICS = {
-	sessionsPerVisitorMetric: 'Sessions per visitor',
-	visitorsMetric: 'Unique visitors',
-};
 
 async function fetchData(url, body) {
 	const response = await fetch(url, {
