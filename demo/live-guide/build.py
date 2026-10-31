@@ -10,10 +10,12 @@ sys.path.insert(0, str(pathlib.Path(__file__).parent))
 from diagram import render as render_diagram, render_fragment_walkthrough, render_notification_walkthrough, render_walkthrough
 
 DEMO = pathlib.Path.home() / 'dev/projects/devcon-2026/devcon-2026-stuff/demo'
-HELPER = 'helper' in sys.argv[1:]
+OFFLINE = 'offline' in sys.argv[1:]
+HELPER = OFFLINE or 'helper' in sys.argv[1:]
 FRAGMENT = HELPER or 'fragment' in sys.argv[1:]
 SHORT = FRAGMENT or 'short' in sys.argv[1:]
 OUT = pathlib.Path(__file__).parent / (
+	'devcon-live-demo-offline.html' if OFFLINE else
 	'devcon-live-demo-helper.html' if HELPER else
 	'devcon-live-guide-fragment.html' if FRAGMENT else
 	'devcon-live-guide-short.html' if SHORT else
@@ -618,6 +620,50 @@ RESET = '''	<section class="part" id="reset-demo">
 
 # The fragment version keeps its code and configuration in the site: pages go
 # first, because DXP refuses to delete a fragment a page still uses
+LOCAL = 'http://devcon.localhost:8081'
+
+# The offline helper rehearses on the frozen DXP in Docker: the Offline Mode
+# fragment answers the LDP and AI Hub calls, so the card code stays the same
+def offline_setup():
+	return f"""	<section class="part" id="local-dxp">
+		<header class="part-head"><span class="letter">0</span><div><h2>Start the Local DXP</h2><span class="topic">Before you start</span></div></header>
+		<div class="reset-card">
+			<ol>
+				<li>Start the container. If Docker itself is not running, start it first with <code>systemctl --user start docker</code>.</li>
+			</ol>
+			{values([v('Start', 'docker start devcon-dxp'), v('Wait for the boot (about a minute)', 'docker logs --follow devcon-dxp 2>&1 | grep --line-buffered "Server startup in"')])}
+			<ol start="2">
+				<li>Open the site at <code>devcon.localhost:8081</code>, never at <code>localhost:8081</code>: the two share cookies with the other local DXP and sign you out.</li>
+				<li>Open <b>Offline Test</b> once: if both cards show numbers and a chart, offline mode works.</li>
+			</ol>
+			{values([v('Site', f'{LOCAL}/web/devcon-demo/home'), v('Offline check page', f'{LOCAL}/web/devcon-demo/offline-test'), v('Admin user', 'test@liferay.com'), v('Password', 'test'), v('Bruna Marketing', 'bruna.marketing@liferay.com'), v('Impersonate Bruna', f'{LOCAL}/web/devcon-demo/home?doAsUserId=64ea33615fcb38789ddc4119223cb4530c')])}
+		</div>
+		<div class="reset-card" style="margin-top: 20px">
+			<p class="step-title"><strong>Prepare the page</strong></p>
+			<ol>
+				<li>Site menu &rarr; <b>Design</b> &rarr; <b>Fragments</b> &rarr; new set <b>DEVCON Demo</b> &rarr; new fragment <b>LDP Fragment Card</b>, with the code of topic 1.</li>
+				<li>Site menu &rarr; <b>Pages</b> &rarr; <b>New</b> &rarr; <b>Page</b> &rarr; <b>Blank</b>, named <b>Demo</b>.</li>
+				<li>In the page editor, drag <b>Offline Mode</b> (set <b>DEVCON Offline</b>) to the top of the page <b>first</b>, then the <b>LDP Fragment Card</b> below it, and publish.</li>
+			</ol>
+			<p>Offline Mode answers the LDP and AI Hub calls with fake data; it shows a dashed label only in the editor. It must stay above the cards. The code is the same as on stage, so <code>CHANNEL_ID</code> and <code>AGENT_ERC</code> are ignored here. The Insight Alert object, the Marketing Team role, the notification and Bruna are real.</p>
+		</div>
+	</section>"""
+
+
+OFFLINE_RESET = """	<section class="part" id="reset-demo">
+		<header class="part-head"><span class="letter">&#8634;</span><div><h2>Reset the Rehearsal</h2><span class="topic">Start over</span></div></header>
+		<div class="reset-card">
+			<ol>
+				<li>Site menu &rarr; <b>Pages</b> &rarr; <b>Demo</b> &rarr; &#8942; &rarr; <b>Delete</b>.</li>
+				<li>Site menu &rarr; <b>Design</b> &rarr; <b>Fragments</b> &rarr; <b>DEVCON Demo</b> &rarr; &#8942; &rarr; <b>Delete</b>.</li>
+				<li>Control Panel &rarr; <b>Insight Alerts</b>: delete the alerts the rehearsal created.</li>
+			</ol>
+			<p>Keep the <b>DEVCON Offline</b> and <b>Offline Test</b> sets, the <b>Offline Test</b> page, the Insight Alert object, the Marketing Team role and Bruna.</p>
+			{stop}
+		</div>
+	</section>"""
+
+
 FRAGMENT_RESET = '''	<section class="part" id="reset-demo">
 		<header class="part-head"><span class="letter">&#8634;</span><div><h2>Reset the demo</h2><span class="topic">Start over</span></div></header>
 		<div class="reset-card">
@@ -664,10 +710,11 @@ LEDE = (
 )
 
 nav = ''.join(f'<li><a href="#part-{p.letter.lower()}"><span class="a-letter">{p.letter}</span><span class="a-title">{p.title}</span><span class="a-topic">{p.topic}</span></a></li>' for p in parts)
-nav += '' if HELPER or (SHORT and not FRAGMENT) else '<li><a href="#reset-demo"><span class="a-letter">&#8634;</span><span class="a-title">Reset the demo</span><span class="a-topic">Start over</span></a></li>'
+nav = ('<li><a href="#local-dxp"><span class="a-letter">0</span><span class="a-title">Start the Local DXP</span><span class="a-topic">Before you start</span></a></li>' if OFFLINE else '') + nav
+nav += '<li><a href="#reset-demo"><span class="a-letter">&#8634;</span><span class="a-title">Reset the Rehearsal</span><span class="a-topic">Start over</span></a></li>' if OFFLINE else '' if HELPER or (SHORT and not FRAGMENT) else '<li><a href="#reset-demo"><span class="a-letter">&#8634;</span><span class="a-title">Reset the demo</span><span class="a-topic">Start over</span></a></li>'
 
 
-page = f'''<title>{'Live Demo Helper' if HELPER else 'Live Demo Fragment Guide' if FRAGMENT else 'Live Demo Short Guide' if SHORT else 'Live Demo Guide'}</title>
+page = f'''<title>{'Live Demo Offline' if OFFLINE else 'Live Demo Helper' if HELPER else 'Live Demo Fragment Guide' if FRAGMENT else 'Live Demo Short Guide' if SHORT else 'Live Demo Guide'}</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;500;600;700;800&amp;family=JetBrains+Mono:wght@400;600&amp;display=swap">
 <style>
@@ -918,11 +965,13 @@ html {{ scroll-behavior: smooth; }}
 <div class="wrap">
 	<header class="hero">
 		<span class="eyebrow">DEVCON 2026 &middot; Live demo</span>
-		<h1>{'Live Demo Helper' if HELPER else 'Live Demo Guide · Fragments' if FRAGMENT else 'Live Demo Guide'}</h1>
+		<h1>{'Live Demo Offline' if OFFLINE else 'Live Demo Helper' if HELPER else 'Live Demo Guide · Fragments' if FRAGMENT else 'Live Demo Guide'}</h1>
 		{'' if SHORT else f'<p class="lede">{LEDE}</p>'}
 	</header>
 
 	{BELOW_HERO}
+
+	{offline_setup() if OFFLINE else ''}
 
 	{'' if SHORT else OPTIONS}
 
@@ -943,7 +992,7 @@ html {{ scroll-behavior: smooth; }}
 
 	{''.join(render_part(p) for p in parts)}
 
-	{'' if HELPER else FRAGMENT_RESET if FRAGMENT else '' if SHORT else RESET}
+	{OFFLINE_RESET.format(stop=values([v('Stop the DXP', 'docker stop devcon-dxp')])) if OFFLINE else '' if HELPER else FRAGMENT_RESET if FRAGMENT else '' if SHORT else RESET}
 
 	<footer class="foot">
 		<span>Code from <code>interaminense/devcon-2026-stuff</code>, folder <code>demo/</code>.</span>

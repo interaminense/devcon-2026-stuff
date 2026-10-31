@@ -1,0 +1,22 @@
+.offline-mode {
+	align-items: center;
+	background: var(--warning-l2, #fff4e0);
+	border: 1px dashed var(--warning, #b95000);
+	border-radius: var(--border-radius, 6px);
+	color: var(--body-color, #272833);
+	display: none;
+	font-size: var(--font-size-sm, 0.875rem);
+	gap: 8px;
+	padding: 6px 12px;
+}
+
+.offline-mode.is-visible {
+	display: inline-flex;
+}
+
+.offline-mode__dot {
+	background: var(--warning, #b95000);
+	border-radius: 50%;
+	height: 8px;
+	width: 8px;
+}

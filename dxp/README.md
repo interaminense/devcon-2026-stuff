@@ -110,3 +110,18 @@ Both commands stop the container while they run and start it again afterwards. T
 | The container fails to write to `data` | Rootless Docker maps the container's `liferay` user to a subordinate host uid. | `run.sh` chowns the folders to uid 1000 from inside a container. Repeat that step if the folders were recreated by hand. |
 | The page editor breaks after clicking the *+* next to a widget | A page editor bug in this release (React `removeChild` error). | Reload the editor and drag the widget instead. |
 | The widget shows `channels?pageSize=200 returned 400` | DXP is not connected to LDP. | See [Connect to LDP](#connect-to-ldp). |
+
+## Offline Rehearsal
+
+The `devcon-demo` site on this DXP mirrors the stage setup without internet. The **DEVCON Offline** fragment set has an *Offline Mode* fragment (`demo/offline/fragments`) that answers the LDP GraphQL proxy and the AI Hub calls with fake data, so the demo card code stays the same as on stage. Drop it at the top of a page, above the cards.
+
+What is already in place:
+
+- The *Insight Alert* object (`/o/c/insightalerts`), its *Notify marketing team* action and the *DEVCON 2026 Insight Alert* notification template.
+- The *Marketing Team* role with *Access in Control Panel* and *View* on Insight Alerts and *View Control Panel Menu*.
+- The user `bruna.marketing@liferay.com` (password `test`) in that role.
+- The *Offline Test* page (template *Offline Rehearsal Test*), with Offline Mode and two finished cards, to check the setup.
+
+"Require strangers to verify their email address" is off in Instance Settings, so new users can sign in without a mail server.
+
+The rehearsal guide is `demo/live-guide/devcon-live-demo-offline.html` (`python3 build.py offline`). Open it straight from disk: it needs no network.
