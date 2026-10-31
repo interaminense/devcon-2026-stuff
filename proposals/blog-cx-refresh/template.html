@@ -164,9 +164,7 @@ p { margin: 0; max-width: 68ch; }
 .m-ai span { position: relative; z-index: 1; }
 .m-ai:hover, .m-ai:focus-visible { box-shadow: 0 6px 18px rgba(229, 0, 189, 0.35); outline: none; transform: translateY(-1px); }
 .m-ai:hover::before, .m-ai:focus-visible::before { animation-play-state: running; opacity: 1; }
-.m-ai--quiet { background: var(--site-weak-soft); color: var(--site-weak); }
 .m-perf .m-ai { font-size: 14px; gap: 8px; margin-top: 10px; padding: 12px 20px; }
-.m-ai--quiet:hover, .m-ai--quiet:focus-visible { color: #fff; }
 @keyframes m-liquid { 50% { border-radius: 58% 42% 37% 63% / 56% 59% 41% 44%; } to { transform: rotate(360deg); } }
 
 /* Mockup: advisor bar above the grid */
@@ -307,7 +305,7 @@ table.plan { border-collapse: collapse; min-width: 640px; width: 100%; }
 							<footer class="m-perf">
 								<div class="m-perf-row"><span class="m-chip m-chip--weak">&#9679; Needs attention</span><span class="m-share">0% of clicks</span></div>
 								<div class="m-meter" role="img" aria-label="0% of clicks, average 11.1%"><span style="width: 0%"></span><i style="left: 11.1%"></i></div>
-								<button class="m-ai m-ai--quiet" id="m-ai-card" type="button"><span>&#10022; Suggest improvements</span></button>
+								<button class="m-ai" id="m-ai-card" type="button"><span>&#10022; Suggest improvements</span></button>
 							</footer>
 						</article>
 					</div>
