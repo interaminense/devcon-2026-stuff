@@ -458,7 +458,7 @@ if FRAGMENT:
 
 	def endpoints(n):
 		rows = ''.join(
-			f'<li class="app-{app}"><span class="ep-method">{method}</span><code class="ep-path">{path}</code><span class="ep-note">{note}</span>{'<span class="ep-new">New</span>' if since == n and n > 1 else ''}</li>'
+			f'<li class="app-{app}{' ep-old' if since < n else ''}"><span class="ep-method">{method}</span><code class="ep-path">{path}</code><span class="ep-note">{note}</span>{'<span class="ep-new">New</span>' if since == n and n > 1 else ''}</li>'
 			for since, app, method, path, note in ENDPOINTS
 			if since <= n
 		)
@@ -647,6 +647,7 @@ FRAGMENT_CSS = '''.endpoints { display: grid; gap: 10px; }
 .ep-method { color: var(--c); font: 700 15px/1 var(--mono); min-width: 3.4em; }
 .ep-path { background: none; color: var(--fg); font-size: 17px; padding: 0; }
 .ep-note { color: var(--muted); flex: 1 1 220px; font-size: 17px; }
+.endpoints li.ep-old { opacity: 0.4; }
 .ep-new { background: var(--accent-soft); border-radius: 999px; color: var(--accent); font: 700 12px/1 var(--mono); letter-spacing: 0.1em; padding: 4px 8px; text-transform: uppercase; }
 .code-tabs { display: grid; gap: 12px; min-width: 0; }
 .code-tablist { border-bottom: 1px solid var(--line); display: flex; flex-wrap: wrap; gap: 4px; }
