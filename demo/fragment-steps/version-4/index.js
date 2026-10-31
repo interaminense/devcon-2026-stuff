@@ -131,6 +131,32 @@ async function askAgent(text) {
 	}
 }
 
+async function showInsight(root, result) {
+	function describe(label, result) {
+		return [
+			`metric: ${label}`,
+			`period: ${getRange().label.toLowerCase()}`,
+			`value: ${result.value}`,
+			`previous period value: ${result.previousValue}`,
+			`change: ${result.trend?.percentage ?? 'n/a'}%`,
+		].join('\n');
+	}
+
+	const insight = root.querySelector('.insight');
+
+	insight.innerHTML = '<span class="spinner" aria-hidden="true"></span>Asking AI Hub...';
+
+	try {
+		insight.textContent = await askAgent(
+			describe(METRICS[configuration.metric], result)
+		);
+		root.querySelector('.ai').hidden = true;
+	}
+	catch (error) {
+		insight.textContent = `AI Hub is not available: ${error.message}`;
+	}
+}
+
 function formatValue(value) {
 	const numberFormat = new Intl.NumberFormat('en-US', {
 		maximumFractionDigits: 1,
@@ -198,32 +224,6 @@ function formatTrend(result) {
 	const arrow = percentage > 0 ? '<span class="up">▲</span>' : percentage < 0 ? '<span class="down">▼</span>' : '';
 
 	return `${arrow} ${Math.abs(percentage).toFixed(1)}% vs previous period (${formatValue(result.previousValue)})`;
-}
-
-async function showInsight(root, result) {
-	function describe(label, result) {
-		return [
-			`metric: ${label}`,
-			`period: ${getRange().label.toLowerCase()}`,
-			`value: ${result.value}`,
-			`previous period value: ${result.previousValue}`,
-			`change: ${result.trend?.percentage ?? 'n/a'}%`,
-		].join('\n');
-	}
-
-	const insight = root.querySelector('.insight');
-
-	insight.innerHTML = '<span class="spinner" aria-hidden="true"></span>Asking AI Hub...';
-
-	try {
-		insight.textContent = await askAgent(
-			describe(METRICS[configuration.metric], result)
-		);
-		root.querySelector('.ai').hidden = true;
-	}
-	catch (error) {
-		insight.textContent = `AI Hub is not available: ${error.message}`;
-	}
 }
 
 async function showMetric(root, metric) {

@@ -132,6 +132,37 @@ async function askAgent(text) {
 	}
 }
 
+async function showInsight(root, result) {
+	function describe(label, result) {
+		return [
+			`metric: ${label}`,
+			`period: ${getRange().label.toLowerCase()}`,
+			`value: ${result.value}`,
+			`previous period value: ${result.previousValue}`,
+			`change: ${result.trend?.percentage ?? 'n/a'}%`,
+		].join('\n');
+	}
+
+	const insight = root.querySelector('.insight');
+	const notify = root.querySelector('.notify');
+
+	insight.innerHTML = '<span class="spinner" aria-hidden="true"></span>Asking AI Hub...';
+	notify.hidden = true;
+
+	try {
+		insight.textContent = await askAgent(
+			describe(METRICS[configuration.metric], result)
+		);
+		root.querySelector('.ai').hidden = true;
+		notify.disabled = false;
+		notify.textContent = '📣 Notify marketing team';
+		notify.hidden = false;
+	}
+	catch (error) {
+		insight.textContent = `AI Hub is not available: ${error.message}`;
+	}
+}
+
 function notifyMarketingTeam(label, text) {
 	return fetchData(ALERT_URL, {
 		insight: text,
@@ -208,37 +239,6 @@ function formatTrend(result) {
 	const arrow = percentage > 0 ? '<span class="up">▲</span>' : percentage < 0 ? '<span class="down">▼</span>' : '';
 
 	return `${arrow} ${Math.abs(percentage).toFixed(1)}% vs previous period (${formatValue(result.previousValue)})`;
-}
-
-async function showInsight(root, result) {
-	function describe(label, result) {
-		return [
-			`metric: ${label}`,
-			`period: ${getRange().label.toLowerCase()}`,
-			`value: ${result.value}`,
-			`previous period value: ${result.previousValue}`,
-			`change: ${result.trend?.percentage ?? 'n/a'}%`,
-		].join('\n');
-	}
-
-	const insight = root.querySelector('.insight');
-	const notify = root.querySelector('.notify');
-
-	insight.innerHTML = '<span class="spinner" aria-hidden="true"></span>Asking AI Hub...';
-	notify.hidden = true;
-
-	try {
-		insight.textContent = await askAgent(
-			describe(METRICS[configuration.metric], result)
-		);
-		root.querySelector('.ai').hidden = true;
-		notify.disabled = false;
-		notify.textContent = '📣 Notify marketing team';
-		notify.hidden = false;
-	}
-	catch (error) {
-		insight.textContent = `AI Hub is not available: ${error.message}`;
-	}
 }
 
 async function shareInsight(root) {
