@@ -163,15 +163,6 @@ async function showInsight(root, result) {
 	}
 }
 
-function notifyMarketingTeam(label, text) {
-	return fetchData(ALERT_URL, {
-		insight: text,
-		metric: label,
-		page: window.location.pathname,
-		period: getRange().label,
-	});
-}
-
 function formatValue(value) {
 	const numberFormat = new Intl.NumberFormat('en-US', {
 		maximumFractionDigits: 1,
@@ -242,6 +233,15 @@ function formatTrend(result) {
 }
 
 async function shareInsight(root) {
+	function notifyMarketingTeam(label, text) {
+		return fetchData(ALERT_URL, {
+			insight: text,
+			metric: label,
+			page: window.location.pathname,
+			period: getRange().label,
+		});
+	}
+
 	const notify = root.querySelector('.notify');
 
 	notify.disabled = true;
