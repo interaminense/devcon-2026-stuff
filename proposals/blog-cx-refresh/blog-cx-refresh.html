@@ -242,8 +242,73 @@ table.plan { border-collapse: collapse; min-width: 640px; width: 100%; }
 	.m-ghost { display: none; }
 }
 
+
+/* AI button hover options: each tile shows one treatment on the same Swell Lab button */
+@property --h-angle { syntax: '<angle>'; inherits: false; initial-value: 0deg; }
+.h-toolbar { align-items: center; display: flex; flex-wrap: wrap; gap: 10px 16px; justify-content: space-between; }
+.h-toolbar p { color: var(--muted); font-size: 14px; }
+.h-switch { align-items: center; color: var(--ink); cursor: pointer; display: inline-flex; font: 600 14px/1 var(--body); gap: 10px; }
+.h-switch input { accent-color: var(--accent); height: 18px; margin: 0; width: 18px; }
+.h-grid { display: grid; gap: 14px; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+@media (max-width: 860px) { .h-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 560px) { .h-grid { grid-template-columns: minmax(0, 1fr); } }
+.h-tile { margin: 0; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; display: grid; gap: 10px; grid-template-rows: auto auto 1fr; overflow: hidden; }
+.h-tile--pick { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
+.h-stage { align-items: center; background: var(--site-sand); display: flex; justify-content: center; min-height: 128px; padding: 24px 16px; }
+.h-meta { display: grid; gap: 4px; padding: 0 16px; }
+.h-meta b { align-items: center; display: flex; font-family: var(--display); font-weight: 600; gap: 8px; }
+.h-meta .h-tag { background: var(--accent-soft); border-radius: 999px; color: var(--accent); font: 700 10px/1 var(--body); letter-spacing: 0.08em; padding: 4px 8px; text-transform: uppercase; }
+.h-desc { color: var(--muted); font-size: 14px; padding: 0 16px 16px; }
+
+.h-btn { white-space: nowrap; align-items: center; background: var(--site-petrol); border: 0; border-radius: 999px; color: #fff; cursor: pointer; display: inline-flex; font: 700 14px/1 var(--body); gap: 8px; isolation: isolate; padding: 12px 20px; position: relative; transition: background 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease; }
+.h-btn:focus-visible { outline: 2px solid var(--devcon-blue); outline-offset: 3px; }
+.h-btn .h-star { display: inline-block; transition: transform 0.5s ease; }
+.h-btn span { position: relative; z-index: 1; }
+
+/* 1. Today: a blurred DEVCON blob swirls inside the pill */
+.h-liquid { overflow: hidden; }
+.h-liquid::before { animation: m-liquid 2.6s linear infinite paused; background: conic-gradient(from 0deg, var(--devcon-blue), var(--devcon-cyan), var(--devcon-violet), var(--devcon-magenta), var(--devcon-blue)); border-radius: 42% 58% 63% 37% / 41% 44% 56% 59%; content: ''; filter: blur(6px); inset: -120% -30%; opacity: 0; position: absolute; transition: opacity 0.35s ease; z-index: -1; }
+.h-liquid:hover::before, .is-hover .h-liquid::before { animation-play-state: running; opacity: 1; }
+.h-liquid:hover, .is-hover .h-liquid { box-shadow: 0 6px 18px rgba(229, 0, 189, 0.35); transform: translateY(-1px); }
+
+/* 2. Gradient ring: the fill stays petrol and a thin DEVCON ring turns around it */
+.h-ring { background: linear-gradient(var(--site-petrol), var(--site-petrol)) padding-box, conic-gradient(from var(--h-angle), var(--site-petrol), var(--site-petrol)) border-box; border: 2px solid transparent; padding: 10px 18px; }
+.h-ring:hover, .is-hover .h-ring { animation: h-spin 2.4s linear infinite; background: linear-gradient(var(--site-petrol), var(--site-petrol)) padding-box, conic-gradient(from var(--h-angle), var(--devcon-blue), var(--devcon-cyan), var(--devcon-violet), var(--devcon-magenta), var(--devcon-blue)) border-box; box-shadow: 0 6px 18px rgba(11, 95, 255, 0.25); }
+.h-ring:hover .h-star, .is-hover .h-ring .h-star { transform: rotate(90deg); }
+@keyframes h-spin { to { --h-angle: 360deg; } }
+
+/* 3. Shimmer: one band of light crosses the button and the star turns */
+.h-shimmer { overflow: hidden; }
+.h-shimmer::after { background: linear-gradient(105deg, transparent 30%, rgba(255, 255, 255, 0.55) 50%, transparent 70%); content: ''; inset: 0; position: absolute; transform: translateX(-120%); }
+.h-shimmer:hover::after, .is-hover .h-shimmer::after { animation: h-sweep 1.4s ease infinite; }
+.h-shimmer:hover, .is-hover .h-shimmer { background: #0a5f84; }
+.h-shimmer:hover .h-star, .is-hover .h-shimmer .h-star { transform: rotate(180deg) scale(1.15); }
+@keyframes h-sweep { 60%, to { transform: translateX(120%); } }
+
+/* 4. Gradient fill: the pill fills with the DEVCON gradient, which drifts slowly */
+.h-fill { background-image: linear-gradient(100deg, var(--devcon-blue), var(--devcon-violet), var(--devcon-magenta), var(--devcon-blue)); background-color: var(--site-petrol); background-size: 300% 100%; background-position: 0 0; overflow: hidden; }
+.h-fill::before { background: var(--site-petrol); border-radius: inherit; content: ''; inset: 0; position: absolute; transition: opacity 0.35s ease; z-index: 0; }
+.h-fill:hover::before, .is-hover .h-fill::before { opacity: 0; }
+.h-fill:hover, .is-hover .h-fill { animation: h-drift 3s linear infinite; box-shadow: 0 6px 18px rgba(122, 60, 255, 0.35); transform: translateY(-1px); }
+@keyframes h-drift { to { background-position: 150% 0; } }
+
+/* 5. Aurora glow: the button stays petrol and a soft DEVCON glow rises behind it */
+.h-glow::before { background: linear-gradient(90deg, var(--devcon-blue), var(--devcon-cyan), var(--devcon-violet), var(--devcon-magenta)); border-radius: inherit; content: ''; filter: blur(14px); inset: 4px 8px -2px; opacity: 0; position: absolute; transition: opacity 0.35s ease, inset 0.35s ease; z-index: -1; }
+.h-glow:hover::before, .is-hover .h-glow::before { inset: -2px -4px -8px; opacity: 0.8; }
+.h-glow:hover, .is-hover .h-glow { transform: translateY(-2px); }
+
+/* 6. Sparkle: the star spins, two small sparkles pop and the pill turns DEVCON blue */
+.h-sparkle { overflow: visible; }
+.h-sparkle i { color: var(--devcon-magenta); font-style: normal; font-size: 11px; opacity: 0; position: absolute; transform: scale(0.3); transition: opacity 0.3s ease, transform 0.4s cubic-bezier(0.3, 1.6, 0.5, 1); }
+.h-sparkle i:nth-of-type(1) { left: 8px; top: -8px; }
+.h-sparkle i:nth-of-type(2) { color: var(--devcon-cyan); left: 30px; bottom: -8px; transition-delay: 0.08s; }
+.h-sparkle:hover, .is-hover .h-sparkle { background: var(--devcon-blue); }
+.h-sparkle:hover i, .is-hover .h-sparkle i { opacity: 1; transform: scale(1); }
+.h-sparkle:hover .h-star, .is-hover .h-sparkle .h-star { transform: rotate(360deg); }
+
 @media (prefers-reduced-motion: reduce) {
-	.m-ai::before { animation: none; }
+	.m-ai::before, .h-btn, .h-btn::before, .h-btn::after { animation: none !important; }
+	.h-btn .h-star { transition: none; }
 	.m-ai, .m-ai::before { transition: none; }
 }
 </style>
@@ -478,6 +543,49 @@ table.plan { border-collapse: collapse; min-width: 640px; width: 100%; }
 		</ul>
 	</section>
 
+	<section class="cx" id="ai-hover">
+		<div class="cx-head">
+			<h2>AI button hover</h2>
+			<p>The liquid hover on the AI buttons looks muddy at this size. Six treatments for the same "Suggest improvements" button; the same choice applies to "Suggest next posts" and "Accept and open in CMS".</p>
+		</div>
+		<div class="h-toolbar">
+			<p>Hover a button, or show every hover state at once to compare them.</p>
+			<label class="h-switch" for="h-all"><input id="h-all" type="checkbox"> Show hover states</label>
+		</div>
+		<div class="h-grid" id="h-grid">
+			<figure class="h-tile">
+				<div class="h-stage"><button class="h-btn h-liquid" type="button"><span><span class="h-star">&#10022;</span> Suggest improvements</span></button></div>
+				<div class="h-meta"><b>Liquid <span class="h-tag">Today</span></b></div>
+				<p class="h-desc">A blurred DEVCON blob swirls inside the pill. Inside a small button the blur mixes the four colors into a muddy purple, and the text loses contrast while it moves.</p>
+			</figure>
+			<figure class="h-tile h-tile--pick">
+				<div class="h-stage"><button class="h-btn h-ring" type="button"><span><span class="h-star">&#10022;</span> Suggest improvements</span></button></div>
+				<div class="h-meta"><b>Gradient ring <span class="h-tag">Recommended</span></b></div>
+				<p class="h-desc">The fill stays petrol, so the text keeps its contrast. A thin DEVCON ring turns around the edge and the star turns a quarter. It reads as AI without leaving the Swell Lab look.</p>
+			</figure>
+			<figure class="h-tile">
+				<div class="h-stage"><button class="h-btn h-shimmer" type="button"><span><span class="h-star">&#10022;</span> Suggest improvements</span></button></div>
+				<div class="h-meta"><b>Shimmer</b></div>
+				<p class="h-desc">A band of light crosses the button and the star turns. The quietest option: no DEVCON color at rest or on hover, only motion.</p>
+			</figure>
+			<figure class="h-tile">
+				<div class="h-stage"><button class="h-btn h-fill" type="button"><span><span class="h-star">&#10022;</span> Suggest improvements</span></button></div>
+				<div class="h-meta"><b>Gradient fill</b></div>
+				<p class="h-desc">The pill fills with the DEVCON gradient, which drifts slowly. Clean and loud; the switch from petrol to violet is the strongest of the six.</p>
+			</figure>
+			<figure class="h-tile">
+				<div class="h-stage"><button class="h-btn h-glow" type="button"><span><span class="h-star">&#10022;</span> Suggest improvements</span></button></div>
+				<div class="h-meta"><b>Aurora glow</b></div>
+				<p class="h-desc">The button stays petrol and lifts, and a soft DEVCON glow rises behind it. The color lives outside the button, so the label never changes.</p>
+			</figure>
+			<figure class="h-tile">
+				<div class="h-stage"><button class="h-btn h-sparkle" type="button"><i aria-hidden="true">&#10022;</i><i aria-hidden="true">&#10022;</i><span><span class="h-star">&#10022;</span> Suggest improvements</span></button></div>
+				<div class="h-meta"><b>Sparkle</b></div>
+				<p class="h-desc">The star spins, two small sparkles pop around the button and the fill turns DEVCON blue. Playful; fits a demo better than an editor tool.</p>
+			</figure>
+		</div>
+	</section>
+
 	<section class="cx">
 		<div class="cx-head">
 			<h2>One set of tokens</h2>
@@ -523,3 +631,9 @@ table.plan { border-collapse: collapse; min-width: 640px; width: 100%; }
 		</ul>
 	</section>
 </main>
+
+<script>
+document.getElementById('h-all').addEventListener('change', (event) => {
+	document.getElementById('h-grid').classList.toggle('is-hover', event.target.checked);
+});
+</script>
