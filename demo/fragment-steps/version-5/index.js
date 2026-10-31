@@ -22,13 +22,14 @@ const METRICS = {
 	visitorsMetric: 'Unique visitors',
 };
 
-async function api(url, options = {}) {
+async function fetchData(url, body) {
 	const response = await fetch(url, {
-		...options,
+		body: JSON.stringify(body),
 		headers: {
 			'Content-Type': 'application/json',
 			'x-csrf-token': Liferay.authToken,
 		},
+		method: 'POST',
 	});
 
 	if (!response.ok) {
@@ -38,8 +39,8 @@ async function api(url, options = {}) {
 	return response.json();
 }
 
-async function getMetric(metric) {
-	const query = `
+function buildQuery(metric) {
+	return `
 		query ($channelId: String!, $rangeKey: Int) {
 			site(channelId: $channelId, interval: "${getRange().interval}", rangeKey: $rangeKey) {
 				${metric} {
@@ -57,22 +58,10 @@ async function getMetric(metric) {
 			}
 		}
 	`;
-
-	const {data} = await api('/o/analytics-rest/v1.0/graphql', {
-		body: JSON.stringify({
-			query,
-			variables: {channelId: CHANNEL_ID, rangeKey: getRange().key},
-		}),
-		method: 'POST',
-	});
-
-	return data.site[metric];
 }
 
 async function askAgent(text) {
-	const token = await api('/o/ai-hub-cell/v1.0/authorization-tokens', {
-		method: 'POST',
-	});
+	const token = await fetchData('/o/ai-hub-cell/v1.0/authorization-tokens');
 
 	const stream = await fetch(
 		`${token.serviceURL}/o/ai-hub/v1.0/agent-instances/subscribe`,
@@ -133,14 +122,11 @@ async function askAgent(text) {
 }
 
 function notifyMarketingTeam(label, text) {
-	return api(ALERT_URL, {
-		body: JSON.stringify({
-			insight: text,
-			metric: label,
-			page: window.location.pathname,
-			period: getRange().label,
-		}),
-		method: 'POST',
+	return fetchData(ALERT_URL, {
+		insight: text,
+		metric: label,
+		page: window.location.pathname,
+		period: getRange().label,
 	});
 }
 
@@ -268,7 +254,12 @@ async function render() {
 
 	root.querySelector('.card-title').textContent = `${METRICS[configuration.metric]} · ${getRange().label}`;
 
-	const result = await getMetric(configuration.metric);
+	const {data} = await fetchData('/o/analytics-rest/v1.0/graphql', {
+		query: buildQuery(configuration.metric),
+		variables: {channelId: CHANNEL_ID, rangeKey: getRange().key},
+	});
+
+	const result = data.site[configuration.metric];
 
 	root.querySelector('.value').textContent = formatValue(result.value);
 	root.querySelector('.trend').innerHTML = formatTrend(result);

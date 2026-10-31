@@ -18,8 +18,25 @@ const METRICS = {
 	visitorsMetric: 'Unique visitors',
 };
 
-async function getMetric(metric) {
-	const query = `
+async function fetchData(url, body) {
+	const response = await fetch(url, {
+		body: JSON.stringify(body),
+		headers: {
+			'Content-Type': 'application/json',
+			'x-csrf-token': Liferay.authToken,
+		},
+		method: 'POST',
+	});
+
+	if (!response.ok) {
+		throw new Error(`${url} returned ${response.status}`);
+	}
+
+	return response.json();
+}
+
+function buildQuery(metric) {
+	return `
 		query ($channelId: String!, $rangeKey: Int) {
 			site(channelId: $channelId, interval: "${getRange().interval}", rangeKey: $rangeKey) {
 				${metric} {
@@ -37,22 +54,6 @@ async function getMetric(metric) {
 			}
 		}
 	`;
-
-	const response = await fetch('/o/analytics-rest/v1.0/graphql', {
-		body: JSON.stringify({
-			query,
-			variables: {channelId: CHANNEL_ID, rangeKey: getRange().key},
-		}),
-		headers: {
-			'Content-Type': 'application/json',
-			'x-csrf-token': Liferay.authToken,
-		},
-		method: 'POST',
-	});
-
-	const {data} = await response.json();
-
-	return data.site[metric];
 }
 
 const NUMBER_FORMAT = new Intl.NumberFormat('en-US', {
@@ -129,7 +130,12 @@ async function render() {
 
 	root.querySelector('.card-title').textContent = `${METRICS[configuration.metric]} · ${getRange().label}`;
 
-	const result = await getMetric(configuration.metric);
+	const {data} = await fetchData('/o/analytics-rest/v1.0/graphql', {
+		query: buildQuery(configuration.metric),
+		variables: {channelId: CHANNEL_ID, rangeKey: getRange().key},
+	});
+
+	const result = data.site[configuration.metric];
 
 	root.querySelector('.value').textContent = formatValue(result.value);
 	root.querySelector('.trend').innerHTML = formatTrend(result);

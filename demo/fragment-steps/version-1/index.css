@@ -21,21 +21,6 @@
 	font-size: var(--font-size-sm);
 }
 
-.ldp-fragment-card .chart {
-	display: block;
-	height: 48px;
-	margin-top: var(--spacer-3);
-	width: 100%;
-}
-
-.ldp-fragment-card .chart .line {
-	fill: none;
-	stroke: currentColor;
-	stroke-linejoin: round;
-	stroke-width: 2;
-	vector-effect: non-scaling-stroke;
-}
-
 .ldp-fragment-card .up {
 	color: var(--success);
 }
