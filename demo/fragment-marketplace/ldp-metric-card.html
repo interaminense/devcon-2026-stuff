@@ -1,0 +1,755 @@
+<title>LDP Metric Card</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+/* One column: a short header, then a tabbed code box that mirrors the fragment editor */
+:root {
+	--bg: #f5f7f9;
+	--surface: #ffffff;
+	--ink: #17222b;
+	--muted: #5c6b77;
+	--line: #dbe2e8;
+	--accent: #0b5fff;
+	--code-bg: #0f1a22;
+	--code-ink: #dce6ee;
+	--body: 'IBM Plex Sans', system-ui, sans-serif;
+	--mono: 'IBM Plex Mono', ui-monospace, 'SFMono-Regular', Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+	:root:not([data-theme="light"]) { --bg: #0d151b; --surface: #15212a; --ink: #e5edf3; --muted: #93a3b0; --line: #26343f; --accent: #5b94ff; --code-bg: #091015; --code-ink: #dce6ee; color-scheme: dark; }
+}
+:root[data-theme="dark"] { --bg: #0d151b; --surface: #15212a; --ink: #e5edf3; --muted: #93a3b0; --line: #26343f; --accent: #5b94ff; --code-bg: #091015; --code-ink: #dce6ee; color-scheme: dark; }
+
+body { background: var(--bg); color: var(--ink); font: 15px/1.55 var(--body); }
+.wrap { display: grid; gap: 20px; margin: 0 auto; max-width: 1100px; padding-block: 32px 48px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+header { display: grid; gap: 6px; }
+.eyebrow { color: var(--accent); font: 500 12px/1 var(--mono); letter-spacing: 0.08em; text-transform: uppercase; }
+h1 { font: 600 28px/1.2 var(--body); margin: 0; text-wrap: balance; }
+header p { color: var(--muted); margin: 0; max-width: 70ch; }
+.box { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; min-width: 0; overflow: hidden; }
+.tabs { border-bottom: 1px solid var(--line); display: flex; overflow-x: auto; }
+.tab { align-items: center; background: none; border: 0; border-bottom: 2px solid transparent; color: var(--muted); cursor: pointer; display: inline-flex; font: 500 14px/1 var(--body); gap: 8px; padding: 14px 18px; white-space: nowrap; }
+.tab:hover { color: var(--ink); }
+.tab[aria-selected="true"] { border-bottom-color: var(--accent); color: var(--ink); }
+.tab:focus-visible, .copy:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
+.count { color: var(--muted); font: 400 11px/1 var(--mono); font-variant-numeric: tabular-nums; }
+.panel-bar { align-items: center; display: flex; justify-content: space-between; gap: 12px; padding: 10px 14px 10px 18px; }
+.file { color: var(--muted); font: 400 13px/1 var(--mono); }
+.copy { background: var(--accent); border: 0; border-radius: 6px; color: #fff; cursor: pointer; font: 500 13px/1 var(--body); padding: 8px 14px; }
+pre { background: var(--code-bg); color: var(--code-ink); font: 13px/1.6 var(--mono); margin: 0; max-height: 640px; overflow: auto; padding: 18px 20px; tab-size: 4; }
+</style>
+
+<div class="wrap">
+	<header>
+		<span class="eyebrow">Fragment · Marketplace</span>
+		<h1>LDP Metric Card</h1>
+		<p>Shows a Liferay Data Platform site metric with its trend and chart, and an optional AI insight from an AI Hub agent. The card checks the LDP connection and the AI Hub agent when it renders, and explains what to fix when one of them is missing.</p>
+	</header>
+	<div class="box">
+		<div aria-label="Fragment files" class="tabs" role="tablist">
+			<button aria-controls="panel-html" aria-selected="true" class="tab" id="tab-html" role="tab" type="button">HTML<span class="count">8</span></button>
+				<button aria-controls="panel-css" aria-selected="false" class="tab" id="tab-css" role="tab" type="button">CSS<span class="count">99</span></button>
+				<button aria-controls="panel-js" aria-selected="false" class="tab" id="tab-js" role="tab" type="button">JavaScript<span class="count">459</span></button>
+				<button aria-controls="panel-config" aria-selected="false" class="tab" id="tab-config" role="tab" type="button">Configuration<span class="count">86</span></button>
+		</div>
+		<section aria-labelledby="tab-html" class="panel" id="panel-html" role="tabpanel">
+				<div class="panel-bar"><span class="file">index.html</span><button class="copy" data-target="code-html" type="button">Copy</button></div>
+				<pre><code id="code-html">&lt;div class=&quot;ldp-fragment-card&quot;&gt;
+	&lt;strong class=&quot;card-title&quot;&gt;&lt;/strong&gt;
+	&lt;div class=&quot;value&quot;&gt;...&lt;/div&gt;
+	&lt;div class=&quot;trend&quot;&gt;Loading LDP data...&lt;/div&gt;
+	&lt;div class=&quot;chart-slot&quot;&gt;&lt;/div&gt;
+	&lt;p class=&quot;insight&quot;&gt;&lt;/p&gt;
+	&lt;p class=&quot;notice&quot; hidden&gt;&lt;/p&gt;
+&lt;/div&gt;</code></pre>
+			</section>
+			<section aria-labelledby="tab-css" class="panel" id="panel-css" role="tabpanel" hidden>
+				<div class="panel-bar"><span class="file">index.css</span><button class="copy" data-target="code-css" type="button">Copy</button></div>
+				<pre><code id="code-css">.ldp-fragment-card {
+	background: var(--white);
+	border: 1px solid var(--gray-300);
+	border-radius: var(--border-radius-lg);
+	box-shadow: var(--box-shadow-sm);
+	color: var(--body-color);
+	display: block;
+	font-family: var(--font-family-base);
+	padding: var(--spacer-4);
+}
+
+.ldp-fragment-card .value {
+	color: var(--dark);
+	font-size: 2.5rem;
+	font-weight: 600;
+	margin: var(--spacer-3) 0 var(--spacer-1);
+}
+
+.ldp-fragment-card .trend {
+	color: var(--secondary);
+	font-size: var(--font-size-sm);
+}
+
+.ldp-fragment-card .chart {
+	display: block;
+	height: 48px;
+	margin-top: var(--spacer-3);
+	width: 100%;
+}
+
+.ldp-fragment-card .chart .line {
+	fill: none;
+	stroke: currentColor;
+	stroke-linejoin: round;
+	stroke-width: 2;
+	vector-effect: non-scaling-stroke;
+}
+
+.ldp-fragment-card .up {
+	color: var(--success);
+}
+
+.ldp-fragment-card .down {
+	color: var(--danger);
+}
+
+.ldp-fragment-card .spinner {
+	animation: ldp-fragment-spin 0.8s linear infinite;
+	border: 2px solid currentColor;
+	border-radius: 50%;
+	border-right-color: transparent;
+	box-sizing: border-box;
+	display: inline-block;
+	height: 0.9em;
+	margin-right: 6px;
+	vertical-align: -0.1em;
+	width: 0.9em;
+}
+
+@keyframes ldp-fragment-spin {
+	to {
+		transform: rotate(360deg);
+	}
+}
+
+.ldp-fragment-card .insight {
+	background: var(--primary-l3);
+	border-left: 3px solid var(--primary);
+	border-radius: var(--border-radius);
+	color: var(--body-color);
+	font-size: var(--font-size-sm);
+	line-height: 1.5;
+	margin: var(--spacer-3) 0 0;
+	padding: var(--spacer-2) var(--spacer-3);
+}
+
+.ldp-fragment-card .insight:empty {
+	display: none;
+}
+
+.ldp-fragment-card .notice {
+	background: var(--warning-l2, #fff4e0);
+	border-left: 3px solid var(--warning, #b95000);
+	border-radius: var(--border-radius);
+	color: var(--body-color);
+	font-size: var(--font-size-sm);
+	line-height: 1.5;
+	margin: var(--spacer-3) 0 0;
+	padding: var(--spacer-2) var(--spacer-3);
+}
+
+.ldp-fragment-card .notice strong {
+	display: block;
+}
+
+.ldp-fragment-card.is-unavailable .value,
+.ldp-fragment-card.is-unavailable .trend {
+	display: none;
+}</code></pre>
+			</section>
+			<section aria-labelledby="tab-js" class="panel" id="panel-js" role="tabpanel" hidden>
+				<div class="panel-bar"><span class="file">index.js</span><button class="copy" data-target="code-js" type="button">Copy</button></div>
+				<pre><code id="code-js">const RANGES = {
+	0: &#x27;Last 24 hours&#x27;,
+	7: &#x27;Last 7 days&#x27;,
+	30: &#x27;Last 30 days&#x27;,
+	90: &#x27;Last 90 days&#x27;,
+};
+
+const METRICS = {
+	sessionsMetric: &#x27;Sessions&#x27;,
+	sessionsPerVisitorMetric: &#x27;Sessions per visitor&#x27;,
+	visitorsMetric: &#x27;Unique visitors&#x27;,
+};
+
+const AGENT_TIMEOUT = 60000;
+
+class FriendlyError extends Error {
+	constructor(title, detail) {
+		super(detail);
+
+		this.title = title;
+	}
+}
+
+function getRange() {
+	const key = RANGES[configuration.range] ? Number(configuration.range) : 7;
+
+	return {interval: key === 0 ? &#x27;H&#x27; : &#x27;D&#x27;, key, label: RANGES[key]};
+}
+
+function getMetricKey() {
+	return METRICS[configuration.metric] ? configuration.metric : &#x27;visitorsMetric&#x27;;
+}
+
+function isAIInsightEnabled() {
+	return configuration.aiInsight === true || configuration.aiInsight === &#x27;true&#x27;;
+}
+
+async function api(url, options = {}) {
+	const response = await fetch(url, {
+		...options,
+		headers: {
+			&#x27;Content-Type&#x27;: &#x27;application/json&#x27;,
+			&#x27;x-csrf-token&#x27;: Liferay.authToken,
+		},
+	});
+
+	return {
+		body: response.ok ? await response.json() : null,
+		status: response.status,
+	};
+}
+
+async function findChannel(channelId) {
+	for (let page = 1; ; page++) {
+		const response = await api(
+			`/o/analytics-settings-rest/v1.0/channels?page=${page}&amp;pageSize=100`
+		).catch(() =&gt; ({status: 0}));
+
+		if (response.status !== 200) {
+			return null;
+		}
+
+		const {items = [], lastPage = 1} = response.body;
+
+		if (items.some((channel) =&gt; channel.channelId === channelId)) {
+			return true;
+		}
+
+		if (page &gt;= lastPage) {
+			return false;
+		}
+	}
+}
+
+async function getMetric() {
+	const channelId = (configuration.channelId || &#x27;&#x27;).trim();
+
+	if (!channelId) {
+		throw new FriendlyError(
+			&#x27;Connect this card to Liferay Data Platform&#x27;,
+			&#x27;Set the LDP channel ID in the fragment configuration.&#x27;
+		);
+	}
+
+	const metric = getMetricKey();
+
+	const query = `
+		query ($channelId: String!, $rangeKey: Int) {
+			site(channelId: $channelId, interval: &quot;${getRange().interval}&quot;, rangeKey: $rangeKey) {
+				${metric} {
+					histogram {
+						metrics {
+							value
+						}
+					}
+					previousValue
+					trend {
+						percentage
+					}
+					value
+				}
+			}
+		}
+	`;
+
+	let channel;
+	let response;
+
+	try {
+		[channel, response] = await Promise.all([findChannel(channelId), api(&#x27;/o/analytics-rest/v1.0/graphql&#x27;, {
+			body: JSON.stringify({
+				query,
+				variables: {channelId, rangeKey: getRange().key},
+			}),
+			method: &#x27;POST&#x27;,
+		})]);
+	}
+	catch (error) {
+		throw new FriendlyError(
+			&#x27;Liferay Data Platform is not reachable&#x27;,
+			&#x27;Check the connection and try again in a moment.&#x27;
+		);
+	}
+
+	if (response.status === 401 || response.status === 403) {
+		throw new FriendlyError(
+			&#x27;LDP data is not available for you&#x27;,
+			&#x27;Sign in with a user who can view Liferay Data Platform data.&#x27;
+		);
+	}
+
+	if (response.status === 404) {
+		throw new FriendlyError(
+			&#x27;This site is not connected to Liferay Data Platform&#x27;,
+			&#x27;Connect the instance to LDP in Instance Settings &gt; Analytics Cloud.&#x27;
+		);
+	}
+
+	if (channel === false) {
+		throw new FriendlyError(
+			&#x27;The LDP channel was not found&#x27;,
+			`There is no channel with the ID &quot;${channelId}&quot; in the connected LDP workspace. Check the LDP channel ID in the fragment configuration.`
+		);
+	}
+
+	const result = response.body?.data?.site?.[metric];
+
+	if (response.status !== 200 || response.body?.errors?.length || !result) {
+		throw new FriendlyError(
+			&#x27;LDP did not return data for this card&#x27;,
+			&#x27;Make sure the LDP channel ID is correct and that the channel is connected to this site.&#x27;
+		);
+	}
+
+	return result;
+}
+
+async function getAgentToken() {
+	let response;
+
+	try {
+		response = await api(&#x27;/o/ai-hub-cell/v1.0/authorization-tokens&#x27;, {
+			method: &#x27;POST&#x27;,
+		});
+	}
+	catch (error) {
+		response = {status: 0};
+	}
+
+	if (response.status === 401 || response.status === 403) {
+		throw new FriendlyError(
+			&#x27;AI insights are not available for you&#x27;,
+			&#x27;Sign in with a user who can use AI Hub.&#x27;
+		);
+	}
+
+	if (!response.body?.accessToken) {
+		throw new FriendlyError(
+			&#x27;AI Hub is not available&#x27;,
+			&#x27;This instance is not connected to AI Hub, so the card shows the metric without an insight.&#x27;
+		);
+	}
+
+	return response.body;
+}
+
+async function startAgent(token, agentERC, text, sinkKey) {
+	const response = await fetch(`${token.serviceURL}/o/ai-hub/v1.0/agent-instances`, {
+		body: JSON.stringify({
+			agentDefinitionExternalReferenceCode: agentERC,
+			context: {metrics: text},
+			sseEventSinkKey: sinkKey,
+		}),
+		headers: {
+			&#x27;Accept&#x27;: &#x27;application/json&#x27;,
+			&#x27;Authorization&#x27;: `Bearer ${token.accessToken}`,
+			&#x27;Content-Type&#x27;: &#x27;application/json&#x27;,
+			&#x27;Liferay-AI-Hub-Cell-On-Behalf-Of&#x27;: token.userToken,
+		},
+		method: &#x27;POST&#x27;,
+	});
+
+	if (response.status === 404) {
+		throw new FriendlyError(
+			&#x27;The AI Hub agent was not found&#x27;,
+			`There is no agent with the ERC &quot;${agentERC}&quot;. Check the AI Hub agent ERC in the fragment configuration.`
+		);
+	}
+
+	if (!response.ok) {
+		throw new FriendlyError(
+			&#x27;AI Hub could not start the agent&#x27;,
+			&#x27;Try again in a moment.&#x27;
+		);
+	}
+}
+
+async function readAnswer(token, agentERC, text, signal) {
+	const stream = await fetch(
+		`${token.serviceURL}/o/ai-hub/v1.0/agent-instances/subscribe`,
+		{
+			headers: {
+				Accept: &#x27;text/event-stream&#x27;,
+				Authorization: `Bearer ${token.accessToken}`,
+			},
+			signal,
+		}
+	);
+
+	if (!stream.ok) {
+		throw new FriendlyError(&#x27;AI Hub is not available&#x27;, &#x27;Try again in a moment.&#x27;);
+	}
+
+	const reader = stream.body.getReader();
+	const decoder = new TextDecoder();
+
+	let buffer = &#x27;&#x27;;
+
+	while (true) {
+		const {done, value} = await reader.read();
+
+		if (done) {
+			throw new FriendlyError(&#x27;AI Hub did not answer&#x27;, &#x27;Try again in a moment.&#x27;);
+		}
+
+		buffer += decoder.decode(value, {stream: true});
+
+		let end;
+
+		while ((end = buffer.indexOf(&#x27;\n\n&#x27;)) &gt;= 0) {
+			const block = buffer.slice(0, end);
+
+			buffer = buffer.slice(end + 2);
+
+			const name = block.match(/^event: ?(.*)$/m)?.[1];
+			const data = block
+				.split(&#x27;\n&#x27;)
+				.filter((line) =&gt; line.startsWith(&#x27;data:&#x27;))
+				.map((line) =&gt; line.slice(5).trim())
+				.join(&#x27;\n&#x27;);
+
+			if (name === &#x27;Subscribe&#x27;) {
+				await startAgent(token, agentERC, text, data);
+			}
+			else if (name === agentERC) {
+				reader.cancel();
+
+				return JSON.parse(data).data;
+			}
+			else if (name === &#x27;Agent Invocation Failed&#x27;) {
+				throw new FriendlyError(
+					&#x27;The AI Hub agent could not answer&#x27;,
+					&#x27;Check the agent workflow in AI Hub and try again.&#x27;
+				);
+			}
+		}
+	}
+}
+
+async function askAgent(text) {
+	const agentERC = (configuration.agentERC || &#x27;&#x27;).trim();
+
+	if (!agentERC) {
+		throw new FriendlyError(
+			&#x27;Choose the AI Hub agent&#x27;,
+			&#x27;Set the AI Hub agent ERC in the fragment configuration.&#x27;
+		);
+	}
+
+	const token = await getAgentToken();
+
+	const controller = new AbortController();
+	const timer = setTimeout(() =&gt; controller.abort(), AGENT_TIMEOUT);
+
+	try {
+		return await readAnswer(token, agentERC, text, controller.signal);
+	}
+	catch (error) {
+		if (error instanceof FriendlyError) {
+			throw error;
+		}
+
+		if (error.name === &#x27;AbortError&#x27;) {
+			throw new FriendlyError(&#x27;AI Hub took too long to answer&#x27;, &#x27;Try again in a moment.&#x27;);
+		}
+
+		throw new FriendlyError(
+			&#x27;AI Hub is not available&#x27;,
+			&#x27;This instance could not reach AI Hub. Check the AI Hub connection and try again.&#x27;
+		);
+	}
+	finally {
+		clearTimeout(timer);
+
+		controller.abort();
+	}
+}
+
+function describe(result) {
+	return [
+		`metric: ${METRICS[getMetricKey()]}`,
+		`period: ${getRange().label.toLowerCase()}`,
+		`value: ${result.value}`,
+		`previous period value: ${result.previousValue}`,
+		`change: ${result.trend?.percentage ?? &#x27;n/a&#x27;}%`,
+	].join(&#x27;\n&#x27;);
+}
+
+const NUMBER_FORMAT = new Intl.NumberFormat(&#x27;en-US&#x27;, {
+	maximumFractionDigits: 1,
+	notation: &#x27;compact&#x27;,
+	roundingMode: &#x27;trunc&#x27;,
+});
+
+function formatValue(value) {
+	return NUMBER_FORMAT.format(value);
+}
+
+function curve(points) {
+	const ys = points.map(([, y]) =&gt; y);
+	const clamp = (y) =&gt; Math.min(Math.max(y, Math.min(...ys)), Math.max(...ys));
+
+	return points
+		.map(([x, y], index) =&gt; {
+			if (index === 0) {
+				return `M${x.toFixed(1)},${y.toFixed(1)}`;
+			}
+
+			const [x0, y0] = points[index - 2] || points[index - 1];
+			const [x1, y1] = points[index - 1];
+			const [x3, y3] = points[index + 1] || [x, y];
+
+			return `C${(x1 + (x - x0) / 6).toFixed(1)},${clamp(y1 + (y - y0) / 6).toFixed(1)} ${(x - (x3 - x1) / 6).toFixed(1)},${clamp(y - (y3 - y1) / 6).toFixed(1)} ${x.toFixed(1)},${y.toFixed(1)}`;
+		})
+		.join(&#x27; &#x27;);
+}
+
+function renderChart(result) {
+	const values = (result.histogram?.metrics || []).map(({value}) =&gt; value);
+
+	if (values.length &lt; 2) {
+		return &#x27;&#x27;;
+	}
+
+	const max = Math.max(...values);
+	const min = Math.min(...values);
+	const points = values.map((value, index) =&gt; [
+		(index / (values.length - 1)) * 100,
+		28 - ((value - min) / (max - min || 1)) * 24,
+	]);
+	const line = curve(points);
+
+	const fade = `ldp-fade-${Math.random().toString(36).slice(2, 8)}`;
+	const percentage = result.trend?.percentage;
+	const direction = percentage &gt; 0 ? &#x27;up&#x27; : percentage &lt; 0 ? &#x27;down&#x27; : &#x27;&#x27;;
+
+	return `
+		&lt;svg class=&quot;chart ${direction}&quot; preserveAspectRatio=&quot;none&quot; viewBox=&quot;0 0 100 32&quot;&gt;
+			&lt;defs&gt;
+				&lt;linearGradient id=&quot;${fade}&quot; x1=&quot;0&quot; x2=&quot;0&quot; y1=&quot;0&quot; y2=&quot;1&quot;&gt;
+					&lt;stop offset=&quot;0&quot; stop-color=&quot;currentColor&quot; stop-opacity=&quot;0.35&quot;/&gt;
+					&lt;stop offset=&quot;1&quot; stop-color=&quot;currentColor&quot; stop-opacity=&quot;0&quot;/&gt;
+				&lt;/linearGradient&gt;
+			&lt;/defs&gt;
+			&lt;path d=&quot;${line} L100,32 L0,32 Z&quot; fill=&quot;url(#${fade})&quot;/&gt;
+			&lt;path class=&quot;line&quot; d=&quot;${line}&quot;/&gt;
+		&lt;/svg&gt;
+	`;
+}
+
+function formatTrend(result) {
+	const percentage = result.trend?.percentage;
+
+	if (percentage === null || percentage === undefined) {
+		return `Previous period: ${formatValue(result.previousValue)}`;
+	}
+
+	const arrow = percentage &gt; 0 ? &#x27;&lt;span class=&quot;up&quot;&gt;▲&lt;/span&gt;&#x27; : percentage &lt; 0 ? &#x27;&lt;span class=&quot;down&quot;&gt;▼&lt;/span&gt;&#x27; : &#x27;&#x27;;
+
+	return `${arrow} ${Math.abs(percentage).toFixed(1)}% vs previous period (${formatValue(result.previousValue)})`;
+}
+
+function showNotice(root, error) {
+	const notice = root.querySelector(&#x27;.notice&#x27;);
+
+	const title = document.createElement(&#x27;strong&#x27;);
+
+	title.textContent = error instanceof FriendlyError ? error.title : &#x27;Something went wrong&#x27;;
+
+	notice.replaceChildren(
+		title,
+		error instanceof FriendlyError ? error.message : &#x27;Reload the page and try again.&#x27;
+	);
+	notice.hidden = false;
+}
+
+async function showInsight(root, result) {
+	const insight = root.querySelector(&#x27;.insight&#x27;);
+
+	insight.innerHTML = &#x27;&lt;span class=&quot;spinner&quot; aria-hidden=&quot;true&quot;&gt;&lt;/span&gt;Asking AI Hub...&#x27;;
+
+	try {
+		insight.textContent = await askAgent(describe(result));
+	}
+	catch (error) {
+		insight.textContent = &#x27;&#x27;;
+
+		showNotice(root, error);
+	}
+}
+
+async function render() {
+	const root = fragmentElement.querySelector(&#x27;.ldp-fragment-card&#x27;);
+
+	root.querySelector(&#x27;.card-title&#x27;).textContent = `${METRICS[getMetricKey()]} · ${getRange().label}`;
+
+	let result;
+
+	try {
+		result = await getMetric();
+	}
+	catch (error) {
+		root.classList.add(&#x27;is-unavailable&#x27;);
+
+		showNotice(root, error);
+
+		return;
+	}
+
+	root.querySelector(&#x27;.value&#x27;).textContent = formatValue(result.value);
+	root.querySelector(&#x27;.trend&#x27;).innerHTML = formatTrend(result);
+	root.querySelector(&#x27;.chart-slot&#x27;).innerHTML = renderChart(result);
+
+	if (isAIInsightEnabled()) {
+		await showInsight(root, result);
+	}
+}
+
+render();</code></pre>
+			</section>
+			<section aria-labelledby="tab-config" class="panel" id="panel-config" role="tabpanel" hidden>
+				<div class="panel-bar"><span class="file">index.json</span><button class="copy" data-target="code-config" type="button">Copy</button></div>
+				<pre><code id="code-config">{
+	&quot;fieldSets&quot;: [
+		{
+			&quot;fields&quot;: [
+				{
+					&quot;dataType&quot;: &quot;string&quot;,
+					&quot;defaultValue&quot;: &quot;&quot;,
+					&quot;description&quot;: &quot;The LDP channel of this site, in Liferay Data Platform under Settings &gt; Channels.&quot;,
+					&quot;label&quot;: &quot;LDP channel ID&quot;,
+					&quot;name&quot;: &quot;channelId&quot;,
+					&quot;type&quot;: &quot;text&quot;
+				},
+				{
+					&quot;dataType&quot;: &quot;string&quot;,
+					&quot;defaultValue&quot;: &quot;visitorsMetric&quot;,
+					&quot;label&quot;: &quot;Metric&quot;,
+					&quot;name&quot;: &quot;metric&quot;,
+					&quot;type&quot;: &quot;select&quot;,
+					&quot;typeOptions&quot;: {
+						&quot;validValues&quot;: [
+							{
+								&quot;label&quot;: &quot;Unique visitors&quot;,
+								&quot;value&quot;: &quot;visitorsMetric&quot;
+							},
+							{
+								&quot;label&quot;: &quot;Sessions&quot;,
+								&quot;value&quot;: &quot;sessionsMetric&quot;
+							},
+							{
+								&quot;label&quot;: &quot;Sessions per visitor&quot;,
+								&quot;value&quot;: &quot;sessionsPerVisitorMetric&quot;
+							}
+						]
+					}
+				},
+				{
+					&quot;dataType&quot;: &quot;string&quot;,
+					&quot;defaultValue&quot;: &quot;7&quot;,
+					&quot;label&quot;: &quot;Time range&quot;,
+					&quot;name&quot;: &quot;range&quot;,
+					&quot;type&quot;: &quot;select&quot;,
+					&quot;typeOptions&quot;: {
+						&quot;validValues&quot;: [
+							{
+								&quot;label&quot;: &quot;Last 24 hours&quot;,
+								&quot;value&quot;: &quot;0&quot;
+							},
+							{
+								&quot;label&quot;: &quot;Last 7 days&quot;,
+								&quot;value&quot;: &quot;7&quot;
+							},
+							{
+								&quot;label&quot;: &quot;Last 30 days&quot;,
+								&quot;value&quot;: &quot;30&quot;
+							},
+							{
+								&quot;label&quot;: &quot;Last 90 days&quot;,
+								&quot;value&quot;: &quot;90&quot;
+							}
+						]
+					}
+				}
+			],
+			&quot;label&quot;: &quot;Liferay Data Platform&quot;
+		},
+		{
+			&quot;fields&quot;: [
+				{
+					&quot;defaultValue&quot;: false,
+					&quot;label&quot;: &quot;Show AI insight&quot;,
+					&quot;name&quot;: &quot;aiInsight&quot;,
+					&quot;type&quot;: &quot;checkbox&quot;
+				},
+				{
+					&quot;dataType&quot;: &quot;string&quot;,
+					&quot;defaultValue&quot;: &quot;&quot;,
+					&quot;description&quot;: &quot;The external reference code of the AI Hub agent that writes the insight. It receives the metric in a \&quot;metrics\&quot; input variable.&quot;,
+					&quot;label&quot;: &quot;AI Hub agent ERC&quot;,
+					&quot;name&quot;: &quot;agentERC&quot;,
+					&quot;type&quot;: &quot;text&quot;
+				}
+			],
+			&quot;label&quot;: &quot;AI Hub&quot;
+		}
+	]
+}</code></pre>
+			</section>
+	</div>
+</div>
+
+<script>
+for (const tab of document.querySelectorAll('.tab')) {
+	tab.addEventListener('click', () => {
+		for (const other of document.querySelectorAll('.tab')) {
+			const selected = other === tab;
+
+			other.setAttribute('aria-selected', String(selected));
+			document.getElementById(other.getAttribute('aria-controls')).hidden = !selected;
+		}
+	});
+}
+
+for (const button of document.querySelectorAll('.copy')) {
+	button.addEventListener('click', async () => {
+		const code = document.getElementById(button.dataset.target);
+
+		try {
+			await navigator.clipboard.writeText(code.textContent);
+			button.textContent = 'Copied';
+		}
+		catch (error) {
+			const range = document.createRange();
+
+			range.selectNodeContents(code);
+			getSelection().removeAllRanges();
+			getSelection().addRange(range);
+			button.textContent = 'Selected';
+		}
+
+		setTimeout(() => (button.textContent = 'Copy'), 1500);
+	});
+}
+</script>

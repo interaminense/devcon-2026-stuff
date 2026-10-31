@@ -1,0 +1,86 @@
+{
+	"fieldSets": [
+		{
+			"fields": [
+				{
+					"dataType": "string",
+					"defaultValue": "",
+					"description": "The LDP channel of this site, in Liferay Data Platform under Settings > Channels.",
+					"label": "LDP channel ID",
+					"name": "channelId",
+					"type": "text"
+				},
+				{
+					"dataType": "string",
+					"defaultValue": "visitorsMetric",
+					"label": "Metric",
+					"name": "metric",
+					"type": "select",
+					"typeOptions": {
+						"validValues": [
+							{
+								"label": "Unique visitors",
+								"value": "visitorsMetric"
+							},
+							{
+								"label": "Sessions",
+								"value": "sessionsMetric"
+							},
+							{
+								"label": "Sessions per visitor",
+								"value": "sessionsPerVisitorMetric"
+							}
+						]
+					}
+				},
+				{
+					"dataType": "string",
+					"defaultValue": "7",
+					"label": "Time range",
+					"name": "range",
+					"type": "select",
+					"typeOptions": {
+						"validValues": [
+							{
+								"label": "Last 24 hours",
+								"value": "0"
+							},
+							{
+								"label": "Last 7 days",
+								"value": "7"
+							},
+							{
+								"label": "Last 30 days",
+								"value": "30"
+							},
+							{
+								"label": "Last 90 days",
+								"value": "90"
+							}
+						]
+					}
+				}
+			],
+			"label": "Liferay Data Platform"
+		},
+		{
+			"fields": [
+				{
+					"defaultValue": false,
+					"label": "Show AI insight",
+					"name": "aiInsight",
+					"type": "checkbox"
+				},
+				{
+					"dataType": "string",
+					"defaultValue": "",
+					"description": "The external reference code of the AI Hub agent that writes the insight. It receives the metric in a \"metrics\" input variable.",
+					"label": "AI Hub agent ERC",
+					"name": "agentERC",
+					"type": "text"
+				}
+			],
+			"label": "AI Hub"
+		}
+	]
+}
