@@ -65,13 +65,6 @@ async function fetchLDPData(metric) {
 	});
 }
 
-function readEvent(block) {
-	return {
-		data: block.match(/^data: ?(.*)$/m)?.[1],
-		name: block.match(/^event: ?(.*)$/m)?.[1],
-	};
-}
-
 function startAgent(token, sinkKey, text) {
 	return fetch(`${token.serviceURL}/o/ai-hub/v1.0/agent-instances`, {
 		body: JSON.stringify({
@@ -89,6 +82,13 @@ function startAgent(token, sinkKey, text) {
 }
 
 async function askAgent(text) {
+	function readEvent(block) {
+		return {
+			data: block.match(/^data: ?(.*)$/m)?.[1],
+			name: block.match(/^event: ?(.*)$/m)?.[1],
+		};
+	}
+
 	const token = await fetchData('/o/ai-hub-cell/v1.0/authorization-tokens');
 
 	const stream = await fetch(
@@ -139,16 +139,6 @@ function notifyMarketingTeam(label, text) {
 		page: window.location.pathname,
 		period: getRange().label,
 	});
-}
-
-function describe(label, result) {
-	return [
-		`metric: ${label}`,
-		`period: ${getRange().label.toLowerCase()}`,
-		`value: ${result.value}`,
-		`previous period value: ${result.previousValue}`,
-		`change: ${result.trend?.percentage ?? 'n/a'}%`,
-	].join('\n');
 }
 
 function formatValue(value) {
@@ -221,6 +211,16 @@ function formatTrend(result) {
 }
 
 async function showInsight(root, result) {
+	function describe(label, result) {
+		return [
+			`metric: ${label}`,
+			`period: ${getRange().label.toLowerCase()}`,
+			`value: ${result.value}`,
+			`previous period value: ${result.previousValue}`,
+			`change: ${result.trend?.percentage ?? 'n/a'}%`,
+		].join('\n');
+	}
+
 	const insight = root.querySelector('.insight');
 	const notify = root.querySelector('.notify');
 
