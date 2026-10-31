@@ -447,6 +447,24 @@ if FRAGMENT:
 
 	ORDER = ('html', 'css', 'js', 'json')
 
+	# The endpoints each version calls, with the ones it adds marked as new
+	ENDPOINTS = [
+		(1, 'ldp', 'POST', '/o/analytics-rest/v1.0/graphql', 'LDP data through the DXP proxy'),
+		(4, 'dxp', 'POST', '/o/ai-hub-cell/v1.0/authorization-tokens', 'AI Hub token for the signed-in user'),
+		(4, 'hub', 'GET', '{serviceURL}/o/ai-hub/v1.0/agent-instances/subscribe', 'Stream with the agent answer'),
+		(4, 'hub', 'POST', '{serviceURL}/o/ai-hub/v1.0/agent-instances', 'Starts the agent with the metric'),
+		(5, 'dxp', 'POST', '/o/c/insightalerts', 'Insight Alert entry, which notifies the Marketing Team'),
+	]
+
+	def endpoints(n):
+		rows = ''.join(
+			f'<li class="app-{app}"><span class="ep-method">{method}</span><code class="ep-path">{path}</code><span class="ep-note">{note}</span>{'<span class="ep-new">New</span>' if since == n and n > 1 else ''}</li>'
+			for since, app, method, path, note in ENDPOINTS
+			if since <= n
+		)
+
+		return f'<div class="endpoints"><p class="ep-title">Endpoints</p><ul>{rows}</ul></div>'
+
 	# One step per version: one code box with a tab per fragment editor tab,
 	# in the editor's order
 	def fragment_code(n, kinds):
@@ -462,7 +480,7 @@ if FRAGMENT:
 			for i, kind in enumerate(shown)
 		)
 
-		yield ('code', f'<div class="code-tabs"><div class="code-tablist" role="tablist">{tabs}</div>{panels}</div>')
+		yield ('code', endpoints(n) + f'<div class="code-tabs"><div class="code-tablist" role="tablist">{tabs}</div>{panels}</div>')
 
 	def ship_fragment(n, tabs):
 		return ('ui', f'''<p class="step-title"><strong>Ship version {n}</strong></p>
@@ -622,7 +640,15 @@ SHORT_CSS = '''.step { grid-template-columns: minmax(0, 1fr); }
 .lc { overflow-wrap: anywhere; white-space: pre-wrap; }'''
 
 # Side by side boxes, each one at most 400px tall and scrolling inside
-FRAGMENT_CSS = '''.code-tabs { display: grid; gap: 12px; min-width: 0; }
+FRAGMENT_CSS = '''.endpoints { display: grid; gap: 10px; }
+.ep-title { color: var(--muted); font: 600 14px/1 var(--mono); letter-spacing: 0.14em; margin: 0; text-transform: uppercase; }
+.endpoints ul { display: grid; gap: 8px; list-style: none; margin: 0; padding: 0; }
+.endpoints li { align-items: center; background: var(--code-bg); border: 1px solid var(--line); border-left: 3px solid var(--c); border-radius: 8px; display: flex; flex-wrap: wrap; gap: 6px 14px; padding: 10px 14px; }
+.ep-method { color: var(--c); font: 700 15px/1 var(--mono); min-width: 3.4em; }
+.ep-path { background: none; color: var(--fg); font-size: 17px; padding: 0; }
+.ep-note { color: var(--muted); flex: 1 1 220px; font-size: 17px; }
+.ep-new { background: var(--accent-soft); border-radius: 999px; color: var(--accent); font: 700 12px/1 var(--mono); letter-spacing: 0.1em; padding: 4px 8px; text-transform: uppercase; }
+.code-tabs { display: grid; gap: 12px; min-width: 0; }
 .code-tablist { border-bottom: 1px solid var(--line); display: flex; flex-wrap: wrap; gap: 4px; }
 .code-tab { background: transparent; border: 0; border-bottom: 3px solid transparent; color: var(--muted); cursor: pointer; font: 600 18px/1 var(--body); margin-bottom: -1px; padding: 10px 16px; }
 .code-tab:hover, .code-tab:focus-visible { color: var(--fg); }

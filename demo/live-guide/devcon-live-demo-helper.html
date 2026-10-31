@@ -245,6 +245,14 @@ html { scroll-behavior: smooth; }
 .step { grid-template-columns: minmax(0, 1fr); }
 .code-scroll { max-height: none; overflow: visible; }
 .lc { overflow-wrap: anywhere; white-space: pre-wrap; }
+.endpoints { display: grid; gap: 10px; }
+.ep-title { color: var(--muted); font: 600 14px/1 var(--mono); letter-spacing: 0.14em; margin: 0; text-transform: uppercase; }
+.endpoints ul { display: grid; gap: 8px; list-style: none; margin: 0; padding: 0; }
+.endpoints li { align-items: center; background: var(--code-bg); border: 1px solid var(--line); border-left: 3px solid var(--c); border-radius: 8px; display: flex; flex-wrap: wrap; gap: 6px 14px; padding: 10px 14px; }
+.ep-method { color: var(--c); font: 700 15px/1 var(--mono); min-width: 3.4em; }
+.ep-path { background: none; color: var(--fg); font-size: 17px; padding: 0; }
+.ep-note { color: var(--muted); flex: 1 1 220px; font-size: 17px; }
+.ep-new { background: var(--accent-soft); border-radius: 999px; color: var(--accent); font: 700 12px/1 var(--mono); letter-spacing: 0.1em; padding: 4px 8px; text-transform: uppercase; }
 .code-tabs { display: grid; gap: 12px; min-width: 0; }
 .code-tablist { border-bottom: 1px solid var(--line); display: flex; flex-wrap: wrap; gap: 4px; }
 .code-tab { background: transparent; border: 0; border-bottom: 3px solid transparent; color: var(--muted); cursor: pointer; font: 600 18px/1 var(--body); margin-bottom: -1px; padding: 10px 16px; }
@@ -324,7 +332,7 @@ html { scroll-behavior: smooth; }
 	
 	<div class="step-body">
 		
-		<div class="code-tabs"><div class="code-tablist" role="tablist"><button aria-selected="true" class="code-tab" data-tab="html" role="tab" type="button">HTML</button><button aria-selected="false" class="code-tab" data-tab="css" role="tab" type="button">CSS</button><button aria-selected="false" class="code-tab" data-tab="js" role="tab" type="button">JavaScript</button></div><div class="code-panel" data-panel="html" role="tabpanel">
+		<div class="endpoints"><p class="ep-title">Endpoints</p><ul><li class="app-ldp"><span class="ep-method">POST</span><code class="ep-path">/o/analytics-rest/v1.0/graphql</code><span class="ep-note">LDP data through the DXP proxy</span></li></ul></div><div class="code-tabs"><div class="code-tablist" role="tablist"><button aria-selected="true" class="code-tab" data-tab="html" role="tab" type="button">HTML</button><button aria-selected="false" class="code-tab" data-tab="css" role="tab" type="button">CSS</button><button aria-selected="false" class="code-tab" data-tab="js" role="tab" type="button">JavaScript</button></div><div class="code-panel" data-panel="html" role="tabpanel">
 <figure class="code">
 	<figcaption>
 		<span class="file">LDP Fragment Card · HTML</span>
@@ -366,7 +374,7 @@ html { scroll-behavior: smooth; }
 	
 	<div class="step-body">
 		
-		<div class="code-tabs"><div class="code-tablist" role="tablist"><button aria-selected="true" class="code-tab" data-tab="html" role="tab" type="button">HTML</button><button aria-selected="false" class="code-tab" data-tab="css" role="tab" type="button">CSS</button><button aria-selected="false" class="code-tab" data-tab="js" role="tab" type="button">JavaScript</button></div><div class="code-panel" data-panel="html" role="tabpanel">
+		<div class="endpoints"><p class="ep-title">Endpoints</p><ul><li class="app-ldp"><span class="ep-method">POST</span><code class="ep-path">/o/analytics-rest/v1.0/graphql</code><span class="ep-note">LDP data through the DXP proxy</span></li></ul></div><div class="code-tabs"><div class="code-tablist" role="tablist"><button aria-selected="true" class="code-tab" data-tab="html" role="tab" type="button">HTML</button><button aria-selected="false" class="code-tab" data-tab="css" role="tab" type="button">CSS</button><button aria-selected="false" class="code-tab" data-tab="js" role="tab" type="button">JavaScript</button></div><div class="code-panel" data-panel="html" role="tabpanel">
 <figure class="code">
 	<figcaption>
 		<span class="file">LDP Fragment Card · HTML</span>
@@ -408,7 +416,7 @@ html { scroll-behavior: smooth; }
 	
 	<div class="step-body">
 		
-		<div class="code-tabs"><div class="code-tablist" role="tablist"><button aria-selected="true" class="code-tab" data-tab="html" role="tab" type="button">HTML</button><button aria-selected="false" class="code-tab" data-tab="css" role="tab" type="button">CSS</button><button aria-selected="false" class="code-tab" data-tab="js" role="tab" type="button">JavaScript</button><button aria-selected="false" class="code-tab" data-tab="json" role="tab" type="button">Configuration</button></div><div class="code-panel" data-panel="html" role="tabpanel">
+		<div class="endpoints"><p class="ep-title">Endpoints</p><ul><li class="app-ldp"><span class="ep-method">POST</span><code class="ep-path">/o/analytics-rest/v1.0/graphql</code><span class="ep-note">LDP data through the DXP proxy</span></li></ul></div><div class="code-tabs"><div class="code-tablist" role="tablist"><button aria-selected="true" class="code-tab" data-tab="html" role="tab" type="button">HTML</button><button aria-selected="false" class="code-tab" data-tab="css" role="tab" type="button">CSS</button><button aria-selected="false" class="code-tab" data-tab="js" role="tab" type="button">JavaScript</button><button aria-selected="false" class="code-tab" data-tab="json" role="tab" type="button">Configuration</button></div><div class="code-panel" data-panel="html" role="tabpanel">
 <figure class="code">
 	<figcaption>
 		<span class="file">LDP Fragment Card · HTML</span>
@@ -459,7 +467,7 @@ html { scroll-behavior: smooth; }
 	
 	<div class="step-body">
 		
-		<div class="code-tabs"><div class="code-tablist" role="tablist"><button aria-selected="true" class="code-tab" data-tab="html" role="tab" type="button">HTML</button><button aria-selected="false" class="code-tab" data-tab="css" role="tab" type="button">CSS</button><button aria-selected="false" class="code-tab" data-tab="js" role="tab" type="button">JavaScript</button></div><div class="code-panel" data-panel="html" role="tabpanel">
+		<div class="endpoints"><p class="ep-title">Endpoints</p><ul><li class="app-ldp"><span class="ep-method">POST</span><code class="ep-path">/o/analytics-rest/v1.0/graphql</code><span class="ep-note">LDP data through the DXP proxy</span></li><li class="app-dxp"><span class="ep-method">POST</span><code class="ep-path">/o/ai-hub-cell/v1.0/authorization-tokens</code><span class="ep-note">AI Hub token for the signed-in user</span><span class="ep-new">New</span></li><li class="app-hub"><span class="ep-method">GET</span><code class="ep-path">{serviceURL}/o/ai-hub/v1.0/agent-instances/subscribe</code><span class="ep-note">Stream with the agent answer</span><span class="ep-new">New</span></li><li class="app-hub"><span class="ep-method">POST</span><code class="ep-path">{serviceURL}/o/ai-hub/v1.0/agent-instances</code><span class="ep-note">Starts the agent with the metric</span><span class="ep-new">New</span></li></ul></div><div class="code-tabs"><div class="code-tablist" role="tablist"><button aria-selected="true" class="code-tab" data-tab="html" role="tab" type="button">HTML</button><button aria-selected="false" class="code-tab" data-tab="css" role="tab" type="button">CSS</button><button aria-selected="false" class="code-tab" data-tab="js" role="tab" type="button">JavaScript</button></div><div class="code-panel" data-panel="html" role="tabpanel">
 <figure class="code">
 	<figcaption>
 		<span class="file">LDP Fragment Card · HTML</span>
@@ -501,7 +509,7 @@ html { scroll-behavior: smooth; }
 	
 	<div class="step-body">
 		
-		<div class="code-tabs"><div class="code-tablist" role="tablist"><button aria-selected="true" class="code-tab" data-tab="html" role="tab" type="button">HTML</button><button aria-selected="false" class="code-tab" data-tab="css" role="tab" type="button">CSS</button><button aria-selected="false" class="code-tab" data-tab="js" role="tab" type="button">JavaScript</button></div><div class="code-panel" data-panel="html" role="tabpanel">
+		<div class="endpoints"><p class="ep-title">Endpoints</p><ul><li class="app-ldp"><span class="ep-method">POST</span><code class="ep-path">/o/analytics-rest/v1.0/graphql</code><span class="ep-note">LDP data through the DXP proxy</span></li><li class="app-dxp"><span class="ep-method">POST</span><code class="ep-path">/o/ai-hub-cell/v1.0/authorization-tokens</code><span class="ep-note">AI Hub token for the signed-in user</span></li><li class="app-hub"><span class="ep-method">GET</span><code class="ep-path">{serviceURL}/o/ai-hub/v1.0/agent-instances/subscribe</code><span class="ep-note">Stream with the agent answer</span></li><li class="app-hub"><span class="ep-method">POST</span><code class="ep-path">{serviceURL}/o/ai-hub/v1.0/agent-instances</code><span class="ep-note">Starts the agent with the metric</span></li><li class="app-dxp"><span class="ep-method">POST</span><code class="ep-path">/o/c/insightalerts</code><span class="ep-note">Insight Alert entry, which notifies the Marketing Team</span><span class="ep-new">New</span></li></ul></div><div class="code-tabs"><div class="code-tablist" role="tablist"><button aria-selected="true" class="code-tab" data-tab="html" role="tab" type="button">HTML</button><button aria-selected="false" class="code-tab" data-tab="css" role="tab" type="button">CSS</button><button aria-selected="false" class="code-tab" data-tab="js" role="tab" type="button">JavaScript</button></div><div class="code-panel" data-panel="html" role="tabpanel">
 <figure class="code">
 	<figcaption>
 		<span class="file">LDP Fragment Card · HTML</span>
