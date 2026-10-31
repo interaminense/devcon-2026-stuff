@@ -311,9 +311,132 @@
 			position: static;
 		}
 
+		/* Blog cards: a tinted ring and a soft glow instead of the outline,
+		   and the performance in a footer under the link */
+
 		.sl-blog-card.ldp-advisor-best,
 		.sl-blog-card.ldp-advisor-weak {
-			outline-offset: 4px;
+			outline: 0;
+		}
+
+		.sl-blog-card.ldp-advisor-best {
+			box-shadow: 0 0 0 2px rgba(47, 154, 98, 0.35), 0 8px 24px rgba(47, 154, 98, 0.12);
+		}
+
+		.sl-blog-card.ldp-advisor-weak {
+			box-shadow: 0 0 0 2px rgba(226, 87, 79, 0.35), 0 8px 24px rgba(226, 87, 79, 0.12);
+		}
+
+		/* The footer makes the cards taller, so they stretch to the tallest
+		   card of the row instead of the fixed height */
+
+		.sl-blog-card.ldp-advisor-card {
+			flex: 1 1 auto;
+			height: auto;
+			min-height: 280px;
+		}
+
+		.col:has(> div > div > .ldp-advisor-card),
+		.col:has(> div > div > .ldp-advisor-card) > div,
+		.col:has(> div > div > .ldp-advisor-card) > div > div {
+			display: flex;
+			flex-direction: column;
+		}
+
+		.col:has(> div > div > .ldp-advisor-card) > div,
+		.col:has(> div > div > .ldp-advisor-card) > div > div {
+			flex: 1 1 auto;
+		}
+
+		.ldp-advisor-perf {
+			border-top: 1px solid rgba(11, 79, 108, 0.1);
+			display: grid;
+			gap: 8px;
+			margin-top: 6px;
+			padding-top: 12px;
+			position: static;
+		}
+
+		.ldp-advisor-perf__row {
+			align-items: center;
+			display: flex;
+			flex-wrap: wrap;
+			gap: 8px;
+			justify-content: space-between;
+		}
+
+		.ldp-advisor-chip {
+			align-items: center;
+			background: #e3f6f4;
+			border-radius: 999px;
+			color: #0b4f6c;
+			display: inline-flex;
+			font: 700 11px/1.4 Inter, system-ui, sans-serif;
+			gap: 6px;
+			padding: 3px 10px;
+		}
+
+		.ldp-advisor-best .ldp-advisor-chip {
+			background: #e5f4ec;
+			color: #2f9a62;
+		}
+
+		.ldp-advisor-weak .ldp-advisor-chip {
+			background: #fde9e7;
+			color: #e2574f;
+		}
+
+		.ldp-advisor-share {
+			color: #1d2b36;
+			font: 600 12px/1 Inter, system-ui, sans-serif;
+			font-variant-numeric: tabular-nums;
+		}
+
+		.ldp-advisor-meter {
+			background: #eef1f3;
+			border-radius: 999px;
+			height: 6px;
+			position: relative;
+		}
+
+		.ldp-advisor-meter span {
+			background: #0b4f6c;
+			border-radius: inherit;
+			display: block;
+			height: 100%;
+		}
+
+		.ldp-advisor-best .ldp-advisor-meter span {
+			background: #2f9a62;
+		}
+
+		.ldp-advisor-weak .ldp-advisor-meter span {
+			background: #e2574f;
+		}
+
+		.ldp-advisor-meter i {
+			background: #5b6b77;
+			border-radius: 2px;
+			height: 12px;
+			position: absolute;
+			top: -3px;
+			width: 2px;
+		}
+
+		.ldp-advisor-perf .ldp-advisor-ai {
+			background: #0b4f6c;
+			border: 0;
+			box-shadow: none;
+			color: #fff;
+			font-size: 14px;
+			justify-self: start;
+			margin-top: 10px;
+			padding: 12px 20px;
+		}
+
+		.ldp-advisor-perf .ldp-advisor-ai:hover,
+		.ldp-advisor-perf .ldp-advisor-ai:focus-visible {
+			box-shadow: 0 6px 18px rgba(229, 0, 189, 0.35);
 		}
 
 		.ldp-advisor-modal__new em {
@@ -933,6 +1056,10 @@
 				element.remove();
 			}
 
+			for (const element of document.querySelectorAll('.ldp-advisor-card')) {
+				element.classList.remove('ldp-advisor-card');
+			}
+
 			for (const element of document.querySelectorAll(
 				'.ldp-advisor-best, .ldp-advisor-weak'
 			)) {
@@ -956,10 +1083,16 @@
 			// fewest in red, with the button that asks AI Hub for a fix.
 
 			for (const block of this.blocks || []) {
-				const badge = document.createElement('div');
+				const body =
+					target === TARGETS.blog &&
+					block.element.querySelector('.sl-card__body');
 
-				badge.className = 'ldp-advisor-badge';
-				badge.innerHTML = `<span class="ldp-advisor-label">${percent(block.share)} of clicks</span>`;
+				const badge = document.createElement(body ? 'footer' : 'div');
+
+				badge.className = body ? 'ldp-advisor-badge ldp-advisor-perf' : 'ldp-advisor-badge';
+				badge.innerHTML = body
+					? this.renderPerformance(block)
+					: `<span class="ldp-advisor-label">${percent(block.share)} of clicks</span>`;
 
 				if (block === this.best) {
 					block.element.classList.add('ldp-advisor-best');
@@ -990,21 +1123,42 @@
 					badge.appendChild(button);
 				}
 
-				// Blog cards have no photo to float over, so the badge goes on
-				// top of the card's text instead
-
-				const body =
-					target === TARGETS.blog &&
-					block.element.querySelector('.sl-card__body');
+				// Blog cards have no photo to float over, so the performance
+				// goes in a footer under the link instead
 
 				if (body) {
-					badge.classList.add('ldp-advisor-badge--inline');
-					body.prepend(badge);
+					block.element.classList.add('ldp-advisor-card');
+					body.append(badge);
 				}
 				else {
 					block.element.appendChild(badge);
 				}
 			}
+		}
+
+		// The share of the clicks against the average of the list: the
+		// meter fills up to the share and the tick marks the average
+
+		renderPerformance(block) {
+			const share = percent(block.share);
+			const average = percent(this.analysis.average);
+
+			let chip = block.share >= this.analysis.average ? 'On track' : 'Below average';
+
+			if (block === this.best) {
+				chip = '&#9650; Top post';
+			}
+			else if ((this.weak || []).includes(block)) {
+				chip = '&#9679; Needs attention';
+			}
+
+			return `
+				<div class="ldp-advisor-perf__row">
+					<span class="ldp-advisor-chip">${chip}</span>
+					<span class="ldp-advisor-share">${share} of clicks</span>
+				</div>
+				<div aria-label="${share} of clicks, average ${average}" class="ldp-advisor-meter" role="img"><span style="width: ${share}"></span><i style="left: ${average}"></i></div>
+			`;
 		}
 
 		async openSuggestion(block) {
