@@ -28,7 +28,6 @@ fragment(
 			<a href="/lessons">Lessons</a>
 			<a href="/trips">Trips</a>
 			<a href="/spots">Spots</a>
-			<a href="/learn">Learn</a>
 			<a href="/blog">Blog</a>
 			<a class="sl-header__signed-in" hidden href="/dashboard-2">Dashboard</a>
 		</nav>
