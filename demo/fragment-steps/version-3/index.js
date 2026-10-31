@@ -35,35 +35,42 @@ async function fetchData(url, body) {
 	return response.json();
 }
 
-function buildQuery(metric) {
-	return `
-		query ($channelId: String!, $rangeKey: Int) {
-			site(channelId: $channelId, interval: "${getRange().interval}", rangeKey: $rangeKey) {
-				${metric} {
-					histogram {
-						metrics {
-							value
+async function fetchLDPData(metric) {
+	function buildQuery(metric) {
+		return `
+			query ($channelId: String!, $rangeKey: Int) {
+				site(channelId: $channelId, interval: "${getRange().interval}", rangeKey: $rangeKey) {
+					${metric} {
+						histogram {
+							metrics {
+								value
+							}
 						}
+						previousValue
+						trend {
+							percentage
+						}
+						value
 					}
-					previousValue
-					trend {
-						percentage
-					}
-					value
 				}
 			}
-		}
-	`;
+		`;
+	}
+
+	return fetchData('/o/analytics-rest/v1.0/graphql', {
+		query: buildQuery(metric),
+		variables: {channelId: CHANNEL_ID, rangeKey: getRange().key},
+	});
 }
 
-const NUMBER_FORMAT = new Intl.NumberFormat('en-US', {
-	maximumFractionDigits: 1,
-	notation: 'compact',
-	roundingMode: 'trunc',
-});
-
 function formatValue(value) {
-	return NUMBER_FORMAT.format(value);
+	const numberFormat = new Intl.NumberFormat('en-US', {
+		maximumFractionDigits: 1,
+		notation: 'compact',
+		roundingMode: 'trunc',
+	});
+
+	return numberFormat.format(value);
 }
 
 function curve(points) {
@@ -130,10 +137,7 @@ async function render() {
 
 	root.querySelector('.card-title').textContent = `${METRICS[configuration.metric]} · ${getRange().label}`;
 
-	const {data} = await fetchData('/o/analytics-rest/v1.0/graphql', {
-		query: buildQuery(configuration.metric),
-		variables: {channelId: CHANNEL_ID, rangeKey: getRange().key},
-	});
+	const {data} = await fetchLDPData(configuration.metric);
 
 	const result = data.site[configuration.metric];
 

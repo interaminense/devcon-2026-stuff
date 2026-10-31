@@ -1,5 +1,4 @@
 const CHANNEL_ID = '845351493326064678';
-
 const RANGE_KEY = 7;
 
 const METRICS = {
@@ -24,35 +23,42 @@ async function fetchData(url, body) {
 	return response.json();
 }
 
-function buildQuery(metric) {
-	return `
-		query ($channelId: String!, $rangeKey: Int) {
-			site(channelId: $channelId, interval: "D", rangeKey: $rangeKey) {
-				${metric} {
-					histogram {
-						metrics {
-							value
+async function fetchLDPData(metric) {
+	function buildQuery(metric) {
+		return `
+			query ($channelId: String!, $rangeKey: Int) {
+				site(channelId: $channelId, interval: "D", rangeKey: $rangeKey) {
+					${metric} {
+						histogram {
+							metrics {
+								value
+							}
 						}
+						previousValue
+						trend {
+							percentage
+						}
+						value
 					}
-					previousValue
-					trend {
-						percentage
-					}
-					value
 				}
 			}
-		}
-	`;
+		`;
+	}
+
+	return fetchData('/o/analytics-rest/v1.0/graphql', {
+		query: buildQuery(metric),
+		variables: {channelId: CHANNEL_ID, rangeKey: RANGE_KEY},
+	});
 }
 
-const NUMBER_FORMAT = new Intl.NumberFormat('en-US', {
-	maximumFractionDigits: 1,
-	notation: 'compact',
-	roundingMode: 'trunc',
-});
-
 function formatValue(value) {
-	return NUMBER_FORMAT.format(value);
+	const numberFormat = new Intl.NumberFormat('en-US', {
+		maximumFractionDigits: 1,
+		notation: 'compact',
+		roundingMode: 'trunc',
+	});
+
+	return numberFormat.format(value);
 }
 
 function curve(points) {
@@ -122,10 +128,7 @@ function renderOptions(select) {
 }
 
 async function showMetric(root, metric) {
-	const {data} = await fetchData('/o/analytics-rest/v1.0/graphql', {
-		query: buildQuery(metric),
-		variables: {channelId: CHANNEL_ID, rangeKey: RANGE_KEY},
-	});
+	const {data} = await fetchLDPData(metric);
 
 	const result = data.site[metric];
 

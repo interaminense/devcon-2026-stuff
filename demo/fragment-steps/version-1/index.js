@@ -1,5 +1,4 @@
 const CHANNEL_ID = '845351493326064678';
-
 const RANGE_KEY = 7;
 
 async function fetchData(url, body) {
@@ -19,30 +18,37 @@ async function fetchData(url, body) {
 	return response.json();
 }
 
-function buildQuery(metric) {
-	return `
-		query ($channelId: String!, $rangeKey: Int) {
-			site(channelId: $channelId, interval: "D", rangeKey: $rangeKey) {
-				${metric} {
-					previousValue
-					trend {
-						percentage
+async function fetchLDPData() {
+	function buildQuery(metric) {
+		return `
+			query ($channelId: String!, $rangeKey: Int) {
+				site(channelId: $channelId, interval: "D", rangeKey: $rangeKey) {
+					${metric} {
+						previousValue
+						trend {
+							percentage
+						}
+						value
 					}
-					value
 				}
 			}
-		}
-	`;
+		`;
+	}
+
+	return fetchData('/o/analytics-rest/v1.0/graphql', {
+		query: buildQuery('visitorsMetric'),
+		variables: {channelId: CHANNEL_ID, rangeKey: RANGE_KEY},
+	});
 }
 
-const NUMBER_FORMAT = new Intl.NumberFormat('en-US', {
-	maximumFractionDigits: 1,
-	notation: 'compact',
-	roundingMode: 'trunc',
-});
-
 function formatValue(value) {
-	return NUMBER_FORMAT.format(value);
+	const numberFormat = new Intl.NumberFormat('en-US', {
+		maximumFractionDigits: 1,
+		notation: 'compact',
+		roundingMode: 'trunc',
+	});
+
+	return numberFormat.format(value);
 }
 
 function formatTrend(result) {
@@ -60,10 +66,7 @@ function formatTrend(result) {
 async function render() {
 	const root = fragmentElement.querySelector('.ldp-fragment-card');
 
-	const {data} = await fetchData('/o/analytics-rest/v1.0/graphql', {
-		query: buildQuery('visitorsMetric'),
-		variables: {channelId: CHANNEL_ID, rangeKey: RANGE_KEY},
-	});
+	const {data} = await fetchLDPData();
 
 	const result = data.site.visitorsMetric;
 

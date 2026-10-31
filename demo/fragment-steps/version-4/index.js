@@ -37,25 +37,55 @@ async function fetchData(url, body) {
 	return response.json();
 }
 
-function buildQuery(metric) {
-	return `
-		query ($channelId: String!, $rangeKey: Int) {
-			site(channelId: $channelId, interval: "${getRange().interval}", rangeKey: $rangeKey) {
-				${metric} {
-					histogram {
-						metrics {
-							value
+async function fetchLDPData(metric) {
+	function buildQuery(metric) {
+		return `
+			query ($channelId: String!, $rangeKey: Int) {
+				site(channelId: $channelId, interval: "${getRange().interval}", rangeKey: $rangeKey) {
+					${metric} {
+						histogram {
+							metrics {
+								value
+							}
 						}
+						previousValue
+						trend {
+							percentage
+						}
+						value
 					}
-					previousValue
-					trend {
-						percentage
-					}
-					value
 				}
 			}
-		}
-	`;
+		`;
+	}
+
+	return fetchData('/o/analytics-rest/v1.0/graphql', {
+		query: buildQuery(metric),
+		variables: {channelId: CHANNEL_ID, rangeKey: getRange().key},
+	});
+}
+
+function readEvent(block) {
+	return {
+		data: block.match(/^data: ?(.*)$/m)?.[1],
+		name: block.match(/^event: ?(.*)$/m)?.[1],
+	};
+}
+
+function startAgent(token, sinkKey, text) {
+	return fetch(`${token.serviceURL}/o/ai-hub/v1.0/agent-instances`, {
+		body: JSON.stringify({
+			agentDefinitionExternalReferenceCode: AGENT_ERC,
+			context: {metrics: text},
+			sseEventSinkKey: sinkKey,
+		}),
+		headers: {
+			'Authorization': `Bearer ${token.accessToken}`,
+			'Content-Type': 'application/json',
+			'Liferay-AI-Hub-Cell-On-Behalf-Of': token.userToken,
+		},
+		method: 'POST',
+	});
 }
 
 async function askAgent(text) {
@@ -85,30 +115,13 @@ async function askAgent(text) {
 
 		buffer += decoder.decode(value, {stream: true});
 
-		let end;
+		const blocks = buffer.split('\n\n');
 
-		while ((end = buffer.indexOf('\n\n')) >= 0) {
-			const block = buffer.slice(0, end);
+		buffer = blocks.pop();
 
-			buffer = buffer.slice(end + 2);
-
-			const name = block.match(/^event: ?(.*)$/m)?.[1];
-			const data = block.match(/^data: ?(.*)$/m)?.[1];
-
+		for (const {data, name} of blocks.map(readEvent)) {
 			if (name === 'Subscribe') {
-				await fetch(`${token.serviceURL}/o/ai-hub/v1.0/agent-instances`, {
-					body: JSON.stringify({
-						agentDefinitionExternalReferenceCode: AGENT_ERC,
-						context: {metrics: text},
-						sseEventSinkKey: data,
-					}),
-					headers: {
-						'Authorization': `Bearer ${token.accessToken}`,
-						'Content-Type': 'application/json',
-						'Liferay-AI-Hub-Cell-On-Behalf-Of': token.userToken,
-					},
-					method: 'POST',
-				});
+				await startAgent(token, data, text);
 			}
 			else if (name === AGENT_ERC) {
 				reader.cancel();
@@ -129,14 +142,14 @@ function describe(label, result) {
 	].join('\n');
 }
 
-const NUMBER_FORMAT = new Intl.NumberFormat('en-US', {
-	maximumFractionDigits: 1,
-	notation: 'compact',
-	roundingMode: 'trunc',
-});
-
 function formatValue(value) {
-	return NUMBER_FORMAT.format(value);
+	const numberFormat = new Intl.NumberFormat('en-US', {
+		maximumFractionDigits: 1,
+		notation: 'compact',
+		roundingMode: 'trunc',
+	});
+
+	return numberFormat.format(value);
 }
 
 function curve(points) {
@@ -219,10 +232,7 @@ async function render() {
 
 	root.querySelector('.card-title').textContent = `${METRICS[configuration.metric]} · ${getRange().label}`;
 
-	const {data} = await fetchData('/o/analytics-rest/v1.0/graphql', {
-		query: buildQuery(configuration.metric),
-		variables: {channelId: CHANNEL_ID, rangeKey: getRange().key},
-	});
+	const {data} = await fetchLDPData(configuration.metric);
 
 	const result = data.site[configuration.metric];
 
