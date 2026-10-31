@@ -61,26 +61,26 @@ function formatValue(value) {
 	return numberFormat.format(value);
 }
 
-function curve(points) {
-	const ys = points.map(([, y]) => y);
-	const clamp = (y) => Math.min(Math.max(y, Math.min(...ys)), Math.max(...ys));
-
-	return points
-		.map(([x, y], index) => {
-			if (index === 0) {
-				return `M${x.toFixed(1)},${y.toFixed(1)}`;
-			}
-
-			const [x0, y0] = points[index - 2] || points[index - 1];
-			const [x1, y1] = points[index - 1];
-			const [x3, y3] = points[index + 1] || [x, y];
-
-			return `C${(x1 + (x - x0) / 6).toFixed(1)},${clamp(y1 + (y - y0) / 6).toFixed(1)} ${(x - (x3 - x1) / 6).toFixed(1)},${clamp(y - (y3 - y1) / 6).toFixed(1)} ${x.toFixed(1)},${y.toFixed(1)}`;
-		})
-		.join(' ');
-}
-
 function renderChart(result) {
+	function curve(points) {
+		const ys = points.map(([, y]) => y);
+		const clamp = (y) => Math.min(Math.max(y, Math.min(...ys)), Math.max(...ys));
+
+		return points
+			.map(([x, y], index) => {
+				if (index === 0) {
+					return `M${x.toFixed(1)},${y.toFixed(1)}`;
+				}
+
+				const [x0, y0] = points[index - 2] || points[index - 1];
+				const [x1, y1] = points[index - 1];
+				const [x3, y3] = points[index + 1] || [x, y];
+
+				return `C${(x1 + (x - x0) / 6).toFixed(1)},${clamp(y1 + (y - y0) / 6).toFixed(1)} ${(x - (x3 - x1) / 6).toFixed(1)},${clamp(y - (y3 - y1) / 6).toFixed(1)} ${x.toFixed(1)},${y.toFixed(1)}`;
+			})
+			.join(' ');
+	}
+
 	const values = result.histogram.metrics.map(({value}) => value);
 	const max = Math.max(...values);
 	const min = Math.min(...values);
@@ -120,13 +120,6 @@ function formatTrend(result) {
 	return `${arrow} ${Math.abs(percentage).toFixed(1)}% vs previous period (${formatValue(result.previousValue)})`;
 }
 
-function renderOptions(select) {
-	select.innerHTML = Object.entries(METRICS)
-		.map(([value, label]) => `<option value="${value}">${label}</option>`)
-		.join('');
-	select.value = 'visitorsMetric';
-}
-
 async function showMetric(root, metric) {
 	const {data} = await fetchLDPData(metric);
 
@@ -138,6 +131,13 @@ async function showMetric(root, metric) {
 }
 
 async function render() {
+	function renderOptions(select) {
+		select.innerHTML = Object.entries(METRICS)
+			.map(([value, label]) => `<option value="${value}">${label}</option>`)
+			.join('');
+		select.value = 'visitorsMetric';
+	}
+
 	const root = fragmentElement.querySelector('.ldp-fragment-card');
 	const select = root.querySelector('.metric');
 
