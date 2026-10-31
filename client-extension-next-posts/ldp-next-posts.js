@@ -104,43 +104,25 @@ const STYLE = `
 			opacity: 0.6;
 		}
 
+		/* On hover the button fills with the DEVCON gradient, which drifts
+		   slowly; the rest color fades out over it */
+
 		.ldp-next-posts .np-ask {
+			background: linear-gradient(100deg, #0b5fff, #7a3cff, #e500bd, #0b5fff) 0 0 / 300% 100%;
 			isolation: isolate;
 			overflow: hidden;
 			position: relative;
 			transition: box-shadow 0.3s ease, transform 0.3s ease;
 		}
 
-		.ldp-next-posts .np-ask:hover:not(:disabled) {
-			background: #0b5fff;
-			box-shadow: 0 6px 18px rgba(229, 0, 189, 0.35);
-			transform: translateY(-1px);
-		}
-
-		/* On hover a glossy liquid in the DEVCON colors swirls inside the
-		   button, and a bright spot follows the pointer */
-
 		.ldp-next-posts .np-ask::before {
-			animation: ldp-next-posts-liquid 2.6s linear infinite paused;
-			background: conic-gradient(from 0deg, #0b5fff, #00c2fb, #7a3cff, #e500bd, #0b5fff);
-			border-radius: 42% 58% 63% 37% / 41% 44% 56% 59%;
+			background: #0b4f6c;
+			border-radius: inherit;
 			content: '';
-			filter: blur(6px);
-			inset: -120% -30%;
-			opacity: 0;
+			inset: 0;
 			position: absolute;
 			transition: opacity 0.35s ease;
 			z-index: -1;
-		}
-
-		.ldp-next-posts .np-ask::after {
-			background: radial-gradient(circle 40px at var(--x, 50%) var(--y, 50%), rgba(255, 255, 255, 0.45), transparent 70%);
-			content: '';
-			inset: 0;
-			opacity: 0;
-			pointer-events: none;
-			position: absolute;
-			transition: opacity 0.25s ease;
 		}
 
 		.ldp-next-posts .np-ask > * {
@@ -148,27 +130,29 @@ const STYLE = `
 			z-index: 1;
 		}
 
-		.ldp-next-posts .np-ask:hover:not(:disabled)::before {
-			animation-play-state: running;
-			opacity: 1;
+		.ldp-next-posts .np-ask:hover:not(:disabled),
+		.ldp-next-posts .np-ask:focus-visible {
+			animation: ldp-next-posts-drift 3s linear infinite;
+			box-shadow: 0 6px 18px rgba(122, 60, 255, 0.35);
+			color: #fff;
+			outline: none;
+			transform: translateY(-1px);
 		}
 
-		.ldp-next-posts .np-ask:hover:not(:disabled)::after {
-			opacity: 1;
+		.ldp-next-posts .np-ask:hover:not(:disabled)::before,
+		.ldp-next-posts .np-ask:focus-visible::before {
+			opacity: 0;
 		}
 
-		@keyframes ldp-next-posts-liquid {
-			50% {
-				border-radius: 58% 42% 37% 63% / 56% 59% 41% 44%;
-			}
-
+		@keyframes ldp-next-posts-drift {
 			to {
-				transform: rotate(360deg);
+				background-position: 150% 0;
 			}
 		}
 
 		@media (prefers-reduced-motion: reduce) {
-			.ldp-next-posts .np-ask::before {
+			.ldp-next-posts .np-ask:hover:not(:disabled),
+			.ldp-next-posts .np-ask:focus-visible {
 				animation: none;
 			}
 		}
@@ -659,16 +643,6 @@ function formatRate(rate) {
 	return rate === null ? 'n/a' : `${Math.round(rate * 100)}%`;
 }
 
-// The liquid highlight on hover follows the pointer
-function followPointer(button) {
-	button.addEventListener('pointermove', (event) => {
-		const box = button.getBoundingClientRect();
-
-		button.style.setProperty('--x', `${event.clientX - box.left}px`);
-		button.style.setProperty('--y', `${event.clientY - box.top}px`);
-	});
-}
-
 class LdpNextPosts extends HTMLElement {
 	async connectedCallback() {
 		if (!Liferay.ThemeDisplay.isSignedIn()) {
@@ -737,8 +711,6 @@ class LdpNextPosts extends HTMLElement {
 		this.querySelector('.np-ask').addEventListener('click', () =>
 			this.suggest()
 		);
-
-		followPointer(this.querySelector('.np-ask'));
 	}
 
 	async suggest() {

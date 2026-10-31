@@ -1703,7 +1703,7 @@
 		}
 
 		.ai {
-			background: var(--ldp-title, #0b4f6c);
+			background: linear-gradient(100deg, #0b5fff, #7a3cff, #e500bd, #0b5fff) 0 0 / 300% 100%;
 			border: 0;
 			border-radius: 6px;
 			color: #fff;
@@ -1728,65 +1728,46 @@
 			opacity: 0.7;
 		}
 
-		/* On hover a glossy liquid in the DEVCON colors swirls inside the
-		   button, and a bright spot follows the pointer */
+		/* On hover the button fills with the DEVCON gradient, which drifts
+		   slowly; the title color fades out over it */
 
 		.ai::before {
-			animation: ldp-liquid 2.6s linear infinite paused;
-			background: conic-gradient(from 0deg, #0b5fff, #00c2fb, #7a3cff, #e500bd, #0b5fff);
-			border-radius: 42% 58% 63% 37% / 41% 44% 56% 59%;
+			background: var(--ldp-title, #0b4f6c);
+			border-radius: inherit;
 			content: '';
-			filter: blur(6px);
-			inset: -120% -30%;
-			opacity: 0;
+			inset: 0;
 			position: absolute;
 			transition: opacity 0.35s ease;
 			z-index: -1;
 		}
-
-		.ai::after {
-			background: radial-gradient(circle 38px at var(--x, 50%) var(--y, 50%), rgba(255, 255, 255, 0.45), transparent 70%);
-			content: '';
-			inset: 0;
-			opacity: 0;
-			pointer-events: none;
-			position: absolute;
-			transition: opacity 0.25s ease;
-		}
-
-		/* The text sits above the liquid and the shine */
 
 		.ai span {
 			position: relative;
 			z-index: 1;
 		}
 
-		.ai:hover:not(:disabled) {
-			box-shadow: 0 6px 18px rgba(229, 0, 189, 0.35);
+		.ai:hover:not(:disabled),
+		.ai:focus-visible {
+			animation: ldp-drift 3s linear infinite;
+			box-shadow: 0 6px 18px rgba(122, 60, 255, 0.35);
+			outline: none;
 			transform: translateY(-1px);
 		}
 
-		.ai:hover:not(:disabled)::before {
-			animation-play-state: running;
-			opacity: 1;
+		.ai:hover:not(:disabled)::before,
+		.ai:focus-visible::before {
+			opacity: 0;
 		}
 
-		.ai:hover:not(:disabled)::after {
-			opacity: 1;
-		}
-
-		@keyframes ldp-liquid {
-			50% {
-				border-radius: 58% 42% 37% 63% / 56% 59% 41% 44%;
-			}
-
+		@keyframes ldp-drift {
 			to {
-				transform: rotate(360deg);
+				background-position: 150% 0;
 			}
 		}
 
 		@media (prefers-reduced-motion: reduce) {
-			.ai::before {
+			.ai:hover:not(:disabled),
+			.ai:focus-visible {
 				animation: none;
 			}
 		}
@@ -1891,15 +1872,6 @@
 				const button = this._get('ai');
 
 				button.hidden = false;
-
-				// The liquid highlight follows the pointer
-
-				button.addEventListener('pointermove', (event) => {
-					const box = button.getBoundingClientRect();
-
-					button.style.setProperty('--x', `${event.clientX - box.left}px`);
-					button.style.setProperty('--y', `${event.clientY - box.top}px`);
-				});
 
 				// The button goes away once the insight is there; after an
 				// error it stays, to try again

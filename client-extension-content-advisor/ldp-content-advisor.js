@@ -64,7 +64,6 @@
 
 		.ldp-advisor-ai {
 			align-items: center;
-			background: #fff;
 			border: 2px solid var(--ldp-advisor-color);
 			border-radius: 999px;
 			box-shadow: 0 6px 16px rgba(29, 43, 54, 0.25);
@@ -73,47 +72,33 @@
 			display: inline-flex;
 			font: 700 13px/1 Inter, system-ui, sans-serif;
 			gap: 8px;
+			padding: 9px 14px 9px 12px;
+		}
+
+		.ldp-advisor-ai:hover:not(:disabled),
+		.ldp-advisor-ai:focus-visible {
+			border-color: transparent;
+		}
+
+		/* On hover the button fills with the DEVCON gradient, which drifts
+		   slowly; the rest color fades out over it */
+
+		.ldp-advisor-ai {
+			background: linear-gradient(100deg, #0b5fff, #7a3cff, #e500bd, #0b5fff) 0 0 / 300% 100%;
 			isolation: isolate;
 			overflow: hidden;
-			padding: 9px 14px 9px 12px;
 			position: relative;
-			transition: border-color 0.3s ease, box-shadow 0.3s ease, color 0.3s ease, transform 0.3s ease;
+			transition: box-shadow 0.3s ease, transform 0.3s ease;
 		}
-
-		.ldp-advisor-ai:hover,
-		.ldp-advisor-ai:focus-visible {
-			background: #0b5fff;
-			border-color: transparent;
-			box-shadow: 0 6px 18px rgba(229, 0, 189, 0.35);
-			color: #fff;
-			outline: none;
-			transform: translateY(-1px);
-		}
-
-		/* On hover a glossy liquid in the DEVCON colors swirls inside the
-		   button, and a bright spot follows the pointer */
 
 		.ldp-advisor-ai::before {
-			animation: ldp-advisor-liquid 2.6s linear infinite paused;
-			background: conic-gradient(from 0deg, #0b5fff, #00c2fb, #7a3cff, #e500bd, #0b5fff);
-			border-radius: 42% 58% 63% 37% / 41% 44% 56% 59%;
+			background: var(--ldp-advisor-ai-rest, #fff);
+			border-radius: inherit;
 			content: '';
-			filter: blur(6px);
-			inset: -120% -30%;
-			opacity: 0;
+			inset: 0;
 			position: absolute;
 			transition: opacity 0.35s ease;
 			z-index: -1;
-		}
-
-		.ldp-advisor-ai::after {
-			background: radial-gradient(circle 40px at var(--x, 50%) var(--y, 50%), rgba(255, 255, 255, 0.45), transparent 70%);
-			content: '';
-			inset: 0;
-			opacity: 0;
-			pointer-events: none;
-			position: absolute;
-			transition: opacity 0.25s ease;
 		}
 
 		.ldp-advisor-ai > * {
@@ -121,27 +106,29 @@
 			z-index: 1;
 		}
 
-		.ldp-advisor-ai:hover:not(:disabled)::before {
-			animation-play-state: running;
-			opacity: 1;
+		.ldp-advisor-ai:hover:not(:disabled),
+		.ldp-advisor-ai:focus-visible {
+			animation: ldp-advisor-drift 3s linear infinite;
+			box-shadow: 0 6px 18px rgba(122, 60, 255, 0.35);
+			color: #fff;
+			outline: none;
+			transform: translateY(-1px);
 		}
 
-		.ldp-advisor-ai:hover:not(:disabled)::after {
-			opacity: 1;
+		.ldp-advisor-ai:hover:not(:disabled)::before,
+		.ldp-advisor-ai:focus-visible::before {
+			opacity: 0;
 		}
 
-		@keyframes ldp-advisor-liquid {
-			50% {
-				border-radius: 58% 42% 37% 63% / 56% 59% 41% 44%;
-			}
-
+		@keyframes ldp-advisor-drift {
 			to {
-				transform: rotate(360deg);
+				background-position: 150% 0;
 			}
 		}
 
 		@media (prefers-reduced-motion: reduce) {
-			.ldp-advisor-ai::before {
+			.ldp-advisor-ai:hover:not(:disabled),
+			.ldp-advisor-ai:focus-visible {
 				animation: none;
 			}
 		}
@@ -424,7 +411,7 @@
 		}
 
 		.ldp-advisor-perf .ldp-advisor-ai {
-			background: #0b4f6c;
+			--ldp-advisor-ai-rest: #0b4f6c;
 			border: 0;
 			box-shadow: none;
 			color: #fff;
@@ -432,11 +419,6 @@
 			justify-self: start;
 			margin-top: 10px;
 			padding: 12px 20px;
-		}
-
-		.ldp-advisor-perf .ldp-advisor-ai:hover,
-		.ldp-advisor-perf .ldp-advisor-ai:focus-visible {
-			box-shadow: 0 6px 18px rgba(229, 0, 189, 0.35);
 		}
 
 		.ldp-advisor-modal__new em {
@@ -510,15 +492,6 @@
 	// Sparkles, the usual AI mark
 
 
-	// The liquid highlight on hover follows the pointer
-	function followPointer(button) {
-		button.addEventListener('pointermove', (event) => {
-			const box = button.getBoundingClientRect();
-	
-			button.style.setProperty('--x', `${event.clientX - box.left}px`);
-			button.style.setProperty('--y', `${event.clientY - box.top}px`);
-		});
-	}
 
 	const AI_ICON =
 		'<svg aria-hidden="true" fill="currentColor" viewBox="0 0 24 24"><path d="M10 2.5l1.6 4.9a4 4 0 0 0 2.5 2.5L19 11.5l-4.9 1.6a4 4 0 0 0-2.5 2.5L10 20.5l-1.6-4.9a4 4 0 0 0-2.5-2.5L1 11.5l4.9-1.6a4 4 0 0 0 2.5-2.5z"/><path d="M19 1l.7 2.1a1.5 1.5 0 0 0 1 1L23 4.8l-2.1.7a1.5 1.5 0 0 0-1 1L19 8.6l-.7-2.1a1.5 1.5 0 0 0-1-1L15 4.8l2.1-.7a1.5 1.5 0 0 0 1-1z"/></svg>';
@@ -1118,7 +1091,6 @@
 						this.openSuggestion(block);
 					});
 
-					followPointer(button);
 
 					badge.appendChild(button);
 				}
