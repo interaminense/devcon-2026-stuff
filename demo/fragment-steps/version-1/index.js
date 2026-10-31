@@ -18,7 +18,7 @@ async function fetchData(url, body) {
 	return response.json();
 }
 
-async function fetchLDPData() {
+async function fetchLDPData(metric) {
 	function buildQuery(metric) {
 		return `
 			query ($channelId: String!, $rangeKey: Int) {
@@ -36,7 +36,7 @@ async function fetchLDPData() {
 	}
 
 	return fetchData('/o/analytics-rest/v1.0/graphql', {
-		query: buildQuery('visitorsMetric'),
+		query: buildQuery(metric),
 		variables: {channelId: CHANNEL_ID, rangeKey: RANGE_KEY},
 	});
 }
@@ -63,15 +63,19 @@ function formatTrend(result) {
 	return `${arrow} ${Math.abs(percentage).toFixed(1)}% vs previous period (${formatValue(result.previousValue)})`;
 }
 
-async function render() {
-	const root = fragmentElement.querySelector('.ldp-fragment-card');
+async function showMetric(root, metric) {
+	const {data} = await fetchLDPData(metric);
 
-	const {data} = await fetchLDPData();
-
-	const result = data.site.visitorsMetric;
+	const result = data.site[metric];
 
 	root.querySelector('.value').textContent = formatValue(result.value);
 	root.querySelector('.trend').innerHTML = formatTrend(result);
+}
+
+async function render() {
+	const root = fragmentElement.querySelector('.ldp-fragment-card');
+
+	await showMetric(root, 'visitorsMetric');
 }
 
 render();

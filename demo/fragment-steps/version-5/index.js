@@ -262,18 +262,24 @@ async function shareInsight(root) {
 	}
 }
 
+async function showMetric(root, metric) {
+	const {data} = await fetchLDPData(metric);
+
+	const result = data.site[metric];
+
+	root.querySelector('.value').textContent = formatValue(result.value);
+	root.querySelector('.trend').innerHTML = formatTrend(result);
+	root.querySelector('.chart-slot').innerHTML = renderChart(result);
+
+	return result;
+}
+
 async function render() {
 	const root = fragmentElement.querySelector('.ldp-fragment-card');
 
 	root.querySelector('.card-title').textContent = `${METRICS[configuration.metric]} · ${getRange().label}`;
 
-	const {data} = await fetchLDPData(configuration.metric);
-
-	const result = data.site[configuration.metric];
-
-	root.querySelector('.value').textContent = formatValue(result.value);
-	root.querySelector('.trend').innerHTML = formatTrend(result);
-	root.querySelector('.chart-slot').innerHTML = renderChart(result);
+	const result = await showMetric(root, configuration.metric);
 
 	root.querySelector('.ai').addEventListener('click', () => showInsight(root, result));
 	root.querySelector('.notify').addEventListener('click', () => shareInsight(root));
