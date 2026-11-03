@@ -1,8 +1,0 @@
-{
-	"cssPath": "index.css",
-	"htmlPath": "index.html",
-	"icon": "plug",
-	"jsPath": "index.js",
-	"name": "Offline Mode",
-	"type": "component"
-}

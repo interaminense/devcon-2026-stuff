@@ -1,0 +1,13 @@
+{
+  "name": "notifyStakeholders",
+  "label": {
+    "en_US": "Notify marketing team"
+  },
+  "active": true,
+  "objectActionTriggerKey": "onAfterAdd",
+  "objectActionExecutorKey": "notification",
+  "parameters": {
+    "notificationTemplateExternalReferenceCode": "DEVCON_2026_INSIGHT_ALERT_NOTIFICATION",
+    "type": "userNotification"
+  }
+}

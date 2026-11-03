@@ -1,0 +1,484 @@
+{
+	"pageElement": {
+		"pageElements": [
+			{
+				"definition": {
+					"fragment": {
+						"key": "sl-dashboard-header"
+					},
+					"fragmentConfig": {},
+					"fragmentFields": []
+				},
+				"type": "Fragment"
+			},
+			{
+				"definition": {
+					"cssClasses": [
+						"sl-dashboard"
+					],
+					"layout": {
+						"widthType": "Fixed"
+					}
+				},
+				"pageElements": [
+					{
+						"definition": {
+							"gutters": true,
+							"modulesPerRow": 1,
+							"numberOfColumns": 1,
+							"reverseOrder": false,
+							"rowViewports": [
+								{
+									"id": "landscapeMobile",
+									"rowViewportDefinition": {
+										"modulesPerRow": 1
+									}
+								},
+								{
+									"id": "portraitMobile",
+									"rowViewportDefinition": {
+										"modulesPerRow": 1
+									}
+								},
+								{
+									"id": "tablet",
+									"rowViewportDefinition": {
+										"modulesPerRow": 1
+									}
+								}
+							],
+							"verticalAlignment": "top"
+						},
+						"pageElements": [
+							{
+								"definition": {
+									"size": 12,
+									"columnViewports": [
+										{
+											"columnViewportDefinition": {
+												"size": 12
+											},
+											"id": "landscapeMobile"
+										},
+										{
+											"columnViewportDefinition": {
+												"size": 12
+											},
+											"id": "portraitMobile"
+										},
+										{
+											"columnViewportDefinition": {
+												"size": 12
+											},
+											"id": "tablet"
+										}
+									]
+								},
+								"pageElements": [
+									{
+										"definition": {
+											"fragment": {
+												"key": "ldp-visitors-behavior-fragment"
+											},
+											"fragmentConfig": {
+												"aiInsight": true,
+												"metric": "visitorsMetric",
+												"rangeKey": "7"
+											}
+										},
+										"type": "Fragment"
+									}
+								],
+								"type": "Column"
+							}
+						],
+						"type": "Row"
+					},
+					{
+						"definition": {
+							"gutters": true,
+							"modulesPerRow": 3,
+							"numberOfColumns": 3,
+							"reverseOrder": false,
+							"rowViewports": [
+								{
+									"id": "landscapeMobile",
+									"rowViewportDefinition": {
+										"modulesPerRow": 1
+									}
+								},
+								{
+									"id": "portraitMobile",
+									"rowViewportDefinition": {
+										"modulesPerRow": 1
+									}
+								},
+								{
+									"id": "tablet",
+									"rowViewportDefinition": {
+										"modulesPerRow": 1
+									}
+								}
+							],
+							"verticalAlignment": "top"
+						},
+						"pageElements": [
+							{
+								"definition": {
+									"size": 4,
+									"columnViewports": [
+										{
+											"columnViewportDefinition": {
+												"size": 12
+											},
+											"id": "landscapeMobile"
+										},
+										{
+											"columnViewportDefinition": {
+												"size": 12
+											},
+											"id": "portraitMobile"
+										},
+										{
+											"columnViewportDefinition": {
+												"size": 12
+											},
+											"id": "tablet"
+										}
+									]
+								},
+								"pageElements": [
+									{
+										"definition": {
+											"fragment": {
+												"key": "ldp-metric-card-fragment"
+											},
+											"fragmentConfig": {
+												"chart": "number",
+												"metric": "anonymousVisitorsMetric",
+												"rangeKey": "7",
+												"title": "Surfers we don't know yet"
+											}
+										},
+										"type": "Fragment"
+									}
+								],
+								"type": "Column"
+							},
+							{
+								"definition": {
+									"size": 4,
+									"columnViewports": [
+										{
+											"columnViewportDefinition": {
+												"size": 12
+											},
+											"id": "landscapeMobile"
+										},
+										{
+											"columnViewportDefinition": {
+												"size": 12
+											},
+											"id": "portraitMobile"
+										},
+										{
+											"columnViewportDefinition": {
+												"size": 12
+											},
+											"id": "tablet"
+										}
+									]
+								},
+								"pageElements": [
+									{
+										"definition": {
+											"fragment": {
+												"key": "ldp-metric-card-fragment"
+											},
+											"fragmentConfig": {
+												"chart": "number",
+												"metric": "knownVisitorsMetric",
+												"rangeKey": "7",
+												"title": "Surfers who signed in"
+											}
+										},
+										"type": "Fragment"
+									}
+								],
+								"type": "Column"
+							},
+							{
+								"definition": {
+									"size": 4,
+									"columnViewports": [
+										{
+											"columnViewportDefinition": {
+												"size": 12
+											},
+											"id": "landscapeMobile"
+										},
+										{
+											"columnViewportDefinition": {
+												"size": 12
+											},
+											"id": "portraitMobile"
+										},
+										{
+											"columnViewportDefinition": {
+												"size": 12
+											},
+											"id": "tablet"
+										}
+									]
+								},
+								"pageElements": [
+									{
+										"definition": {
+											"fragment": {
+												"key": "ldp-metric-card-fragment"
+											},
+											"fragmentConfig": {
+												"chart": "number",
+												"metric": "totalIndividualsMetric",
+												"rangeKey": "7",
+												"title": "Everyone who paddled in"
+											}
+										},
+										"type": "Fragment"
+									}
+								],
+								"type": "Column"
+							}
+						],
+						"type": "Row"
+					},
+					{
+						"definition": {
+							"gutters": true,
+							"modulesPerRow": 1,
+							"numberOfColumns": 1,
+							"reverseOrder": false,
+							"rowViewports": [
+								{
+									"id": "landscapeMobile",
+									"rowViewportDefinition": {
+										"modulesPerRow": 1
+									}
+								},
+								{
+									"id": "portraitMobile",
+									"rowViewportDefinition": {
+										"modulesPerRow": 1
+									}
+								},
+								{
+									"id": "tablet",
+									"rowViewportDefinition": {
+										"modulesPerRow": 1
+									}
+								}
+							],
+							"verticalAlignment": "top"
+						},
+						"pageElements": [
+							{
+								"definition": {
+									"size": 12,
+									"columnViewports": [
+										{
+											"columnViewportDefinition": {
+												"size": 12
+											},
+											"id": "landscapeMobile"
+										},
+										{
+											"columnViewportDefinition": {
+												"size": 12
+											},
+											"id": "portraitMobile"
+										},
+										{
+											"columnViewportDefinition": {
+												"size": 12
+											},
+											"id": "tablet"
+										}
+									]
+								},
+								"pageElements": [
+									{
+										"definition": {
+											"fragment": {
+												"key": "ldp-metric-card-fragment"
+											},
+											"fragmentConfig": {
+												"chart": "heatmap",
+												"metric": "trafficHeatmap",
+												"rangeKey": "7",
+												"title": "When surfers visit"
+											}
+										},
+										"type": "Fragment"
+									}
+								],
+								"type": "Column"
+							}
+						],
+						"type": "Row"
+					},
+					{
+						"definition": {
+							"gutters": true,
+							"modulesPerRow": 2,
+							"numberOfColumns": 2,
+							"reverseOrder": false,
+							"rowViewports": [
+								{
+									"id": "landscapeMobile",
+									"rowViewportDefinition": {
+										"modulesPerRow": 1
+									}
+								},
+								{
+									"id": "portraitMobile",
+									"rowViewportDefinition": {
+										"modulesPerRow": 1
+									}
+								},
+								{
+									"id": "tablet",
+									"rowViewportDefinition": {
+										"modulesPerRow": 1
+									}
+								}
+							],
+							"verticalAlignment": "top"
+						},
+						"pageElements": [
+							{
+								"definition": {
+									"size": 6,
+									"columnViewports": [
+										{
+											"columnViewportDefinition": {
+												"size": 12
+											},
+											"id": "landscapeMobile"
+										},
+										{
+											"columnViewportDefinition": {
+												"size": 12
+											},
+											"id": "portraitMobile"
+										},
+										{
+											"columnViewportDefinition": {
+												"size": 12
+											},
+											"id": "tablet"
+										}
+									]
+								},
+								"pageElements": [
+									{
+										"definition": {
+											"fragment": {
+												"key": "ldp-metric-card-fragment"
+											},
+											"fragmentConfig": {
+												"chart": "donut",
+												"metric": "visitorsByBrowser",
+												"rangeKey": "7",
+												"title": "What surfers browse with"
+											}
+										},
+										"type": "Fragment"
+									},
+									{
+										"definition": {
+											"fragment": {
+												"key": "ldp-metric-card-fragment"
+											},
+											"fragmentConfig": {
+												"chart": "bars",
+												"metric": "topPages",
+												"rangeKey": "7",
+												"title": "Most visited pages"
+											}
+										},
+										"type": "Fragment"
+									}
+								],
+								"type": "Column"
+							},
+							{
+								"definition": {
+									"size": 6,
+									"columnViewports": [
+										{
+											"columnViewportDefinition": {
+												"size": 12
+											},
+											"id": "landscapeMobile"
+										},
+										{
+											"columnViewportDefinition": {
+												"size": 12
+											},
+											"id": "portraitMobile"
+										},
+										{
+											"columnViewportDefinition": {
+												"size": 12
+											},
+											"id": "tablet"
+										}
+									]
+								},
+								"pageElements": [
+									{
+										"definition": {
+											"fragment": {
+												"key": "ldp-metric-card-fragment"
+											},
+											"fragmentConfig": {
+												"chart": "donut",
+												"metric": "visitorsByDevice",
+												"rangeKey": "7",
+												"title": "Phones or desktops"
+											}
+										},
+										"type": "Fragment"
+									},
+									{
+										"definition": {
+											"fragment": {
+												"key": "ldp-metric-card-fragment"
+											},
+											"fragmentConfig": {
+												"chart": "bars",
+												"metric": "acquisitionChannel",
+												"rangeKey": "7",
+												"title": "How surfers find us"
+											}
+										},
+										"type": "Fragment"
+									}
+								],
+								"type": "Column"
+							}
+						],
+						"type": "Row"
+					}
+				],
+				"type": "Section"
+			}
+		],
+		"type": "Root"
+	},
+	"settings": {
+		"masterPage": {
+			"key": "swell-lab"
+		}
+	}
+}

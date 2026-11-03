@@ -1,4 +1,6 @@
 .DS_Store
 .env
 node_modules
-surf-site/dist/
+swell-lab/site/dist/
+__pycache__
+marketplace/ldp-metrics.zip

@@ -8,43 +8,13 @@ Everything here reads LDP data from inside Liferay DXP through the DXP GraphQL p
 
 | Folder | What it is |
 |---|---|
-| `dxp` | How to run the frozen demo DXP in Docker, with the scripts that create, back up and restore it. |
-| `tutorial` | Reference solutions for the from-scratch tutorial: a small `ldp-card` built step by step, from Hello, World to Objects. |
-| `objects` | The Liferay Object that stores each metric card's configuration, with the script that creates it and the integration guide. |
-| `scripts` | `curl` scripts that prove the proxy works before any page exists, and `probe-metrics.mjs`, which checks every metric of the metric card. |
-| `html-fragment` | The first prototype: the widget pasted into the out-of-the-box HTML fragment of a content page. |
-| `client-extension` | The same widget as a Web Component, registered as a Custom Element client extension without a Liferay workspace. Served on port 3333. |
-| `client-extension-metric-card` | A card that renders any of 21 LDP metrics with a choice of charts, with a cog to pick the metric, the chart, the period, and the title. Served on port 3334. |
+| `swell-lab` | The Swell Lab surf school site: its fragments, page templates and style book, the client extensions on the blog and the dashboards, the Objects they use, and the AI Hub agents behind them. |
+| `demo` | The live demo: the LDP Fragment Card built topic by topic, the Insight Alert notification setup, and the generator of the *Live Demo* helper pages. |
+| `marketplace` | The LDP Metric Card fragment packaged for Liferay Marketplace, with LDP and AI Hub settings in its fragment configuration. |
 
 ## Prerequisites
 
 - An LDP workspace with data, where you are an Owner or Administrator.
-- A DXP that ships the GraphQL proxy (`analytics-rest-impl`, LPD-85945). `dxp/README.md` sets one up.
-- DXP connected to LDP, with the demo site assigned to an LDP property (channel).
-
-## Scripts
-
-```bash
-export DXP_PASSWORD=<password>
-export DXP_USER=<email>
-
-scripts/get-channels.sh
-scripts/get-site-histogram.sh <channelId> 30 visitorsMetric
-```
-
-`DXP_URL` defaults to `http://localhost:8080`.
-
-## HTML Fragment
-
-Create a blank content page, drag the *HTML* fragment onto it, double-click it, paste `html-fragment/ldp-widget.html`, and publish. The `<script>` runs both in the page editor and in view mode.
-
-## Client Extension
-
-See `client-extension/README.md`.
-
-## Known Limits
-
-- The LDP GraphQL schema behind the proxy is not a documented public API and may change.
-- The "sum of daily values" KPI counts the same person once per day they visited.
-- Anonymous requests to the proxy get 403. The permissions it requires are still to be confirmed.
-- Guests see every metric card with its default configuration: they cannot read the Object entries, and the LDP proxy refuses them anyway.
+- A DXP that ships the GraphQL proxy (`analytics-rest-impl`, LPD-85945): 2026.Q3 or later.
+- DXP connected to LDP, with the site assigned to an LDP property (channel).
+- For the AI insights, DXP connected to AI Hub (*Instance Settings → AI Hub*) and the agents described in `swell-lab/ai-hub/README.md`.

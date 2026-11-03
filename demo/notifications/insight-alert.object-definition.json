@@ -1,0 +1,50 @@
+{
+  "externalReferenceCode": "DEVCON_2026_INSIGHT_ALERT",
+  "name": "InsightAlert",
+  "label": {
+    "en_US": "Insight Alert"
+  },
+  "pluralLabel": {
+    "en_US": "Insight Alerts"
+  },
+  "scope": "company",
+  "panelCategoryKey": "control_panel.object",
+  "objectFields": [
+    {
+      "name": "metric",
+      "label": {
+        "en_US": "Metric"
+      },
+      "businessType": "Text",
+      "DBType": "String",
+      "required": true
+    },
+    {
+      "name": "period",
+      "label": {
+        "en_US": "Period"
+      },
+      "businessType": "Text",
+      "DBType": "String",
+      "required": false
+    },
+    {
+      "name": "insight",
+      "label": {
+        "en_US": "Insight"
+      },
+      "businessType": "LongText",
+      "DBType": "Clob",
+      "required": true
+    },
+    {
+      "name": "page",
+      "label": {
+        "en_US": "Page"
+      },
+      "businessType": "Text",
+      "DBType": "String",
+      "required": false
+    }
+  ]
+}

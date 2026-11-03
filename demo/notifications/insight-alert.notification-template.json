@@ -1,0 +1,18 @@
+{
+  "externalReferenceCode": "DEVCON_2026_INSIGHT_ALERT_NOTIFICATION",
+  "name": "DEVCON 2026 Insight Alert",
+  "type": "userNotification",
+  "editorType": "richText",
+  "recipientType": "role",
+  "recipients": [
+    {
+      "roleName": "Marketing Team"
+    }
+  ],
+  "subject": {
+    "en_US": "New LDP insight on [%INSIGHTALERT_METRIC%] ([%INSIGHTALERT_PERIOD%]): [%INSIGHTALERT_INSIGHT%]"
+  },
+  "body": {
+    "en_US": "[%INSIGHTALERT_INSIGHT%]"
+  }
+}
